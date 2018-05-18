@@ -1,0 +1,51 @@
+.chartContent{
+	position: relative;
+	margin-bottom: 10px;
+	border: solid 1px rgba(0, 84, 224, 0.2);
+	.borderImage{
+		display: inline-block;
+		width:8px;
+		height:8px;
+		position: absolute;
+		z-index: 9;
+	}
+	.borderImage:nth-child(1){
+		left:0;
+		top:0;
+		background:url('../images/big_lt.png') no-repeat;		
+	}
+	.borderImage:nth-child(2){
+		right:0;
+		top:0;
+		background:url('../images/big_rt.png') no-repeat;		
+	}
+	.borderImage:nth-child(3){
+		bottom:0;
+		left:0;
+		background:url('../images/big_lb.png') no-repeat;		
+	}
+	.borderImage:nth-child(4){
+		bottom:0;
+		right: 0;
+		background:url('../images/big_rb.png') no-repeat;		
+	}
+	.titleName{
+		z-index: 9;
+		position: absolute;
+		top:8px;
+		left:10px;
+		color:#fff;
+		padding:6px;
+		span{
+			display: inline-block;
+			padding: 0 4px;
+			background: #132852;			
+		}
+	}				
+}
+
+.activeRouter{
+    color: #1890ff !important;
+    border-bottom: 2px solid #1890ff;
+    margin-bottom: -2px;
+}
