@@ -106,7 +106,7 @@ class FightItem extends React.Component {
                         </Row>
                     </Col>
                 </Row>
-                <Row style={{ margin: '10px 0 0' }} gutter={16}>
+                <Row style={{ margin: '10px 0' }} gutter={16}>
                     <Col xl={17} lg={17} md={17} sm={24} xs={24} style={{ textIndent: '2em' }}>
                         <span >
                             {record.xqnr}
@@ -115,7 +115,7 @@ class FightItem extends React.Component {
                     <Col xl={7} lg={7} md={7} sm={24} xs={24}>
                         <p>{record.lrrymc}，{record.qqdw}，{record.qqsj}</p>
                         <div>
-                            <Tag color="red">已超过10天未反馈</Tag> |  &nbsp;&nbsp;
+                            <Tag color="red">已超过{record.ccts}天未反馈</Tag> |  &nbsp;&nbsp;
 							<Button type='primary' size='small' onClick={() => this.replyClue(record)}>
                                 回复线索：{record.clueCount}条{replyClue ?<Icon type="up" /> :<Icon type="down" />}
                             </Button>
@@ -125,7 +125,7 @@ class FightItem extends React.Component {
                 {replyClue ? <ReplyClue record={record} showType='fightPlat' /> : null}
                 <Divider dashed />
                 {/* 上传线索 */}
-                <Modal title='上传线索'
+                <Modal title='反馈线索'
                     visible={feedbakClue}
                     onCancel={this.handleCancel}
                     className='requestModal'

@@ -11,26 +11,33 @@ class FeedfackClue extends React.Component {
 		this.state = {
 			tagColor: '#108ee9',
 			tagBack: '#fff',
-			requestModal: false
+            requestModal: false,
+            fileList: []
 		}
-	}
-
-	//上传附件
-	normFile = (e) => {
-		console.log('Upload event:', e);
-		if (Array.isArray(e)) {
-			return e;
-		}
-		return e && e.fileList;
-	}
+    }
 	handleSubmit = (e) => {
-		e.preventDefault();
+        e.preventDefault(); 
+        const { fileList } = this.state;
 		const { requestRecord } = this.props;
 		this.props.form.validateFields((err, value) => {
 			console.log("valie", value)
 			if (!err) {
-				const reqUrl = addressUrl + '/clue/insert';
-				httpAjax("post", reqUrl, { demandId: requestRecord.id, ajbh: requestRecord.ajbh, theme: value.theme, xsnr: value.xsnr }).then(res => {
+                const reqUrl = addressUrl + '/clue/insert';
+                let formData = new FormData();
+                formData.append("demandId", requestRecord.id);
+                formData.append("ajbh",requestRecord.ajbh);
+                formData.append("theme",value.theme);
+                formData.append("xsnr",value.xsnr);
+                formData.append("fileComment",value.fileComment);
+                fileList && fileList.map((item, index) => {
+                    formData.append("files", item);
+                })                
+                let config = {
+                    headers: {
+                        "Content-Type": 'multipart/form-data'
+                    }
+                }
+				httpAjax("post", reqUrl,formData,config).then(res => {
 					if (res.code === '200') {
 						message.success("反馈成功");
 						this.props.handleCancel();
@@ -41,9 +48,35 @@ class FeedfackClue extends React.Component {
 				})
 			}
 		})
-	}
+    }
+    beforeUpload = (file) => {
+        this.setState(({ fileList }) => ({
+            fileList: [...fileList, file],
+        }));
+        return false;
+
+    }
+    //删除上传文件
+    removeFileList = (file) => {
+        this.setState(({ fileList }) => {
+            const index = fileList.indexOf(file);
+            const newFileList = fileList.slice();
+            newFileList.splice(index, 1);
+            return {
+                fileList: newFileList,
+            };
+        });
+    }    
 	render() {
-		const { getFieldDecorator } = this.props.form;
+        const { fileList } = this.state;
+        const { getFieldDecorator } = this.props.form;
+        const props = {
+            action: `${addressUrl}/demand/insert`,
+            onRemove: this.removeFileList,
+            beforeUpload: this.beforeUpload,
+            name: 'files'
+            //fileList: this.state.fileList,
+        };
 		const formItemLayout = {
 			labelCol: {
 				xs: { span: 24 },
@@ -70,20 +103,21 @@ class FeedfackClue extends React.Component {
 						<TextArea placeholder='请输入线索内容' />
 					)}
 				</FormItem>
-				<FormItem  {...formItemLayout} label="附件">
-					{getFieldDecorator('files', {
-						valuePropName: 'fileList',
-						getValueFromEvent: this.normFile,
-					})(
-						<Upload name="logo" action="/upload.do" listType="picture">
-							<Button>
-								<Icon type="upload" /> 添加附件
-		              </Button>
-						</Upload>
-					)}
-				</FormItem>
+                <FormItem  {...formItemLayout} label="附件">
+                    {getFieldDecorator('files', {
+                        // valuePropName: 'fileList',
+                        // getValueFromEvent: this.normFile,
+                        initialValue: fileList
+                    })(
+                        <Upload {...props} multiple >
+                            <Button>
+                                <Icon type="upload" /> 添加附件
+		                     </Button>
+                        </Upload>
+                    )}
+                </FormItem>
 				<FormItem {...formItemLayout} label="附件说明">
-					{getFieldDecorator('attachmentDesc', {
+					{getFieldDecorator('fileComment', {
 						//rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
 					})(
 						<TextArea placeholder='请输入附件说明' />

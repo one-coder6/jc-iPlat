@@ -10,7 +10,8 @@ import {
     Form,
     Input,
     Button,
-    Icon
+    Icon,
+    Layout
 } from 'antd';
 
 //引入redux
@@ -29,6 +30,7 @@ import {
 import '../../styles/login.less';
 import LoginBg from '../../images/login_01.jpg'
 const FormItem = Form.Item;
+const { Footer } = Layout;
 class LoginForm extends React.Component {
 
     constructor(props) {
@@ -48,15 +50,15 @@ class LoginForm extends React.Component {
                 }).then(res => {
                     let data = res.data;
                     sessionStorage.setItem("user", JSON.stringify(data));
-                    let {
-                        dispatch,
-                        user
-                    } = this.props;
+                    // let {
+                    //     dispatch,
+                    //     user
+                    // } = this.props;
                     // dispatch(updateUser({
                     //     userName: data.name,
                     //     account: data.account
                     // }))
-                   history.push('/scoutPlat')
+                    history.push('/scoutPlat')
                 })
             }
         })
@@ -102,7 +104,12 @@ class LoginForm extends React.Component {
                         <Col xl={8} lg={8} md={4} sm={24} xs={24}></Col>
                     </Row>
                 </Form>
-                <footer style={{ textAlign: 'center', marginTop: '6%' }}>{footerText}</footer>
+                 <Footer style={{ textAlign: 'center', background: '#fff', }}>
+                    {footerText}
+                    {/* <p>制作单位：深圳市CID刑事侦查局</p> color: '#fff' 
+                    <p>研发单位：深圳市华云中盛科技有限公司</p>
+                    <p>维护电话：13746573647</p> */}
+                </Footer>
             </div>
         )
     }

@@ -98,20 +98,21 @@ class ExtractList extends React.Component {
     rowSelectChange = (selectedRowKeys, selectedRows) => {
         this.setState({selectedRowKeys:selectedRowKeys})
     }
-    //提取案件
+    //添加串并案
     extractCase = () => {
         const { selectedRowKeys } = this.state;
+        const ajbh = sessionStorage.getItem("ajbh");
         const ajbhs= selectedRowKeys&&selectedRowKeys.join(",");
-        const reqUrl = addressUrl+`/cases/remotePickCase?ajbhs=${ajbhs}`;
+        const reqUrl = addressUrl+`/cases/series`;
         this.setState({submitDisabled:true})
-        httpAjax("get",reqUrl).then(res=>{
+        httpAjax("post",reqUrl,{ajbh:ajbh,ajbhs:ajbhs}).then(res=>{
             if(res.code==='200'){
-                message.success("提取成功")
+                message.success("添加成功")
                 this.props.history.push('/scoutPlat');
                 this.setState({submitDisabled:false});
                 this.props.handleCancel();
             }else{
-                message.error("提取失败");
+                message.error("添加失败");
                 this.props.handleCancel();
             }
         })

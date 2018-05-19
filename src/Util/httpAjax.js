@@ -82,12 +82,12 @@ export const addressUrl = 'http://192.168.1.100:9090/cidyth-web';
 export const UC_URL = 'http://192.168.1.100:8080/hyzs-uc';
 
 //陈铭
-// export const addressUrl = 'http://192.168.1.111:8888/cidyth-web';
-// export const UC_URL = 'http://192.168.1.111:9090/hyzs-uc/uc/';
+//export const addressUrl = 'http://192.168.1.111:8888/cidyth-web';
+//export const UC_URL = 'http://192.168.1.111:9090/hyzs-uc/uc/';
 
 //服务器
-// export const addressUrl = 'http://68.64.16.139:9090/cidyth-web';
-// export const UC_URL = 'http://68.64.16.139:9090/hyzs-uc';
+//export const addressUrl = 'http://68.64.16.139:8888/cidyth-web';
+//export const UC_URL = 'http://68.64.16.139:9090/hyzs-uc/uc/';
 
 /*
 机构API：获取顶级机构数据：GET

@@ -10,6 +10,7 @@ import WaitDone from './WaitDone';    //待办事项
 import MonthFeedBacked from './MonthFeedBacked' //需求反馈情况
 import UnitRank from './UnitRank'; //本单位排名
 import '../../../styles/personalCenter.less';
+import avatar from '../../../images/police.png';
 export default class CenterContent extends React.Component {
 
     constructor(props) {
@@ -36,8 +37,8 @@ export default class CenterContent extends React.Component {
             <div className='personalCenter'>
                 <Card style={{ width: '100%' }}>
                     <Row gutter={16}>
-                        <Col xl={2} lg={4} md={4} sm={24} xs={24}>
-                            <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" size="large" className='avatar' />
+                        <Col xl={3} lg={4} md={4} sm={24} xs={24} style={{textAlign:'center'}}>
+                            <Avatar src={avatar} size="large" className='avatar' />
                             <p style={{ marginTop: '20px', textAlign: 'center' }}>{baseInfo.name}</p>
                         </Col>
                         <Col xl={6} lg={8} md={8} sm={24} xs={24}>
@@ -48,7 +49,7 @@ export default class CenterContent extends React.Component {
                                 <p>积分：{baseInfo.avalible}</p>
                             </Card>
                         </Col>
-                        <Col xl={16} lg={12} md={12} sm={24} xs={24} style={{ marginTop: '3%' }}>
+                        <Col xl={15} lg={12} md={12} sm={24} xs={24} style={{ marginTop: '3%' }}>
                             <Row gutter={16}>
                                 <Col span={6}>
                                     <Tag color="gray">主办案件</Tag>  {personalRankVO.mainHandleCount}宗

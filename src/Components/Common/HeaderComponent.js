@@ -11,11 +11,14 @@ class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            BBSMsg: 3,
+            user:''
             newNoticeList: []
         }
     }
-
     componentWillMount() {
+        const user=JSON.parse(sessionStorage.getItem("user"));
+        this.setState({user:user})
         //console.log("user",this.props.user)
         const reqUrl = addressUrl + '/notice/loadNotReadNotice';
         httpAjax("get", reqUrl, {}).then(res => {
@@ -60,19 +63,20 @@ class Header extends React.Component {
 
     }
     render() {
-        const user = this.props.user;
-        const { newNoticeList } = this.state;
-        const menu = (<Menu>
-            <Menu.Item key="0">
-                <a href="">退出</a>
-            </Menu.Item>
-            <Menu.Item key="1">
-                <a href="">修改</a>
-            </Menu.Item>
-            <Menu.Item key="3">
-                <Link to='/systemSet'>个人中心</Link>
-            </Menu.Item>
-        </Menu>
+        const { user } = this.state;
+              const { newNoticeList } = this.state;
+        const menu = (
+            <Menu>
+                <Menu.Item key="0">
+                    <a href="">退出</a>
+                </Menu.Item>
+                <Menu.Item key="1">
+                    <a href="">修改</a>
+                </Menu.Item>
+                <Menu.Item key="3">
+                    <Link to='/systemSet'>个人中心</Link>
+                </Menu.Item>
+            </Menu>
         );
         // 消息list
         const noticeList = (<Menu>

@@ -161,7 +161,7 @@ class CaseList extends React.Component {
       title: '案件类别',
       dataIndex: 'abCn',
     }, {
-      title: '立发时间',
+      title: '立案时间',
       dataIndex: 'sljjsj',
     }, 
     // {

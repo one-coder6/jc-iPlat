@@ -5,7 +5,8 @@ import { Row, Col, Card, List, Button, Modal } from 'antd';
 
 //引入自定义组件
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
-import ExtractList from '../ExtractCase/index';
+import AddCBA from '../AddCBA/index';
+import RecordInfor from './RecordInfor'; //笔录信息
 import '../../../styles/scoutPlat.less';
 export default class DbaseInfor extends React.Component {
 	constructor(props) {
@@ -26,7 +27,7 @@ export default class DbaseInfor extends React.Component {
 		})
 	}
 	addCBA = () => {
-		// this.setState({visible:true})
+		this.setState({ visible: true })
 	}
 	handleCancel = () => {
 		this.setState({ visible: false })
@@ -44,6 +45,10 @@ export default class DbaseInfor extends React.Component {
 		const lsCasesSuspectVO = this.state.detailSource && this.state.detailSource.lsCasesSuspectVO;
 		const lsCasesInformantVO = this.state.detailSource && this.state.detailSource.lsCasesInformantVO;
 		const lsCasesGoodsVO = this.state.detailSource && this.state.detailSource.lsCasesGoodsVO;
+		const lsSceneVO = this.state.detailSource && this.state.detailSource.lsSceneVO;
+		const lsCasesRecordVO = this.state.detailSource && this.state.detailSource.lsCasesRecordVO;
+		const lsSceneFingerPrintVO = this.state.detailSource && this.state.detailSource.lsSceneFingerPrintVO;
+		const lsSceneFootPrintVO = this.state.detailSource && this.state.detailSource.lsSceneFootPrintVO;
 		return (
 			<div className='detailBaseInfo'>
 				<div style={{ marginBottom: 10 }}>
@@ -148,7 +153,10 @@ export default class DbaseInfor extends React.Component {
 								size="small"
 								dataSource={lsCasesSuspectVO}
 								renderItem={item => (
-									<List.Item>{item.xm}，{item.xbCn}，{item.csrq}，户籍：{item.hjdz}，手机：{item.lxdh ? item.lxdh : '无'}</List.Item>
+									<List.Item>
+										{item.xm}，{item.xbCn}，{item.csrq}，户籍：{item.hjdz}，手机：{item.lxdh ? item.lxdh : '无'};
+                                    违法情况：{item.wfqk}；教育经历:{item.reservation10 ? item.reservation10 : '无'}
+									</List.Item>
 								)}
 							/> : '无'
 					}
@@ -174,27 +182,80 @@ export default class DbaseInfor extends React.Component {
 								size="small"
 								dataSource={lsCasesGoodsVO}
 								renderItem={item => (
-									<List.Item>失主：{item.wpsz}；物品名称：{item.wpmcCn}；物品类别：{item.wplbCn}</List.Item>
+									<List.Item>失主：{item.wpsz ? item.wpsz : '未知'}；物品名称：{item.wpmcCn}；物品类别：{item.wplbCn}</List.Item>
 								)}
 							/> : '无'
 					}
 
 				</Card>
 				<Card title='现场勘察' style={{ marginBottom: '10px' }}>
-					<List
-						size="small"
-						dataSource={data}
-						renderItem={item => (
-							<List.Item>{item}</List.Item>
-						)}
-					/>
+					{
+						lsSceneVO && lsSceneVO.length >= 1 ?
+							<List
+								size="small"
+								dataSource={lsSceneVO}
+								renderItem={item => (
+									<List.Item>勘察人员:{item.kyjcry}；勘察情况:{item.kyjcqk}；勘验地点:{item.kydd}；</List.Item>
+								)}
+							/> : '无'
+					}
+				</Card>
+				<Card title='现场勘察图片' style={{ marginBottom: '10px' }} className='sceneImages'>
+					{
+						(lsSceneVO && lsSceneVO).length>=1 ?
+							lsSceneVO.map((item, index) => {
+								return <div key={index} style={{ height: '200px' }}>
+									{
+										item.lsSceneImageCidVO && item.lsSceneImageCidVO.map((i, dn) => {
+											return <Card.Grid key={dn} style={{ padding: 0 }}>{i.lbCn}<img alt="example" src={addressUrl + `/cases/sceneImage?id=${i.id}`} /></Card.Grid>
+										})
+									}
+								</div>
+							}) : '暂无图片'
+					}
+				</Card>
+				<Card title='手印' style={{ marginBottom: '10px' }}>
+					{
+						lsSceneFingerPrintVO && lsSceneFingerPrintVO.length >= 1 ?
+							<List
+								size="small"
+								dataSource={lsSceneFingerPrintVO}
+								renderItem={item => (
+									<List.Item>提取日期:{item.tqrq}；遗留部位:{item.ylbw ? item.ylbw : '无'}；</List.Item>
+								)}
+							/> : '暂无记录'
+					}
+				</Card>
+				<Card title='足迹' style={{ marginBottom: '10px' }}>
+					{
+						lsSceneFootPrintVO && lsSceneFootPrintVO.length >= 1 ?
+							<List
+								size="small"
+								dataSource={lsSceneFootPrintVO}
+								renderItem={item => (
+									<List.Item>提取日期:{item.tqrq}；遗留部位:{item.ylbw}；</List.Item>
+								)}
+							/> : '暂无记录'
+					}
 				</Card>
 				<Card title='笔录信息' style={{ marginBottom: '10px' }}>
-					描述： 在朴成贤呆在咖啡色的喊楼呆在呆在喊楼 中
-        </Card>
+					{
+                        lsCasesRecordVO && lsCasesRecordVO.length>=1 
+                        ?
+                        <RecordInfor  lsCasesRecordVO = {lsCasesRecordVO}/> :'暂无数据'
+                        // lsCasesRecordVO.map((item,index)=>{
+                        //     return <span>
+                        //         {index},记录地点：{item.jldd}；记录人员：{item.recorder}；笔录对象性别：{item.targetXbCn}；
+                        //         笔录对象名称：{item.targetXm}；开始时间：{item.starttime}；结束时间：{item.endtime}；
+                        //         笔录内容：{item.body}笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：
+                        //         </span>
+                        // }):'暂无记录'
+                        // RecordInfor
+					}
+				</Card>
 				{/* 添加串并案 */}
 				<Modal visible={visible} title='添加串并案' onCancel={this.handleCancel} className='extractCaseM' footer={false}>
-					<ExtractList handleCancel={this.handleCancel} showType='addCBA' />
+					<AddCBA handleCancel={this.handleCancel} showType='addCBA' />
 				</Modal>
 			</div>
 		)

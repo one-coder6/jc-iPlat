@@ -33,7 +33,7 @@
 		// width:100%px;
 		overflow-x: scroll;
 		.ant-card-body{
-			padding: 128px 20px 20px;
+			padding: 128px 20px 20px !important;
 			width:110%;
 			.pItem{
 				.ant-steps-item{
@@ -67,7 +67,7 @@
 				.ant-steps-item:nth-child(odd){
 					.ant-steps-item-icon{
 						.ant-steps-icon{
-							color:green
+							color:#91d5ff
 						}
 					}
 					.ant-steps-item-title{
@@ -77,25 +77,25 @@
 						}
 						.stepTitles{
 							padding-left:6px;
-							border-left: 1px dashed green;
+							border-left: 1px dashed #91d5ff;
 						}
 					}
 					.ant-steps-item-title:after{
-						background-color:green
+						background-color:#91d5ff
 					}
 				}
 				.ant-steps-item:nth-child(even){
 					.ant-steps-icon{
-						color:red
+						color:#91d5ff
 					}
 					.stepTitle{
 						position: absolute;
 						padding-left: 16px;
 						margin-top: 16px;
-						border-left:1px  dashed red;	
+						border-left:1px  dashed #91d5ff;	
 					}
 					.ant-steps-item-title:after{
-						background-color:red
+						background-color:#91d5ff
 					}					
 				}				
 			}
@@ -151,6 +151,20 @@
 .extractCaseM{
     width:88% !important;
 }
+
+//勘察图片
+.sceneImages{
+    .ant-card-grid{
+        width:20%;
+        height:200px;
+        img{
+            display: block;
+            height:90%;
+            width:100%;
+        }
+    }
+}
+
 // 定位到了新线索
 .focusFind{
 	animation-timing-function: ease-in-out;
