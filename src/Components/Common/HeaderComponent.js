@@ -12,7 +12,7 @@ class Header extends React.Component {
         super(props);
         this.state = {
             BBSMsg: 3,
-            user:''
+            user:'',
             newNoticeList: []
         }
     }
