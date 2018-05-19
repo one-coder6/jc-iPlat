@@ -64,7 +64,6 @@ export function ScoketHandler(url) {
                 description: '你有新的短消息',
                 icon: <Icon type="check" style={{ color: '#108ee9' }} />,
             });
-            console.log(ev.data)
             if (that.callback) {
                 that.callback(ev.data)
             }

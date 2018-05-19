@@ -51,14 +51,14 @@ export default class DbaseInfor extends React.Component {
 		const lsSceneFootPrintVO = this.state.detailSource && this.state.detailSource.lsSceneFootPrintVO;
 		return (
 			<div className='detailBaseInfo'>
-				<div>
+				<div style={{ marginBottom: 10 }}>
 					{casesVO.lasj}{casesVO.ajmc}
 					{/* <Link to='/addCase' > */}
 					<Button type='primary' size='small' style={{ margin: '0 10px' }} onClick={this.addCBA}>添加串并案</Button>
 					{/* </Link> */}
 					<span>串并案件：{
 						casesVO.sfcba == 1 ? casesVO.lsCasesMegerVO && casesVO.lsCasesMegerVO.map((item, index) => {
-							return <span key={index}>{item.ajbh}:{item.ajmc}</span>;
+							return <span key={index}>{item.ajbh}：{item.ajmc} </span>;
 						}) : '无'
 					}</span>
 				</div>

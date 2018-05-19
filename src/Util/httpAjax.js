@@ -78,12 +78,12 @@ export function httpAjax(method, url, data, config) {
 }
 
 //纪德伟 
-//export const addressUrl = 'http://192.168.1.100:9090/cidyth-web';
-//export const UC_URL = 'http://192.168.1.100:8080/hyzs-uc';
+export const addressUrl = 'http://192.168.1.100:9090/cidyth-web';
+export const UC_URL = 'http://192.168.1.100:8080/hyzs-uc';
 
 //陈铭
-export const addressUrl = 'http://192.168.1.111:8888/cidyth-web';
-export const UC_URL = 'http://192.168.1.111:9090/hyzs-uc/uc/';
+//export const addressUrl = 'http://192.168.1.111:8888/cidyth-web';
+//export const UC_URL = 'http://192.168.1.111:9090/hyzs-uc/uc/';
 
 //服务器
 //export const addressUrl = 'http://68.64.16.139:8888/cidyth-web';
@@ -101,8 +101,8 @@ http://192.168.1.108:9090/hyzs-uc/uc/getDepartmentByAny?code=440300000000
 //服务器地址
 //export const addressUrl = 'http://68.64.17.37:8081/cidyth-web';
 
-// export const DemandFeedbackWSUrl  = "ws://192.168.1.102:9528/ws/chat"; // bbs论坛通讯
-// export const GlobalWSUrl  = "ws://192.168.1.102:9527/ws/global"; // 全局消息
+export const DemandFeedbackWSUrl  = "ws://192.168.1.100:9532/ws/chat"; // bbs论坛通讯
+export const GlobalWSUrl  = "ws://192.168.1.100:9531/ws/global"; // 全局消息
 
-export const DemandFeedbackWSUrl  = "ws://68.64.16.139:9528/ws/chat"; // bbs论坛通讯
-export const GlobalWSUrl  = "ws://68.64.16.139:9527/ws/global"; // 全局消息
+// export const DemandFeedbackWSUrl  = "ws://68.64.16.139:9528/ws/chat"; // bbs论坛通讯
+// export const GlobalWSUrl  = "ws://68.64.16.139:9527/ws/global"; // 全局消息

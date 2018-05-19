@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { withRouter } from 'react-router-dom';
-import { Row, Col, Card, Tabs ,Button ,Modal} from 'antd';
+import { Row, Col, Card, Tabs, Button, Modal } from 'antd';
 
 //引入公共组件
 import ContentComponent from '../../Content/Index';
@@ -20,41 +20,54 @@ const TabPane = Tabs.TabPane;
 class CaseDetail extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            createDemand:false,
-            publishInfor:false
+        this.state = {
+            createDemand: false,
+            publishInfor: false,
+            showTabsIndex: "1" //显示tab的索引
         }
     }
 
     componentWillMount() {
         //console.log("session",sessionStorage.getItem("ajbh"))
+        debugger;
+        let sessionanchor = sessionStorage.getItem("notic-anchor");
+        if (sessionanchor) {
+            // 如果是消息点击进来
+            let arr = sessionanchor.split('_');
+            this.setState({ showTabsIndex: "2" })
+        }
+    }
+
+    componentWillUnmount() {
+        // 离开了 需要clear
+        sessionStorage.removeItem("notic-anchor")
     }
 
     createDemand = () => {
-        this.setState({createDemand:true})
+        this.setState({ createDemand: true })
     }
     publishInfor = () => {
-        this.setState({publishInfor:true})
+        this.setState({ publishInfor: true })
     }
     handleCancel = () => {
-        this.setState({createDemand:false,publishInfor:false})
+        this.setState({ createDemand: false, publishInfor: false })
     }
     render() {
-        const  { createDemand ,publishInfor} = this.state;
+        const { createDemand, publishInfor } = this.state;
         return (
             <ContentComponent>
                 <div className='detailContent'>
                     <Card title="案件进度" style={{ width: '100%' }}>
                         <CaseProgress />
                     </Card>
-                    <Tabs defaultActiveKey="1" onChange={this.callback} style={{ padding: '0 20px ' }}>
+                    <Tabs defaultActiveKey="1" activeKey={this.state.showTabsIndex} onChange={(e) => { this.setState({ showTabsIndex: e.toString() }); }} style={{ padding: '0 20px ' }}>
                         <TabPane tab="案件基本信息" key="1">
                             <DbaseInfor />
                         </TabPane>
                         <TabPane tab="需求/反馈" key="2">
-                            <div style={{textAlign:'right'}}>
-                                <Button size='small' style={{marginRight:'10px'}} onClick={this.createDemand}>创建需求</Button>
-                                <Button size='small' style={{marginRight:'10px'}} onClick={this.publishInfor}>发布消息</Button>
+                            <div style={{ textAlign: 'right', padding: "0px 0px 10px 0px" }}>
+                                <Button size='small' style={{ marginRight: '10px' }} onClick={this.createDemand}>创建需求</Button>
+                                <Button size='small' style={{ marginRight: '10px' }} onClick={this.publishInfor}>发布消息</Button>
                             </div>
                             <RequestList showType='scoutPlat' />
                         </TabPane>
@@ -71,11 +84,11 @@ class CaseDetail extends React.Component {
                             <Dprogress />
                         </TabPane>
                     </Tabs>
-                    <Modal title ='创建需求' visible ={createDemand} onCancel = {this.handleCancel}>
-                        <CreateRequest handleCancel ={this.handleCancel} />
+                    <Modal title='创建需求' visible={createDemand} onCancel={this.handleCancel}>
+                        <CreateRequest handleCancel={this.handleCancel} />
                     </Modal>
-                    <Modal title ='发布信息' visible ={publishInfor} onCancel = {this.handleCancel}>
-                        <CreateRequest handleCancel ={this.handleCancel}/>
+                    <Modal title='发布信息' visible={publishInfor} onCancel={this.handleCancel}>
+                        <CreateRequest handleCancel={this.handleCancel} />
                     </Modal>
                 </div>
             </ContentComponent>
