@@ -11,12 +11,14 @@ class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            BBSMsg: 3
+            BBSMsg: 3,
+            user:''
         }
     }
 
     componentWillMount() {
-        //console.log("user",this.props.user)
+        const user=JSON.parse(sessionStorage.getItem("user"));
+        this.setState({user:user})
     }
     //退出
     logout = () => {
@@ -41,7 +43,7 @@ class Header extends React.Component {
         WS = shl;
     }
     render() {
-        const user = this.props.user;
+        const { user } = this.state;
         const menu = (
             <Menu>
                 <Menu.Item key="0">

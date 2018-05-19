@@ -16,7 +16,7 @@ export default class CaseMember extends React.Component {
         }
     }
     componentWillMount() {
-        const ajbh = 'A4403035200002007010003' // sessionStorage.getItem("ajbh");
+        const ajbh = sessionStorage.getItem("ajbh");
         const reqUrl = addressUrl + `/cases/memberGroup?ajbh=${ajbh}`
         httpAjax("get", reqUrl, ).then(res => {
             if (res.code === '200') {

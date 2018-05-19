@@ -193,6 +193,7 @@ class CreateRequest extends React.Component {
                             dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
                             onSelect={this.treeSelectKeys}
                             searchPlaceholder='融合作战单位'
+                            treeDefaultExpandAll
                         >
                             {this.renderTreeNodes(treeData)}
                         </TreeSelect>

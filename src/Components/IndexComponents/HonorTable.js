@@ -86,7 +86,8 @@ export default class HonorTable extends React.Component{
 		  			return text.inferior	
 		  		}
 		  	},
-		  ]
+          ],
+        //   key:''
 		},{
 		  title: '综合排名',
 		  dataIndex: 'compositiveRank',

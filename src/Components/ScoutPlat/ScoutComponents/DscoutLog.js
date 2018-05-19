@@ -12,8 +12,7 @@ class ScoutLog extends React.Component {
         }
     }
     componentWillMount() {
-        console.log("ScoutLo", this.props)
-        const ajbh = 'A4403035100002011040090' // sessionStorage.getItem("ajbh");
+        const ajbh =  sessionStorage.getItem("ajbh");
         const reqUrl = addressUrl + `/timeNode/list?ajbh=${ajbh}`
         httpAjax("get", reqUrl, ).then(res => {
             console.log("res", res)

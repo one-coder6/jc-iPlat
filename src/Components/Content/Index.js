@@ -6,6 +6,7 @@ import { Link, NavLink, } from 'react-router-dom';
 //引入自定义组件
 import HeaderCom from '../Common/HeaderComponent';
 import BreadNav from '../Common/BreadNav';
+import { footerText } from '../../Util/config';
 import '../../styles/common.less';
 import '../../styles/layout.less';
 const { Header, Footer, Content } = Layout;
@@ -66,7 +67,12 @@ export default class ContentComponent extends React.Component {
                 <Content>
                     {this.props.children}
                 </Content>
-                {/*<Footer>Footer</Footer>*/}
+                <Footer style={{ textAlign: 'center' ,background:'#3ba0e9',color:'#fff'}}>
+                {/* {footerText} */}
+                    <p>制作单位：深圳市CID刑事侦查局</p>
+                    <p>研发单位：深圳市华云中盛科技有限公司</p>
+                    <p>维护电话：13746573647</p>
+                </Footer>
             </Layout>
         )
     }
