@@ -6,17 +6,31 @@ import { Row, Col, Badge, Icon, Menu, Dropdown, Tooltip, Button } from 'antd';
 import { httpAjax, addressUrl, GlobalWSUrl } from '../../Util/httpAjax';
 import { ScoketHandler } from './websocket/socket.js';
 import '../../styles/content/header.less';
-let WS = null;
+let Goloal_WS = null;
 class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            BBSMsg: 3
+            newNoticeList: []
         }
     }
 
     componentWillMount() {
         //console.log("user",this.props.user)
+        const reqUrl = addressUrl + '/notice/loadNotReadNotice';
+        httpAjax("get", reqUrl, {}).then(res => {
+            debugger;
+            if (res.code === '200') {
+                let data = res.data;
+                this.setState({ newNoticeList: data })
+                // 保存起来 noticelist
+                sessionStorage.setItem("noticelistobj", JSON.stringify(data));
+                this.connSocket();
+            }
+        })
+    }
+    componentWillUnmount() {
+        Goloal_WS && Goloal_WS.onclose();
     }
     //退出
     logout = () => {
@@ -30,43 +44,51 @@ class Header extends React.Component {
     }
     // 连接回话
     connSocket = () => {
+
         var user = JSON.parse(sessionStorage.getItem("user"));
-        let shl = ScoketHandler(GlobalWSUrl + "&account=" + user.account);
+        let shl = ScoketHandler(GlobalWSUrl + "?account=" + user.account);
         shl.init();
         // callback里面写websocket有新消息的逻辑
         shl.callback = (d) => {
-            let td = d && JSON.parse(d).data;
-            console.log(td)
+            debugger;
+            let data = d && JSON.parse(d).data;
+            this.setState({ newNoticeList: data });
+            // 更新noticelist
+            sessionStorage.setItem("noticelistobj", JSON.stringify(data));
         }
-        WS = shl;
+        Goloal_WS = shl;
+
     }
     render() {
         const user = this.props.user;
-        const menu = (
-            <Menu>
-                <Menu.Item key="0">
-                    <a href="">退出</a>
-                </Menu.Item>
-                <Menu.Item key="1">
-                    <a href="">修改</a>
-                </Menu.Item>
-                <Menu.Item key="3">
-                    <Link to='/systemSet'>个人中心</Link>
-                </Menu.Item>
-            </Menu>
+        const { newNoticeList } = this.state;
+        const menu = (<Menu>
+            <Menu.Item key="0">
+                <a href="">退出</a>
+            </Menu.Item>
+            <Menu.Item key="1">
+                <a href="">修改</a>
+            </Menu.Item>
+            <Menu.Item key="3">
+                <Link to='/systemSet'>个人中心</Link>
+            </Menu.Item>
+        </Menu>
         );
-        const menuMsg = (
-            <Menu>
-                <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">消息1</a>
+        // 消息list
+        const noticeList = (<Menu>
+            {newNoticeList.map((item, i) => {
+                let temp = item.anchor || "";
+                let arr = temp.split('_');
+                if (arr.length == 0) return false;
+                return <Menu.Item>
+                    <Link style={{fontSize:12}} to={{ pathname: '/caseDetail', query: { ajbh: arr[0] } }} onClick={() => {
+                        sessionStorage.setItem("ajbh", arr[0]);
+                        sessionStorage.setItem("notic-anchor", temp);
+                    }}>{(i + 1) + '.' + item.tznr || '-'}</Link>
                 </Menu.Item>
-                <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">消息2</a>
-                </Menu.Item>
-                <Menu.Item>
-                    <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">消息3</a>
-                </Menu.Item>
-            </Menu>
+            })
+            }
+        </Menu>
         );
         return (
             <Row className='header'>
@@ -85,8 +107,8 @@ class Header extends React.Component {
                             </Badge>
                         </Col> */}
                         <Col xl={4} lg={3} md={3} sm={2} xs={2}>
-                            <Dropdown overlay={menuMsg}>
-                                <Badge count={this.state.BBSMsg}>
+                            <Dropdown overlay={noticeList}>
+                                <Badge count={this.state.newNoticeList.length || 0}>
                                     <Icon type="message" />
                                 </Badge>
                             </Dropdown>

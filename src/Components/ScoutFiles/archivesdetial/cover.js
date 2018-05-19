@@ -83,9 +83,9 @@ export default class ScoutFile extends React.Component {
 			</div>
 		})
 		return (
-			<CommonLayout>
+			<CommonLayout style={{overflow:"hidden",border:"1px solid red"}}>
 				<Spin spinning={this.state.loading}>
-					<div>
+					<div style={{ height:700}}>
 						<div className="flipbook-viewport">
 							<div className="container">
 								<div className="flipbook">

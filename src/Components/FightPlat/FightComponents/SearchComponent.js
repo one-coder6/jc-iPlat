@@ -62,9 +62,7 @@ class Search extends React.Component {
     const {
       getFieldDecorator
     } = this.props.form;
-    const {
-      expand,
-    } = this.state;
+    const { expand, } = this.state;
     const FormItemLayout = {
       wrapperCol: {
         xs: {

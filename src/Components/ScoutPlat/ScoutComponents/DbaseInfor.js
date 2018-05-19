@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import { Row, Col, Card, List, Button ,Modal} from 'antd';
+import { Row, Col, Card, List, Button, Modal } from 'antd';
 
 //引入自定义组件
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
@@ -12,7 +12,7 @@ export default class DbaseInfor extends React.Component {
 		super(props);
 		this.state = {
 			detailSource: '',
-			visible:false
+			visible: false
 		}
 	}
 
@@ -29,7 +29,7 @@ export default class DbaseInfor extends React.Component {
 		// this.setState({visible:true})
 	}
 	handleCancel = () => {
-		this.setState({visible:false})
+		this.setState({ visible: false })
 	}
 	render() {
 		const { visible } = this.state;
@@ -46,15 +46,15 @@ export default class DbaseInfor extends React.Component {
 		const lsCasesGoodsVO = this.state.detailSource && this.state.detailSource.lsCasesGoodsVO;
 		return (
 			<div className='detailBaseInfo'>
-				<div>
+				<div style={{ marginBottom: 10 }}>
 					{casesVO.lasj}{casesVO.ajmc}
 					{/* <Link to='/addCase' > */}
 					<Button type='primary' size='small' style={{ margin: '0 10px' }} onClick={this.addCBA}>添加串并案</Button>
 					{/* </Link> */}
-					<span>串并案件：{						
-						casesVO.sfcba==1?casesVO.lsCasesMegerVO&&casesVO.lsCasesMegerVO.map((item,index)=>{
-							return <span key={index}>{item.ajbh}:{item.ajmc}</span>;
-						}) :'无'
+					<span>串并案件：{
+						casesVO.sfcba == 1 ? casesVO.lsCasesMegerVO && casesVO.lsCasesMegerVO.map((item, index) => {
+							return <span key={index}>{item.ajbh}：{item.ajmc} </span>;
+						}) : '无'
 					}</span>
 				</div>
 				<Card title="基本信息">

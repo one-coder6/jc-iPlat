@@ -6,7 +6,10 @@ import ReplyClue from './relayRequest'; // 回复评论
 import FeedbackClue from '../feedbackClue'; //反馈线索
 import RateCom from './rate'; //评价
 import { ScoketHandler } from '../websocket/socket.js';
-
+import { thirdLayout } from '../../../Util/Flexout';
+import { EALREADY } from 'constants';
+import { debug } from 'util';
+import $ from 'jquery';
 const Panel = Collapse.Panel;
 let WS = null;
 export default class RequestList extends React.Component {
@@ -22,16 +25,47 @@ export default class RequestList extends React.Component {
 			loading: false,
 			loadbacklist: false, // 通讯更新数据的状态loading
 			isFirstGet: true, // 首次是通过api请求数据，完了之后是通过建立的websocket通讯更新新数据
-			showCollapseIndex: "0" // 显示Collapse的索引
+			showCollapseIndex: "0", // 显示Collapse的索引
+			focusFind: false // 定位到的动画
 		}
 	}
+	// 渲染之前
 	componentWillMount() {
 		this.getRequestSource();
 		//console.log("this.record", this.props.showType)
 	}
+	// dom完成
+	componentDidMount() {
+		setTimeout(() => {
+			let sessionanchor = sessionStorage.getItem("notic-anchor");
+			if (sessionanchor) {
+				this.fromNotie(sessionanchor);
+			}
+		}, 1000);
+	}
 	componentWillUnmount() {
 		WS && WS.onclose();
+		// 离开了 需要clear
+		sessionStorage.removeItem("notic-anchor")
 	}
+	// 来自全局notice进入
+	fromNotie = (sessionanchor) => {
+		// 如果是消息点击进来
+		/* 
+		1、通过案件编号找到一级的 索引 展开，然后跳转到新消息的位置
+		*/
+		let arr = sessionanchor.split('_');
+		let index = 0;
+		this.state.requestSource.map((item, i) => {
+			if (item.id == arr[1]) {
+				index = i;
+			}
+		});
+		this.setState({ showCollapseIndex: index.toString() }, () => {
+			this.toscrollView(sessionanchor)
+		})
+	}
+
 	// 连接回话
 	connSocket = () => {
 		const ajbh = sessionStorage.getItem("ajbh");
@@ -70,7 +104,7 @@ export default class RequestList extends React.Component {
 		if (d) {
 			let childList = {};
 			d.map((item, i) => {
-				let key = item.contentType + "_" + item.id, val = item.contentList;
+				let key = item.contentType + "_" + item.id, val = item.contentList || [];
 				childList[key] = val;
 			})
 			this.setState({ contentList: childList });
@@ -97,6 +131,7 @@ export default class RequestList extends React.Component {
 	handleCancel = () => {
 		this.setState({ showReply: false, showAppraise: false, showClue: false })
 	}
+
 	// 获取需求和信息的detail
 	getRequestSource = () => {
 		this.setState({ loading: true });
@@ -122,6 +157,7 @@ export default class RequestList extends React.Component {
 		})
 	}
 
+	// 关键字翻译
 	mapReplyType = (type) => {
 		if (type === "CLUE") {
 			return '反馈线索'
@@ -129,20 +165,56 @@ export default class RequestList extends React.Component {
 			return '回复'
 		}
 	}
+
 	// 跳转到指定焦点
-	toscrollView = () => {
-		this.setState({ currentPage: "2", currentPageChild: "2" }, () => {
-			let anchorElement = document.getElementById("mmy");
-			if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
-		})
+	toscrollView = (id) => {
+		debugger;
+		let anchorElement = document.getElementById(id);
+		if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+		// 这里需要触发聚焦动画
+		this.showAnimateShow(id)
 	}
+
 	//提交评价
 	submitAppraise = () => {
 		this.setState({ showAppraise: false })
 	}
 
+	// 显示动画
+	showAnimateShow = (id) => {
+		// 1.如果当前父级下面有多个列表则都显示聚焦动画
+		// 2.将这些设为已读
+		let noticelistobj = sessionStorage.getItem("noticelistobj"),
+			b = this.state.isFirstGet;
+		if (noticelistobj) {
+			let obj = JSON.parse(noticelistobj),
+				ids = [],
+				domId = [],
+				tempArr = id.split('_'),
+				code = tempArr[1];
+			obj && obj.map((item, i) => {
+				let _code = item.anchor.split('_')[1];
+				if (_code == code) {
+					ids.push(item.id);
+					domId.push("#" + item.anchor);
+				}
+			})
+			$(domId.join(',')).addClass("focusFind");
+			if (ids.length) {
+				const reqUrl = addressUrl + '/notice/readNotice';
+				debugger
+				let _ids = ids.join(',');
+				httpAjax("get", reqUrl, { params: { noticeId: _ids } }).then(res => {
+					if (res.code === '200') {
+						debugger;
+					}
+				})
+			}
+		}
+	}
+
 	// 回复信息
-	renderChild = (id, contentType) => {
+	renderChild = (id, contentType, ajbh) => {
 		let contentList = this.state.contentList;
 		let key = contentType + '_' + id
 		let tempData = contentList[key] || [];
@@ -150,8 +222,9 @@ export default class RequestList extends React.Component {
 			<List
 				dataSource={tempData}
 				locale={{ emptyText: '无数据' }}
-				renderItem={(ele, index) => (
-					<List.Item style={{ padding: "10px 25px" }}   >
+				renderItem={(ele, index) => {
+					let _id = ajbh + '_' + id + '_' + ele.type + '_' + ele.replyId;
+					return <List.Item style={{ padding: "10px 25px" }} id={_id}>
 						<List.Item.Meta
 							title={
 								<div >
@@ -169,7 +242,8 @@ export default class RequestList extends React.Component {
 							<Button onClick={() => this.appraiseRequest(ele)} size='small'> 评价 </Button>
 						</div>
 					</List.Item>
-				)}
+				}
+				}
 			/>
 		</Spin>
 	}
@@ -177,7 +251,7 @@ export default class RequestList extends React.Component {
 	render() {
 		const { showReply, showAppraise, showClue, requestSource, replyRecord, loading } = this.state;
 		const { showType } = this.props;
-		return (<div>
+		return (<div style={{ marginBottom: 40 }}>
 			{
 				showType === 'scoutPlat' ?
 					<Collapse defaultActiveKey={['0']} activeKey={this.state.showCollapseIndex} onChange={(e, c) => { this.setState({ showCollapseIndex: e.pop() }) }}>
@@ -201,7 +275,7 @@ export default class RequestList extends React.Component {
 										</div>
 										<Divider dashed />
 										{/* 回复列表   */}
-										{this.renderChild(item.id, item.contentType)}
+										{this.renderChild(item.id, item.contentType, item.ajbh)}
 									</div>
 								</Panel>
 							})
