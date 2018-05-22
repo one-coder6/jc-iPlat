@@ -20,7 +20,7 @@ export default class ScoutFile extends React.Component {
 			showContent: false,
 			searchParam: null,
 			trunObj: null,
-			loading: false
+			loading: true
 		}
 		this.loadShowBook();
 	}
@@ -50,6 +50,12 @@ export default class ScoutFile extends React.Component {
 	}
 	componentWillReceiveProps = (nextProps) => {
 		let pp = nextProps;
+
+	}
+	loadingfn = (b) => {
+		setTimeout(() => {
+			this.setState({ loading: b })
+		}, 1000)
 	}
 	componentDidMount = () => {
 	}
@@ -66,7 +72,7 @@ export default class ScoutFile extends React.Component {
 			{ name: '现场勘查信息', Comp: <Prospecting /> },
 			{ name: '笔录信息', Comp: <Record /> },
 			{ name: '嫌疑人信息', Comp: <Suspect /> },
-			{ name: '涉案物品信息', Comp: <Goods finishState={this.state.loading} /> }
+			{ name: '涉案物品信息', Comp: <Goods loadingfn={this.loadingfn} /> }
 		];
 
 		const PageDom = catalogList && catalogList.map((item, index) => {
@@ -83,38 +89,40 @@ export default class ScoutFile extends React.Component {
 			</div>
 		})
 		return (
-			<CommonLayout style={{overflow:"hidden",border:"1px solid red"}}>
-				<Spin spinning={this.state.loading}>
-					<div style={{ height:700}}>
-						<div className="flipbook-viewport">
-							<div className="container">
-								<div className="flipbook">
-									<div className="archivcover" style={{ background: '#c18e68' }}>
-										<div style={{ padding: 40, textAlign: "center", fontFamily: "幼圆", fontWeight: 800 }}>
-											<h1>情报超市侦查档案</h1>
-											<h4>编号：A4403035200002007010003</h4>
-										</div>
-									</div>
-									<div className="archiivcont">
-										<div className="cont-bookpage-odd">
-											<div>
-												<h1 style={{ width: '100%', display: 'block', textAlign: 'center', paddingTop: "25px" }}>目       录</h1>
-												<List style={{ padding: 25 }}
-													dataSource={catalogList}
-													renderItem={(item, index) => (<List.Item style={{ border: '0px' }}>
-														<span style={{ cursor: 'pointer' }} onClick={() => { return this.catalogclick(index) }}>{item.name}</span>.......................................................................................................{index + 1}
-													</List.Item>)}
-												/>
+			<CommonLayout>
+				<div style={{ height: 800 }}>
+					<Spin spinning={this.state.loading}>
+						<div style={{ height: 700, display: this.state.loading ? 'none' : 'block' }} >
+							<div className="flipbook-viewport">
+								<div className="container">
+									<div className="flipbook">
+										<div className="archivcover" style={{ background: '#c18e68' }}>
+											<div style={{ padding: 40, textAlign: "center", fontFamily: "幼圆", fontWeight: 800 }}>
+												<h1>情报超市侦查档案</h1>
+												<h4>编号：A4403035200002007010003</h4>
 											</div>
 										</div>
-									</div>
-									{PageDom}
-									<div className="archiivcont">
-										<div className="cont-bookpage-odd">
-											<div>
-												<div style={{ width: "100%", textAlign: "center", padding: "20px auto" }}>
-													<h1>情报超市侦查档案</h1>
-													<h3>结束</h3>
+										<div className="archiivcont">
+											<div className="cont-bookpage-odd">
+												<div>
+													<h1 style={{ width: '100%', display: 'block', textAlign: 'center', paddingTop: "25px" }}>目       录</h1>
+													<List style={{ padding: 25 }}
+														dataSource={catalogList}
+														renderItem={(item, index) => (<List.Item style={{ border: '0px' }}>
+															<span style={{ cursor: 'pointer' }} onClick={() => { return this.catalogclick(index) }}>{item.name}</span>.......................................................................................................{index + 1}
+														</List.Item>)}
+													/>
+												</div>
+											</div>
+										</div>
+										{PageDom}
+										<div className="archiivcont">
+											<div className="cont-bookpage-odd">
+												<div>
+													<div style={{ width: "100%", textAlign: "center", padding: "20px auto" }}>
+														<h1>情报超市侦查档案</h1>
+														<h3>结束</h3>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -122,8 +130,8 @@ export default class ScoutFile extends React.Component {
 								</div>
 							</div>
 						</div>
-					</div>
-				</Spin>
+					</Spin>
+				</div>
 			</CommonLayout >
 		)
 	}

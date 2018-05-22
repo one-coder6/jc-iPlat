@@ -162,8 +162,11 @@ class Search extends React.Component {
 						</Col>
 					</Row>
 					<Row>
-						<Col xl={18} lg={18} md={16} sm={16} xs={16}></Col>
-						<Col xl={6} lg={6} md={8} sm={8} xs={8}>
+						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
+						</Col>
+						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
+						</Col>
+						<Col xl={8} lg={8} md={8} sm={24} xs={24} style={{paddingLeft:"17%"}}>
 							<Button type='primary' htmlType="submit" style={{ marginRight: '20px' }}>查询</Button>
 							<Button onClick={this.resetForm}>清空</Button>
 							<a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggle}>
@@ -171,6 +174,7 @@ class Search extends React.Component {
 							</a>
 						</Col>
 					</Row>
+
 				</Form>
 			</div>
 		)

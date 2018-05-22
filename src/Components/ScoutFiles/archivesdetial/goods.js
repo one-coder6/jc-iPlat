@@ -10,7 +10,8 @@ export default class Goods extends React.Component {
             showContent: false,
             searchParam: null,
             ajbh: 'A4403035200002007010003',
-            infoEnity: {}
+            infoEnity: {},
+            finishState: this.props.finishState
         }
     }
     componentWillMount = () => {
@@ -19,8 +20,11 @@ export default class Goods extends React.Component {
             if (res.code == 200) {
                 this.state.infoEnity = { ...res.data.casesVO };
                 console.log(this.state.infoEnity)
+
             }
         })
+        let { loadingfn } = this.props;
+        loadingfn(false)
     }
     componentWillReceiveProps = (nextProps) => {
         let pp = nextProps;
@@ -100,7 +104,7 @@ export default class Goods extends React.Component {
                         pagination={false}
                         title={() => "作案工具"}
                     />
-                    <br/>
+                    <br />
                     <Table
                         columns={columns_ys}
                         dataSource={data_ys}

@@ -29,11 +29,9 @@ class CaseDetail extends React.Component {
 
     componentWillMount() {
         //console.log("session",sessionStorage.getItem("ajbh"))
-        debugger;
         let sessionanchor = sessionStorage.getItem("notic-anchor");
         if (sessionanchor) {
             // 如果是消息点击进来
-            let arr = sessionanchor.split('_');
             this.setState({ showTabsIndex: "2" })
         }
     }

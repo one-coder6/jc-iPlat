@@ -17,7 +17,6 @@ import {
 //引入自定义组件
 import Search from './SearchComponent';
 import ExtractList from './ExtractList';
-
 export default class ExtractCase extends React.Component {
     constructor(props) {
         super(props);
@@ -49,7 +48,6 @@ export default class ExtractCase extends React.Component {
             <div>
                 <Search Search={this.handleSearch} />
                 <ExtractList searchValue={this.state.searchValue} showType={this.props.showType} handleCancel={this.props.handleCancel}/>
-
                 {/* <CommonLayout>
                     <Search Search={this.handleSearch} />
                     <ExtractList searchValue={this.state.searchValue} />

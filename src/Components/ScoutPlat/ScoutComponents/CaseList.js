@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, withRouter, HashRouter } from 'react-router-dom';
-import { Row, Col, Pagination, Table, Tooltip, Icon, Button, Modal, Tag } from 'antd';
+import { Pagination, Table, Tooltip, Icon, Button, Modal, Tag } from 'antd';
 import moment from 'moment';
-
 //引入自定义组件
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
 import CreateRequest from './Modal/seedRequest';
@@ -34,6 +33,10 @@ class CaseList extends React.Component {
 
   componentWillMount() {
     this.setState({ loading: true });
+    this.actionForLoad();
+  }
+
+  actionForLoad = () => {
     let { pageSize, pageNum } = this.state.pagination;
     this.getDataSource({
       pageSize: pageSize,
@@ -57,7 +60,7 @@ class CaseList extends React.Component {
         searchValue.caseSponsor = "";
       } else {
         searchValue.caseSponsor = caseSponsor
-      }     
+      }
     }
     //delete searchValue.baqk;
     if (searchValue != this.state.searchValue) {
@@ -76,10 +79,10 @@ class CaseList extends React.Component {
     };
     const { searchValue } = this.state;
     const reqUrl = addressUrl + '/cases/list';
-    this.setState({loading:true})
+    this.setState({ loading: true })
     httpAjax("get", reqUrl, {
-     params: {
-       pageSize: page.pageSize,
+      params: {
+        pageSize: page.pageSize,
         pageNum: page.pageNum,
         ...searchValue
       }
@@ -91,9 +94,9 @@ class CaseList extends React.Component {
             pagination: pager,
             loading: false,
             dataSource: data.list
-         })
-     }
-   })
+          })
+      }
+    })
   }
   paginationChange = (page) => {
     this.getDataSource({
@@ -122,7 +125,10 @@ class CaseList extends React.Component {
     this.setState({ caseFinish: true, caseRecord: record })
   }
   handleCancel = () => {
-    this.setState({ createRequest: false, publishInfor: false, caseFinish: false })
+    if (this.state.caseFinish) {
+      this.actionForLoad();
+    }
+    this.setState({ createRequest: false, publishInfor: false, caseFinish: false });
   }
   //跳转详情页
   viewDetail = (ajbh) => {
@@ -163,12 +169,12 @@ class CaseList extends React.Component {
     }, {
       title: '立案时间',
       dataIndex: 'sljjsj',
-    }, 
+    },
     // {
     //   title: '来源',
     //   dataIndex: 'ajFromCn',
     // },
-     {
+    {
       title: '主办人员',
       dataIndex: 'ajzbryCn',
     }, {
@@ -183,20 +189,20 @@ class CaseList extends React.Component {
           return <Tag color="gold">{text}</Tag>
         }
       }
-    }, 
+    },
     // {
     //   title: '审核状态',
     //   dataIndex: 'shzt',
     // },
-     {
+    {
       title: '操作',
       dataIndex: 'operation',
       width: '19%',
       render: (text, record, index) => {
         return <div>
-          <Button  size='small' onClick={() => this.createRequest(record)} style = {{fontSize:'10px',marginRight:'6px'}}>创建需求</Button>
-          <Button  size='small' onClick={() => this.publishInfor(record)} style = {{fontSize:'10px',marginRight:'6px'}}>发布信息</Button>
-          <Button  size='small' onClick={() => this.caseFinish(record)} style = {{fontSize:'10px'}}>破案/侦结</Button>
+          <Button size='small' onClick={() => this.createRequest(record)} style={{ fontSize: '10px', marginRight: '6px' }}>创建需求</Button>
+          <Button size='small' onClick={() => this.publishInfor(record)} style={{ fontSize: '10px', marginRight: '6px' }}>发布信息</Button>
+          <Button size='small' onClick={() => this.caseFinish(record)} style={{ fontSize: '10px' }}>破案/侦结</Button>
           {/* <Tooltip placement="top" title="创建需求">
 						<Icon type="plus" onClick={() => this.createRequest(record)} style={{ cursor: 'pointer' }} />
 					</Tooltip>

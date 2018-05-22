@@ -51,53 +51,54 @@ class AdvancedSearchForm extends React.Component {
             },
         };
         return (
-            <Form onSubmit={this.handleSearch}>
-                <Row>
-                    <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                        <FormItem {...thirdLayout} label="案件开始时间" >
-                            {getFieldDecorator('range-picker', )(
-                                <RangePicker />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                        <FormItem {...thirdLayout} label="案件名称" >
-                            {getFieldDecorator('ajmc', )(
-                                <Input placeholder="请输入案件名称" />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                        <FormItem {...thirdLayout} label="案件编号">
-                            {getFieldDecorator('ajbh', {
-                                //initialValue:['Orange']
-                            })(
-                                <Input placeholder="请输入案件编号" />
-                            )}
-                        </FormItem>
-                    </Col>
-                </Row>
-                <Row style={{ display: expand ? 'none' : 'block' }}>
-                    <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                        <FormItem   {...thirdLayout} label="主办民警">
-                            {getFieldDecorator('ajzbryCn', {
-                                //initialValue:"1"
-                            })(
-                                <Input placeholder="请输入主办民警" />
-                            )}
-                        </FormItem>
-                    </Col>
-                    <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                        <FormItem {...thirdLayout} label="主办单位">
-                            {getFieldDecorator('zbdw', {
-                                //initialValue:['Orange']
-                            })(
-                                <Input placeholder="请输入主办单位" />
-                            )}
-                        </FormItem>
-                    </Col>
-                </Row>
-                {/* <Row style={{display:expand?'none':'block'}}>
+            <div style={{ padding: '20px', background: '#fff' }}>
+                <Form onSubmit={this.handleSearch}>
+                    <Row>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                            <FormItem {...thirdLayout} label="案件开始时间" >
+                                {getFieldDecorator('range-picker', )(
+                                    <RangePicker />
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                            <FormItem {...thirdLayout} label="案件名称" >
+                                {getFieldDecorator('ajmc', )(
+                                    <Input placeholder="请输入案件名称" />
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                            <FormItem {...thirdLayout} label="案件编号">
+                                {getFieldDecorator('ajbh', {
+                                    //initialValue:['Orange']
+                                })(
+                                    <Input placeholder="请输入案件编号" />
+                                )}
+                            </FormItem>
+                        </Col>
+                    </Row>
+                    <Row style={{ display: expand ? 'none' : 'block' }}>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                            <FormItem   {...thirdLayout} label="主办民警">
+                                {getFieldDecorator('ajzbryCn', {
+                                    //initialValue:"1"
+                                })(
+                                    <Input placeholder="请输入主办民警" />
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                            <FormItem {...thirdLayout} label="主办单位">
+                                {getFieldDecorator('zbdw', {
+                                    //initialValue:['Orange']
+                                })(
+                                    <Input placeholder="请输入主办单位" />
+                                )}
+                            </FormItem>
+                        </Col>
+                    </Row>
+                    {/* <Row style={{display:expand?'none':'block'}}>
                           <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                               <FormItem   {...thirdLayout} label="签收情况">
                                 {getFieldDecorator('qszt',{
@@ -117,17 +118,21 @@ class AdvancedSearchForm extends React.Component {
                               </FormItem>
                           </Col>													
                       </Row>					 */}
-                <Row>
-                    <Col xl={18} lg={18} md={16} sm={16} xs={16}></Col>
-                    <Col xl={6} lg={6} md={8} sm={8} xs={8}>
-                        <Button type='primary' htmlType="submit" style={{ marginRight: '20px' }}>查询</Button>
-                        <Button onClick={this.resetForm}>清空</Button>
-                        <a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggle}>
-                            {this.state.expand ? '展开' : '收起'}  <Icon type={this.state.expand ? 'down' : 'up'} />
-                        </a>
-                    </Col>
-                </Row>
-            </Form>
+                    <Row>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                        </Col>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                        </Col>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24} style={{ paddingLeft: "17%" }}>
+                            <Button type='primary' htmlType="submit" style={{ marginRight: '20px' }}>查询</Button>
+                            <Button onClick={this.resetForm}>清空</Button>
+                            <a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggle}>
+                                {this.state.expand ? '展开' : '收起'}  <Icon type={this.state.expand ? 'down' : 'up'} />
+                            </a>
+                        </Col>
+                    </Row>
+                </Form>
+            </div>
         );
     }
 }

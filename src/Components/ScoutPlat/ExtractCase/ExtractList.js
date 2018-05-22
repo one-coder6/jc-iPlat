@@ -26,12 +26,12 @@ class ExtractList extends React.Component {
     }
 
     componentWillMount() {
-        this.setState({ loading: true });
-        let { pageSize, pageNum } = this.state.pagination;
+     //   this.setState({ loading: true });
+      /*   let { pageSize, pageNum } = this.state.pagination;
         this.getDataSource({
             pageSize: pageSize,
             pageNum: pageNum,
-        });
+        }); */
     }
 
     componentWillReceiveProps(nextProps) {

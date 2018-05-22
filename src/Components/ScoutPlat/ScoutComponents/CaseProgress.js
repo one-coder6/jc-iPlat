@@ -63,7 +63,7 @@ class CaseProgress extends React.Component {
 				return "#2db7f5";
 				break;
 			case "CASE_PICK":
-				return "#87d068";
+				return "#76EE00";
 				break;
 			case "CASE_MERGE":
 				return "#108ee9";

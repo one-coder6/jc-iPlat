@@ -25,6 +25,7 @@ class CreateRequest extends React.Component {
         }
     }
     componentWillMount() {
+        debugger
         //获取作战单位首层
         const reqUrl = UC_URL + "getTopDepartment";
         httpAjax("post", reqUrl, {}).then(res => {
@@ -73,19 +74,24 @@ class CreateRequest extends React.Component {
                 const beginCreateTime = moment(value.qqsj).format("YYYY-MM-DD HH:mm:ss");
                 let formData = new FormData();
                 const params = { ...value };
-                formData.append("xqlx", value.xqlx&&value.xqlx.split("&")[0]);
-                Object.keys(params).forEach((item,index)=>{
-					if(params[item]!=undefined){
-                        if(item!=='files'||item!=='qqsj'){
-                            formData.append(item,params[item]);
+                formData.append("xqlx", value.xqlx && value.xqlx.split("&")[0]);
+
+                Object.keys(params).forEach((item, index) => {
+                    if (params[item] != undefined) {
+                        if (item !== 'files') {
+                            formData.append(item, params[item]);
                         }
-					}					
+                    }
                 })
                 formData.append("ajbh", caseRecord.ajbh);
-                formData.append("qqsj",beginCreateTime);
-                fileList && fileList.map((item, index) => {
-                    formData.append("files", item);
-                })                
+                formData.append("qqsj", beginCreateTime);
+                debugger;
+                if (fileList && fileList.length) {
+                    fileList.map((item, index) => {
+                        formData.append("files", item);
+                    })
+                }
+
                 let config = {
                     headers: {
                         "Content-Type": 'multipart/form-data'
@@ -94,6 +100,7 @@ class CreateRequest extends React.Component {
                 httpAjax("post", reqUrl, formData, config).then(res => {
                     if (res.code === '200') {
                         message.success("创建需求成功");
+                        this.props.form.resetFields();
                         this.props.handleCancel();
                     } else {
                         message.error("创建需求失败")

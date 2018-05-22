@@ -22,7 +22,6 @@ class Header extends React.Component {
         //console.log("user",this.props.user)
         const reqUrl = addressUrl + '/notice/loadNotReadNotice';
         httpAjax("get", reqUrl, {}).then(res => {
-            debugger;
             if (res.code === '200') {
                 let data = res.data;
                 this.setState({ newNoticeList: data })
@@ -53,7 +52,6 @@ class Header extends React.Component {
         shl.init();
         // callback里面写websocket有新消息的逻辑
         shl.callback = (d) => {
-            debugger;
             let data = d && JSON.parse(d).data;
             this.setState({ newNoticeList: data });
             // 更新noticelist
@@ -101,7 +99,7 @@ class Header extends React.Component {
                     <div></div>
                 </Col>
                 <Col xl={12} lg={8} md={8} sm={8} xs={6} className='slogan' >
-                    <h3>新时代  新侦查 新挑战</h3>
+                     <h3>新时代  新挑战 新侦查</h3>
                 </Col>
                 <Col xl={6} lg={8} md={8} sm={8} xs={6}>
                     <Row>

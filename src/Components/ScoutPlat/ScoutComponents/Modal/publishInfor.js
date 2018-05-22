@@ -80,7 +80,7 @@ class PublishInfor extends React.Component {
                 //params.fbfw = treeSelectKeys.join(",");
                 Object.keys(params).forEach((item,index)=>{
 					if(params[item]!=undefined){
-                        if(item!=='files'||item!=='jsdwbh'){
+                        if(item!=='files'){
                             formData.append(item,params[item]);
                         }						
 					}					
@@ -99,6 +99,7 @@ class PublishInfor extends React.Component {
                     if (res.code === '200') {
                         message.success("发布消息成功");
                         this.props.handleCancel();
+                        this.props.form.resetFields();
                     } else {
                         message.error("发布消息失败")
                         this.props.handleCancel();

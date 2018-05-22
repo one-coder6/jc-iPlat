@@ -2,19 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 // 引入antd组件
-import {
-	Row,
-	Col,
-	Tag,
-	Button,
-	Modal
-} from 'antd';
+import { Row, Col, Tag, Button, Modal } from 'antd';
 // 引入自定义组件    公共部分
 import CommonLayout from '../Content/Index';
-import {
-	httpAjax,
-	addressUrl
-} from '../../Util/httpAjax';
+import { httpAjax, addressUrl } from '../../Util/httpAjax';
 //引入自定义组件
 import Search from './ScoutComponents/SearchComponent';
 import CaseList from './ScoutComponents/CaseList';
@@ -26,7 +17,7 @@ export default class ScoutPlat extends React.Component {
 		this.state = {
 			searchValue: null,
 			countGroup: '',
-			extractCase:false
+			extractCase: false
 		}
 	}
 	componentWillMount() {
@@ -46,14 +37,14 @@ export default class ScoutPlat extends React.Component {
 	}
 
 	extractCase = () => {
-		this.setState({extractCase:true})
+		this.setState({ extractCase: true })
 	}
 	handleCancel = () => {
-		this.setState({extractCase:false})
+		this.setState({ extractCase: false })
 	}
 	render() {
 		const {
-			countGroup,extractCase
+			countGroup, extractCase
 		} = this.state;
 		return (
 			<CommonLayout>
@@ -84,7 +75,7 @@ export default class ScoutPlat extends React.Component {
 				</Row>
 				<CaseList searchValue={this.state.searchValue} />
 				<Modal visible={extractCase} titel='提取案件' onCancel={this.handleCancel} className='extractCaseM' footer={false}>
-						<ExtractList handleCancel={this.handleCancel} showType='extractCase' />
+					<ExtractList handleCancel={this.handleCancel} showType='extractCase' />
 				</Modal>
 			</CommonLayout>
 		)

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Row, Col } from 'antd';
-import policeShield from '../../images/policeShield.png'
+import policeShield from '../../images/police.png'
 import '../../styles/index.less';
 export default class CaseItem extends React.Component{
 	constructor(props){

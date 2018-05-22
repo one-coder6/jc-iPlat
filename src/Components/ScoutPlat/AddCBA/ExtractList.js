@@ -111,6 +111,13 @@ class ExtractList extends React.Component {
                 this.props.history.push('/scoutPlat');
                 this.setState({submitDisabled:false});
                 this.props.handleCancel();
+                const reqUrl = addressUrl + '/cases/list';
+                httpAjax("get", reqUrl, {
+                    params: {
+                      pageSize: 10,
+                       pageNum: 1,
+                     }
+                   })
             }else{
                 message.error("添加失败");
                 this.props.handleCancel();

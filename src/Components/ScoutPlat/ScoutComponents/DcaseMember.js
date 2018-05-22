@@ -62,6 +62,10 @@ export default class CaseMember extends React.Component {
             dataIndex: 'deptName',
             key: 'deptName',
         }, {
+            title: '手机号',
+            dataIndex: 'phone',
+            key: 'phone',
+        }, {
             title: '积分',
             dataIndex: 'score',
             key: 'score',

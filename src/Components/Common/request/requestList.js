@@ -37,6 +37,7 @@ export default class RequestList extends React.Component {
 	// dom完成
 	componentDidMount() {
 		setTimeout(() => {
+			debugger;
 			let sessionanchor = sessionStorage.getItem("notic-anchor");
 			if (sessionanchor) {
 				this.fromNotie(sessionanchor);
@@ -80,7 +81,7 @@ export default class RequestList extends React.Component {
 			//1、回复线索或者恢复对话
 			let topMessageIdentifer = td.topMessageIdentifer || "";
 			if (topMessageIdentifer.toString().indexOf("DEMAND") > -1 || topMessageIdentifer.toString().indexOf("INFO") > -1) {
-				let tempList = this.state.contentList;
+				let tempList = this.state.contentList || [];
 				tempList[topMessageIdentifer].push(td);
 				//this.setState({ contentList: tempList })
 				resultSource = { contentList: tempList }
@@ -94,7 +95,9 @@ export default class RequestList extends React.Component {
 				resultSource = { requestSource: tempList }
 			}
 			this.setState({ loadbacklist: true }, () => {
-				this.setState(resultSource, () => { this.setState({ loadbacklist: false }) });
+				this.setState(resultSource, () => {
+					this.setState({ loadbacklist: false })
+				});
 			})
 		}
 		WS = shl;
@@ -121,6 +124,7 @@ export default class RequestList extends React.Component {
 		record["topMessageIdentifer"] = pid;
 		this.setState({ showClue: true, replyRecord: record })
 	}
+
 
 	//评价
 	appraiseRequest = (record) => {
@@ -202,11 +206,9 @@ export default class RequestList extends React.Component {
 			$(domId.join(',')).addClass("focusFind");
 			if (ids.length) {
 				const reqUrl = addressUrl + '/notice/readNotice';
-				debugger
 				let _ids = ids.join(',');
 				httpAjax("get", reqUrl, { params: { noticeId: _ids } }).then(res => {
 					if (res.code === '200') {
-						debugger;
 					}
 				})
 			}
@@ -317,6 +319,7 @@ export default class RequestList extends React.Component {
 				<ReplyClue handleCancel={this.handleCancel} replyRecord={replyRecord} getRequestSource={this.getRequestSource} />
 			</Modal>
 			{/* 评价 */}
+
 			<Modal title='评价' visible={showAppraise} onCancel={this.handleCancel} footer={null}>
 				<RateCom />
 			</Modal>

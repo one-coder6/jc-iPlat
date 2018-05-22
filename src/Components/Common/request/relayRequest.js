@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Form, Input, Button, DatePicker, message } from 'antd';
-
 import { httpAjax, addressUrl, } from '../../../Util/httpAjax';
 import { thirdLayout } from '../../../Util/Flexout';
 const FormItem = Form.Item;
@@ -21,7 +20,8 @@ class ReplyClueForm extends React.Component {
     }
     handleSubmit = (e) => {
         e.preventDefault();
-        const userInfor = this.props.user;
+        //const userInfor = this.props.user;
+        var userInfor = JSON.parse(sessionStorage.getItem("user"));
         const { replyRecord } = this.props;
         const reqUrl = addressUrl + '/reply/send';
         this.props.form.validateFields((err, value) => {
@@ -62,6 +62,7 @@ class ReplyClueForm extends React.Component {
                     if (res.code === '200') {
                         message.success("回复成功");
                         this.props.handleCancel();
+                        this.props.form.resetFields();
                         this.props.getRequestSource();
                     } else {
                         message.error(res.message);

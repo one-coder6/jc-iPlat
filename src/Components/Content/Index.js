@@ -71,7 +71,7 @@ export default class ContentComponent extends React.Component {
                 {/* {footerText} */}
                     <p>制作单位：深圳市CID刑事侦查局</p>
                     <p>研发单位：深圳市华云中盛科技有限公司</p>
-                    <p>维护电话：13746573647</p>
+                    <p>维护电话：13537883060（刘）</p>
                 </Footer>
             </Layout>
         )

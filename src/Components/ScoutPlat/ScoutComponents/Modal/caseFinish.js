@@ -13,8 +13,8 @@ class CaseFinish extends React.Component {
             tagBack: '#fff',
             requestModal: false,
             options: [
-                { label: '破案', value: 'Apple' },
-                { label: '侦结', value: 'finish' },
+                { label: '破案', value: 'finish' },
+               // { label: '侦结', value: 'finish' },
                 { label: '挂起', value: 'hangUp' },
             ],
             dataSource: [{ id: '11', name: '深圳深圳', age: '张二二二地' }, { id: '22', name: '上海线', age: '张辊 国是地' }],
@@ -37,6 +37,7 @@ class CaseFinish extends React.Component {
     }
 
     operationType = (e) => {
+        debugger;
         //console.log("key",e.target.value)
         if (e.target.value === 'finish') {
             this.setState({ operationType: "/cases/finish" })
@@ -61,6 +62,7 @@ class CaseFinish extends React.Component {
                     if(res.code==='200'){
                         message.success("破案/侦结成功");
                         this.props.handleCancel();
+                        this.props.form.resetFields();
                     }else{
                         message.error("破案/侦结失败")
                         this.props.handleCancel();
@@ -107,7 +109,7 @@ class CaseFinish extends React.Component {
                         bordered rowSelection={rowSelection} />
                 </Card> */}
                 <Form onSubmit={this.handleSubmit}>
-                    <FormItem {...formItemLayout} label="办理业务类型">
+                    <FormItem {...formItemLayout} label="案件状态">
                         {getFieldDecorator('xqnr', {
                             //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
                         })(

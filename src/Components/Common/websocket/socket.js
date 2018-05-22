@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {
     Icon,
     message,
@@ -98,6 +98,7 @@ export function ScoketHandler(url) {
                     description: getWebSocketState(),
                     icon: <Icon type="close-circle" style={{ color: '#108ee9' }} />,
                 });
+                that.init();
             }
         }
         // 异常
