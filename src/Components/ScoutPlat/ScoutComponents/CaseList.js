@@ -48,6 +48,11 @@ class CaseList extends React.Component {
     let searchValue = nextProps.searchValue;
     let { pageSize, pageNum } = this.state.pagination;
     let _this = this;
+    //l
+    let reload = nextProps.reload;
+    if (reload) {
+      this.actionForLoad();
+    }
     //console.log("componentWillReceiveProps", searchValue)
     if (searchValue && searchValue.sljjsj !== undefined) {
       searchValue.beginCreateTime = moment(searchValue.sljjsj[0]).format("YYYY-MM-DD HH:mm:ss");
@@ -72,6 +77,8 @@ class CaseList extends React.Component {
         });
       })
     }
+
+
   }
   getDataSource = (page) => {
     const pager = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link, withRouter, HashRouter } from 'react-router-dom';
-import { Table ,Button ,message} from 'antd';
+import { Table, Button, message } from 'antd';
 import moment from 'moment';
 
 //引入自定义组件
@@ -21,17 +21,17 @@ class ExtractList extends React.Component {
             dataSource: [],
             searchValue: '',
             selectedRowKeys: [],
-            submitDisabled:false
+            submitDisabled: false
         }
     }
 
     componentWillMount() {
-     //   this.setState({ loading: true });
-      /*   let { pageSize, pageNum } = this.state.pagination;
-        this.getDataSource({
-            pageSize: pageSize,
-            pageNum: pageNum,
-        }); */
+        //   this.setState({ loading: true });
+        /*   let { pageSize, pageNum } = this.state.pagination;
+          this.getDataSource({
+              pageSize: pageSize,
+              pageNum: pageNum,
+          }); */
     }
 
     componentWillReceiveProps(nextProps) {
@@ -69,7 +69,7 @@ class ExtractList extends React.Component {
         };
         const { searchValue } = this.state;
         const reqUrl = addressUrl + '/cases/listPickCases' // '/cases/list' 
-        this.setState({loading:true})
+        this.setState({ loading: true })
         httpAjax("get", reqUrl, {
             params: {
                 pageSize: page.pageSize,
@@ -96,28 +96,32 @@ class ExtractList extends React.Component {
     }
 
     rowSelectChange = (selectedRowKeys, selectedRows) => {
-        this.setState({selectedRowKeys:selectedRowKeys})
+        this.setState({ selectedRowKeys: selectedRowKeys })
     }
     //提取案件
     extractCase = () => {
         const { selectedRowKeys } = this.state;
-        const ajbhs= selectedRowKeys&&selectedRowKeys.join(",");
-        const reqUrl = addressUrl+`/cases/remotePickCase?ajbhs=${ajbhs}`;
-        this.setState({submitDisabled:true})
-        httpAjax("get",reqUrl).then(res=>{
-            if(res.code==='200'){
+        const ajbhs = selectedRowKeys && selectedRowKeys.join(",");
+        const reqUrl = addressUrl + `/cases/remotePickCase?ajbhs=${ajbhs}`;
+        this.setState({ submitDisabled: true })
+        httpAjax("get", reqUrl).then(res => {
+            if (res.code === '200') {
                 message.success("提取成功")
-                this.props.history.push('/scoutPlat');
-                this.setState({submitDisabled:false});
+                this.setState({ submitDisabled: false });
                 this.props.handleCancel();
-            }else{
+                this.props.history.push('/scoutPlat');
+            } else {
                 message.error("提取失败");
                 this.props.handleCancel();
             }
         })
     }
+    gotoFn = () => {
+        this.props.handleCancel();
+        this.props.history.push('/scoutPlat');
+    }
     render() {
-        const { loading, dataSource, submitDisabled ,selectedRowKeys} = this.state;
+        const { loading, dataSource, submitDisabled, selectedRowKeys } = this.state;
         const pager = { ...this.state.pagination };
         pager.showTotal = () => {
             return `共${pager.total}条`
@@ -145,7 +149,7 @@ class ExtractList extends React.Component {
         }, {
             title: '案件类别',
             dataIndex: 'abCn',
-        }, 
+        },
         // {
         //     title: '主要案情',
         //     dataIndex: 'zyaq',
@@ -154,7 +158,7 @@ class ExtractList extends React.Component {
         //     title: '详细地址',
         //     dataIndex: 'xxdz',
         // },
-         {
+        {
             title: '案发时间',
             dataIndex: 'fasjcz',
         },
@@ -174,6 +178,7 @@ class ExtractList extends React.Component {
         ]
         return (
             <div className='caseListContent'>
+                <Button onClick={this.gotoFn}>确 定</Button>
                 <Table
                     columns={columns}
                     dataSource={dataSource}
@@ -184,10 +189,10 @@ class ExtractList extends React.Component {
                     rowSelection={rowSelection}
                 />
                 <div style={{ textAlign: 'center' }}>
-                   {
-                       dataSource&&dataSource.length>=1?
-                       <Button type='primary' onClick = {this.extractCase} disabled = {(selectedRowKeys&&selectedRowKeys.length>=1)?false:true || submitDisabled }>提交</Button>:null
-                   } 
+                    {
+                        dataSource && dataSource.length >= 1 ?
+                            <Button type='primary' onClick={this.extractCase} disabled={(selectedRowKeys && selectedRowKeys.length >= 1) ? false : true || submitDisabled}>提交</Button> : null
+                    }
                 </div>
             </div>
         )

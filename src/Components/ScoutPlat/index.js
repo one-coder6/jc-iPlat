@@ -17,7 +17,8 @@ export default class ScoutPlat extends React.Component {
 		this.state = {
 			searchValue: null,
 			countGroup: '',
-			extractCase: false
+			extractCase: false,
+			reload: false
 		}
 	}
 	componentWillMount() {
@@ -40,12 +41,10 @@ export default class ScoutPlat extends React.Component {
 		this.setState({ extractCase: true })
 	}
 	handleCancel = () => {
-		this.setState({ extractCase: false })
+		this.setState({ extractCase: false, reload: true })
 	}
 	render() {
-		const {
-			countGroup, extractCase
-		} = this.state;
+		const { countGroup, extractCase } = this.state;
 		return (
 			<CommonLayout>
 				{/*<Row style={{padding:'20px 0',background:'#fff'}}>
@@ -73,7 +72,7 @@ export default class ScoutPlat extends React.Component {
 						<Button type='primary' size='small' style={{ margin: '0 10px' }} onClick={this.extractCase}>提取案件</Button>
 					</Col>
 				</Row>
-				<CaseList searchValue={this.state.searchValue} />
+				<CaseList searchValue={this.state.searchValue} reload={this.state.reload} />
 				<Modal visible={extractCase} titel='提取案件' onCancel={this.handleCancel} className='extractCaseM' footer={false}>
 					<ExtractList handleCancel={this.handleCancel} showType='extractCase' />
 				</Modal>
