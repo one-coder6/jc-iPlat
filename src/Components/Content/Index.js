@@ -43,7 +43,7 @@ export default class ContentComponent extends React.Component {
 						</NavLink>
                     </Menu.Item>
                     <Menu.Item key="scoutPlat" >
-                        <NavLink to='/scoutPlat' activeClassName="activeRouter" >
+                        <NavLink to='/scoutPlat:id' activeClassName="activeRouter" >
                             <Icon type="search" />侦查工作台
 						</NavLink>
                     </Menu.Item>

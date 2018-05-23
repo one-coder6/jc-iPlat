@@ -69,7 +69,7 @@ class PublishInfor extends React.Component {
     //点击提交
     handleSubmit = (e) => {
         e.preventDefault();
-        const { treeSelectKeys ,fileList} = this.state;
+        const { treeSelectKeys, fileList } = this.state;
         const { caseRecord } = this.props;
         const reqUrl = addressUrl + '/info/insert';
         this.props.form.validateFields((err, value) => {
@@ -78,18 +78,20 @@ class PublishInfor extends React.Component {
                 const params = { ...value };
                 //params.ajbh = caseRecord.ajbh;
                 //params.fbfw = treeSelectKeys.join(",");
-                Object.keys(params).forEach((item,index)=>{
-					if(params[item]!=undefined){
-                        if(item!=='files'){
-                            formData.append(item,params[item]);
-                        }						
-					}					
+                Object.keys(params).forEach((item, index) => {
+                    if (params[item] != undefined) {
+                        if (item !== 'files') {
+                            formData.append(item, params[item]);
+                        }
+                    }
                 })
                 fileList && fileList.map((item, index) => {
                     formData.append("files", item);
-                })     
-                formData.append("ajbh",caseRecord.ajbh) ;
-                formData.append("jsdwbh" , treeSelectKeys&&treeSelectKeys.join(","))
+                })
+                debugger;
+                let ajbh = caseRecord ? caseRecord.ajbh : sessionStorage.getItem('ajbh');
+                formData.append("ajbh", ajbh);
+                formData.append("jsdwbh", treeSelectKeys && treeSelectKeys.join(","))
                 let config = {
                     headers: {
                         "Content-Type": 'multipart/form-data'

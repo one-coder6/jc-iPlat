@@ -63,6 +63,10 @@ class CaseFinish extends React.Component {
                         message.success("破案/侦结成功");
                         this.props.handleCancel();
                         this.props.form.resetFields();
+                        this.props.getDataSource({
+                            pageSize: 10,
+                            pageNum: 1,
+                          });
                     }else{
                         message.error("破案/侦结失败")
                         this.props.handleCancel();

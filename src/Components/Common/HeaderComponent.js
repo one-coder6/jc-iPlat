@@ -12,19 +12,21 @@ class Header extends React.Component {
         super(props);
         this.state = {
             BBSMsg: 3,
-            user:'',
+            user: '',
             newNoticeList: []
         }
     }
     componentWillMount() {
-        const user=JSON.parse(sessionStorage.getItem("user"));
-        this.setState({user:user})
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        this.setState({ user: user })
         //console.log("user",this.props.user)
         const reqUrl = addressUrl + '/notice/loadNotReadNotice';
         httpAjax("get", reqUrl, {}).then(res => {
             if (res.code === '200') {
                 let data = res.data;
-                this.setState({ newNoticeList: data })
+                let _data = this.state.newNoticeList || [];
+                _data.push(data);
+                this.setState({ newNoticeList: _data })
                 // 保存起来 noticelist
                 sessionStorage.setItem("noticelistobj", JSON.stringify(data));
                 this.connSocket();
@@ -46,7 +48,7 @@ class Header extends React.Component {
     }
     // 连接回话
     connSocket = () => {
-
+        const { newNoticeList } = this.state;
         var user = JSON.parse(sessionStorage.getItem("user"));
         let shl = ScoketHandler(GlobalWSUrl + "?account=" + user.account);
         shl.init();
@@ -61,8 +63,9 @@ class Header extends React.Component {
 
     }
     render() {
-        const { user } = this.state;
-              const { newNoticeList } = this.state;
+        let { user } = this.state;
+
+        user = user || JSON.parse(sessionStorage.getItem("user"));
         const menu = (
             <Menu>
                 <Menu.Item key="0">
@@ -76,14 +79,17 @@ class Header extends React.Component {
                 </Menu.Item>
             </Menu>
         );
+        let _tempList = this.state.newNoticeList || [];
+        debugger;
         // 消息list
         const noticeList = (<Menu>
-            {newNoticeList.map((item, i) => {
+            {_tempList.map((item, i) => {
                 let temp = item.anchor || "";
                 let arr = temp.split('_');
                 if (arr.length == 0) return false;
+                //`/scoutPlat:${new Date().valueOf()}`
                 return <Menu.Item>
-                    <Link style={{fontSize:12}} to={{ pathname: '/caseDetail', query: { ajbh: arr[0] } }} onClick={() => {
+                    <Link style={{ fontSize: 12 }} to={{ pathname: '/caseDetail?' + new Date().valueOf(), query: { ajbh: arr[0] } }} onClick={() => {
                         sessionStorage.setItem("ajbh", arr[0]);
                         sessionStorage.setItem("notic-anchor", temp);
                     }}>{(i + 1) + '.' + item.tznr || '-'}</Link>
@@ -92,6 +98,16 @@ class Header extends React.Component {
             }
         </Menu>
         );
+
+        const logoutMenu = (<Menu>
+            <Menu.Item key="0">
+                <a href="#" style={{ cursor: 'pointer' }} >修改密码</a>
+            </Menu.Item>
+            <Menu.Item key="1">
+                <a href="#" onClick={this.logout} style={{ cursor: 'pointer', textAlign: "center" }}>退 出</a>
+            </Menu.Item>
+        </Menu>
+        )
         return (
             <Row className='header'>
                 <Col xl={6} lg={8} md={8} sm={8} xs={6} className='logo'>
@@ -99,7 +115,7 @@ class Header extends React.Component {
                     <div></div>
                 </Col>
                 <Col xl={12} lg={8} md={8} sm={8} xs={6} className='slogan' >
-                     <h3>新时代  新挑战 新侦查</h3>
+                    <h3>新时代  新挑战 新侦查</h3>
                 </Col>
                 <Col xl={6} lg={8} md={8} sm={8} xs={6}>
                     <Row>
@@ -114,7 +130,6 @@ class Header extends React.Component {
                                     <Icon type="message" />
                                 </Badge>
                             </Dropdown>
-
                         </Col>
                         <Col xl={16} lg={18} md={16} sm={18} xs={18}>
                             {/* <Dropdown overlay={menu} trigger={['click']}>
@@ -124,8 +139,11 @@ class Header extends React.Component {
                             </Dropdown>*/}
                             {/* <Tooltip title="退出">
                             </Tooltip> */}
-                            <span>{user.name}  {user.account}</span>
-                            <Icon type="logout" onClick={this.logout} style={{ marginLeft: '10px', cursor: 'pointer' }} />
+                            <span>{user.name || '-'}  {user.account || '-'} </span>
+                            <Dropdown overlay={logoutMenu}>
+                                <Icon type="logout" />
+                            </Dropdown>
+
                         </Col>
                     </Row>
                 </Col>

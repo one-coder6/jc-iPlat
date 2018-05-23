@@ -26,12 +26,12 @@ class ExtractList extends React.Component {
     }
 
     componentWillMount() {
-        //   this.setState({ loading: true });
-        /*   let { pageSize, pageNum } = this.state.pagination;
-          this.getDataSource({
-              pageSize: pageSize,
-              pageNum: pageNum,
-          }); */
+        // this.setState({ loading: true });
+        // let { pageSize, pageNum } = this.state.pagination;
+        // this.getDataSource({
+        //     pageSize: pageSize,
+        //     pageNum: pageNum,
+        // });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -53,7 +53,9 @@ class ExtractList extends React.Component {
             }
         }
         //delete searchValue.baqk;
-        if (searchValue != this.state.searchValue) {
+        if (this.props.searchValue == null) {
+            return;
+        } else {
             this.setState({ searchValue: searchValue }, () => {
                 _this.getDataSource({
                     pageSize: pageSize,
@@ -69,7 +71,7 @@ class ExtractList extends React.Component {
         };
         const { searchValue } = this.state;
         const reqUrl = addressUrl + '/cases/listPickCases' // '/cases/list' 
-        this.setState({ loading: true })
+        //this.setState({ loading: true })
         httpAjax("get", reqUrl, {
             params: {
                 pageSize: page.pageSize,
@@ -108,17 +110,17 @@ class ExtractList extends React.Component {
             if (res.code === '200') {
                 message.success("提取成功")
                 this.setState({ submitDisabled: false });
-                this.props.handleCancel();
-                this.props.history.push('/scoutPlat');
+                this.props.handelExtra();
+                this.props.history.push(`/scoutPlat:${new Date().valueOf()}`);
             } else {
                 message.error("提取失败");
-                this.props.handleCancel();
+                this.props.handelExtra();
             }
         })
     }
     gotoFn = () => {
-        this.props.handleCancel();
-        this.props.history.push('/scoutPlat');
+        // this.props.handleCancel();
+        // this.props.history.push('/scoutPlat');
     }
     render() {
         const { loading, dataSource, submitDisabled, selectedRowKeys } = this.state;
@@ -178,7 +180,6 @@ class ExtractList extends React.Component {
         ]
         return (
             <div className='caseListContent'>
-                <Button onClick={this.gotoFn}>确 定</Button>
                 <Table
                     columns={columns}
                     dataSource={dataSource}

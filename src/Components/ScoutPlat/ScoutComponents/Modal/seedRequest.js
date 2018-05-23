@@ -71,6 +71,7 @@ class CreateRequest extends React.Component {
         const reqUrl = addressUrl + '/demand/insert';
         this.props.form.validateFields((err, value) => {
             if (!err) {
+                debugger;
                 const beginCreateTime = moment(value.qqsj).format("YYYY-MM-DD HH:mm:ss");
                 let formData = new FormData();
                 const params = { ...value };
@@ -83,7 +84,9 @@ class CreateRequest extends React.Component {
                         }
                     }
                 })
-                formData.append("ajbh", caseRecord.ajbh);
+                // 传递 caseRecord 过来的为null？
+                let ajbh = caseRecord ? caseRecord.ajbh : sessionStorage.getItem('ajbh');
+                formData.append("ajbh", ajbh);
                 formData.append("qqsj", beginCreateTime);
                 debugger;
                 if (fileList && fileList.length) {

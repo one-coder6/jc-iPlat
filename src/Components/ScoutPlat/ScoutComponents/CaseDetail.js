@@ -14,7 +14,8 @@ import ScoutLog from './DscoutLog';           //侦查日志
 import MindMap from './MindMap';              //思维导图
 import Dprogress from './DprogressList'        //进度列表
 
-import CreateRequest from './Modal/seedRequest'
+import PublishInfor from './Modal/publishInfor';
+import CreateRequest from './Modal/seedRequest';
 import '../../../styles/scoutPlat.less';
 const TabPane = Tabs.TabPane;
 class CaseDetail extends React.Component {
@@ -65,7 +66,7 @@ class CaseDetail extends React.Component {
                         <TabPane tab="需求/反馈" key="2">
                             <div style={{ textAlign: 'right', padding: "0px 0px 10px 0px" }}>
                                 <Button size='small' style={{ marginRight: '10px' }} onClick={this.createDemand}>创建需求</Button>
-                                <Button size='small' style={{ marginRight: '10px' }} onClick={this.publishInfor}>发布消息</Button>
+                                <Button size='small' style={{ marginRight: '10px' }} onClick={this.publishInfor}>发布信息</Button>
                             </div>
                             <RequestList showType='scoutPlat' />
                         </TabPane>
@@ -82,11 +83,11 @@ class CaseDetail extends React.Component {
                             <Dprogress />
                         </TabPane>
                     </Tabs>
-                    <Modal title='创建需求' visible={createDemand} onCancel={this.handleCancel}>
-                        <CreateRequest handleCancel={this.handleCancel} />
+                    <Modal title='创建需求' visible={createDemand} onCancel={this.handleCancel} footer={null}>
+                        <CreateRequest  handleCancel={this.handleCancel} />
                     </Modal>
-                    <Modal title='发布信息' visible={publishInfor} onCancel={this.handleCancel}>
-                        <CreateRequest handleCancel={this.handleCancel} />
+                    <Modal title='发布信息' visible={publishInfor} onCancel={this.handleCancel} footer={null}>
+                        <PublishInfor handleCancel={this.handleCancel} />
                     </Modal>
                 </div>
             </ContentComponent>

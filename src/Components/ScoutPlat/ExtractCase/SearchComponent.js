@@ -1,23 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-	Row,
-	Col,
-	Button,
-	Form,
-	DatePicker,
-	Tag,
-	Checkbox,
-	Input,
-	Select,
-	Icon,
-} from 'antd';
-
+import { Row, Col, Button, Form, DatePicker, Tag, Checkbox, Input, Select, Icon } from 'antd';
 //引入自适应文件
-import {
-	thirdLayout
-} from '../../../Util/Flexout.js';
-
+import { thirdLayout } from '../../../Util/Flexout.js';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
@@ -149,7 +134,7 @@ class Search extends React.Component {
 					</Row>
 					<Row>
 						<Col xl={18} lg={18} md={16} sm={16} xs={16}></Col>
-						<Col xl={6} lg={6} md={8} sm={8} xs={8}>
+						<Col xl={6} lg={6} md={8} sm={8} xs={8} style={{ paddingLeft: "7%" }}>
 							<Button type='primary' htmlType="submit" style={{ marginRight: '20px' }}>查询</Button>
 							<Button onClick={this.resetForm}>清空</Button>
 							<a style={{ marginLeft: 8, fontSize: 12 }} onClick={this.toggle}>

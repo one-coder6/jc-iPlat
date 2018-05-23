@@ -84,7 +84,7 @@ const routes = (App) => {
                         <Route path="/index" component={Index} />
                         <Route path="/userCenter" component={PersonalCenter} />
                         <Route path="/fightPlat" component={FightPlat} />
-                        <Route path="/scoutPlat" component={ScoutPlat} />
+                        <Route path="/scoutPlat:id" component={ScoutPlat} />
                         <Route path='/scoutFile' component={ScoutFile} />
                         <Route path='/caseDetail' component={CaseDetail} />
                         <Route path='/addCase' component={AddCase} />

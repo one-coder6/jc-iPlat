@@ -78,15 +78,15 @@ export function httpAjax(method, url, data, config) {
 }
 
 //纪德伟 
-export const addressUrl = 'http://192.168.1.100:8080/cidyth-web/';
-export const UC_URL = 'http://192.168.1.100:8080/hyzs-uc/uc/';
+export const addressUrl = 'http://192.168.1.102:8080/cidyth-web/';
+export const UC_URL = 'http://192.168.1.103:8080/hyzs-uc/uc/';
 
 //陈铭
 // export const addressUrl = 'http://192.168.1.111:8888/cidyth-web';
 // export const UC_URL = 'http://192.168.1.111:9090/hyzs-uc/uc/';
 
-export const DemandFeedbackWSUrl = "ws://192.168.1.100:9528/ws/chat"; // bbs论坛通讯
-export const GlobalWSUrl = "ws://192.168.1.100:9527/ws/global"; // 全局消息
+export const DemandFeedbackWSUrl = "ws://192.168.1.102:9528/ws/chat"; // bbs论坛通讯
+export const GlobalWSUrl = "ws://192.168.1.102:9527/ws/global"; // 全局消息
 
 /*
 机构API：获取顶级机构数据：GET
@@ -105,7 +105,6 @@ export const MindMapUrl = "http://68.64.17.37:8080/cidyth-mind/index.html"; // �
 // //服务器
 // export const addressUrl = 'http://68.64.17.37:8080/cid';
 // export const UC_URL = 'http://68.64.17.37:8080/hyzs-uc/uc/';
-
 
 // 服务器
 // export const DemandFeedbackWSUrl  = "ws://68.64.17.37:9528/ws/chat"; // bbs论坛通讯

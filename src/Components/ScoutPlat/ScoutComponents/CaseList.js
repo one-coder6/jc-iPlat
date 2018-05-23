@@ -32,7 +32,7 @@ class CaseList extends React.Component {
   }
 
   componentWillMount() {
-    this.setState({ loading: true });
+    this.setState({ loading: true});
     this.actionForLoad();
   }
 
@@ -48,7 +48,6 @@ class CaseList extends React.Component {
     let searchValue = nextProps.searchValue;
     let { pageSize, pageNum } = this.state.pagination;
     let _this = this;
-    //l
     let reload = nextProps.reload;
     if (reload) {
       this.actionForLoad();
@@ -77,8 +76,6 @@ class CaseList extends React.Component {
         });
       })
     }
-
-
   }
   getDataSource = (page) => {
     const pager = {
@@ -132,9 +129,9 @@ class CaseList extends React.Component {
     this.setState({ caseFinish: true, caseRecord: record })
   }
   handleCancel = () => {
-    if (this.state.caseFinish) {
-      this.actionForLoad();
-    }
+    // if (this.state.caseFinish) {
+    //   this.actionForLoad();
+    // }
     this.setState({ createRequest: false, publishInfor: false, caseFinish: false });
   }
   //跳转详情页
@@ -242,7 +239,7 @@ class CaseList extends React.Component {
         </Modal>
         {/* 破案/侦结 */}
         <Modal visible={caseFinish} title='破案/侦结' onCancel={this.handleCancel} footer={null}>
-          <CaseFinish caseRecord={caseRecord} handleCancel={this.handleCancel} />
+          <CaseFinish caseRecord={caseRecord} handleCancel={this.handleCancel}  getDataSource = {this.getDataSource}/>
         </Modal>
       </div>
     )

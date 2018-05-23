@@ -255,7 +255,7 @@ export default class DbaseInfor extends React.Component {
 				</Card>
 				{/* 添加串并案 */}
 				<Modal visible={visible} title='添加串并案' onCancel={this.handleCancel} className='extractCaseM' footer={false}>
-					<AddCBA handleCancel={this.handleCancel} showType='addCBA' />
+					{/* <AddCBA handleCancel={this.handleCancel} showType='addCBA' /> */}
 				</Modal>
 			</div>
 		)

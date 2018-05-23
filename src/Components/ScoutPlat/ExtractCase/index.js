@@ -28,19 +28,15 @@ export default class ExtractCase extends React.Component {
         // })
     }
     handleSearch = (value) => {
-        this.setState({
-            searchValue: value
-        });
+        this.setState({ searchValue: value });
     }
-    
+
     render() {
-        const {
-            countGroup
-        } = this.state;
+        const { countGroup } = this.state;
         return (
             <div>
                 <Search Search={this.handleSearch} />
-                <ExtractList searchValue={this.state.searchValue} showType={this.props.showType} handleCancel={this.props.handleCancel} />
+                <ExtractList searchValue={this.state.searchValue} showType={this.props.showType} handelExtra={this.props.handelExtra} />
                 {/* <CommonLayout>
                     <Search Search={this.handleSearch} />
                     <ExtractList searchValue={this.state.searchValue} />
