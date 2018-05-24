@@ -22,7 +22,6 @@ class CaseProgress extends React.Component {
 		let { dispatch, timeNode } = this.props;
 		httpAjax("get", reqUrl, ).then(res => {
 			if (res.code === '200') {
-				debugger;
 				dispatch(getTimeNode({
 					timeNode: res.data,
 				}))
@@ -96,9 +95,9 @@ class CaseProgress extends React.Component {
 										title={
 											<div className='stepTitle stepTitles'>
 												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{this.mapTitleType(item.referenceType)}</span></div>
-												<div className='caesDescrition'>发送单位：{item.sendOrgName || '-'}</div>
-												<div className='caesDescrition'>接收单位：{item.receiveOrgName || '-'}</div>
-												<div className='caesDescrition'>说明：{item.content || '-'}</div>
+												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''}>发送单位：{item.sendOrgName || '-'}</div>
+												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>
+												<div className='caesDescrition' title={item.content ? item.content : ''}>说明：{item.content ? item.content : '-'}</div>
 												<Tag color={this.mapTimeColor(item.referenceType)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
 											</div>
 										}
@@ -110,10 +109,10 @@ class CaseProgress extends React.Component {
 										title={
 											<div className='stepTitle stepTitles'>
 												<Tag color={this.mapTimeColor(item.referenceType)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
-												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceType?this.mapTitleType(item.referenceType):'-'}</span></div>
-												<div className='caesDescrition'>发送单位：{item.sendOrgName || '-'}</div>
-												<div className='caesDescrition'>接收单位：{item.receiveOrgName || '-'}</div>
-												<div className='caesDescrition'>说明：{item.content || '-'}</div>
+												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceType ? this.mapTitleType(item.referenceType) : '-'}</span></div>
+												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''} >发送单位：{item.sendOrgName || '-'}</div>
+												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>
+												<div className='caesDescrition' title={item.content ? item.content : ''}>说明：{item.content ? item.content : '-'}</div>
 											</div>
 										}
 										icon={<Icon type="right-circle-o" />} key={index}>

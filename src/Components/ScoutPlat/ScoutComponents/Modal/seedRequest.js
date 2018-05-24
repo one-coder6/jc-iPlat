@@ -25,7 +25,7 @@ class CreateRequest extends React.Component {
         }
     }
     componentWillMount() {
-        debugger
+        
         //获取作战单位首层
         const reqUrl = UC_URL + "getTopDepartment";
         httpAjax("post", reqUrl, {}).then(res => {
@@ -71,7 +71,6 @@ class CreateRequest extends React.Component {
         const reqUrl = addressUrl + '/demand/insert';
         this.props.form.validateFields((err, value) => {
             if (!err) {
-                debugger;
                 const beginCreateTime = moment(value.qqsj).format("YYYY-MM-DD HH:mm:ss");
                 let formData = new FormData();
                 const params = { ...value };
@@ -88,7 +87,6 @@ class CreateRequest extends React.Component {
                 let ajbh = caseRecord ? caseRecord.ajbh : sessionStorage.getItem('ajbh');
                 formData.append("ajbh", ajbh);
                 formData.append("qqsj", beginCreateTime);
-                debugger;
                 if (fileList && fileList.length) {
                     fileList.map((item, index) => {
                         formData.append("files", item);

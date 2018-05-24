@@ -49,7 +49,6 @@ class Header extends React.Component {
     updatePwd = (e) => {
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                debugger;
                 if (values.newPwd != values.newPwd2) {
                     message.warning('2次输入的新密码不一致，请重试。', 10);
                     return false;

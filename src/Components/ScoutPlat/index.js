@@ -37,11 +37,14 @@ export default class ScoutPlat extends React.Component {
 		});
 	}
 
+	reloadFn = () => {
+		this.setState({ reload: true })
+	}
 	extractCase = () => {
 		this.setState({ extractCase: true })
 	}
 	handleCancel = () => {
-		this.setState({ reload: true })
+		//	this.setState({ reload: true })
 	}
 	handelExtra = () => {
 		this.setState({ extractCase: false })
@@ -61,23 +64,26 @@ export default class ScoutPlat extends React.Component {
 				</Row>	*/}
 				<Search Search={this.handleSearch} />
 				<Row style={{ padding: '20px 0', background: '#fff', margin: '10px 0', textAlign: 'right' }} gutter={16}>
-					<Col xl={21} lg={14} md={10} sm={24} xs={24}></Col>
+					<Col xl={19} lg={14} md={10} sm={24} xs={24}></Col>
 					{/* <Col xl={2} lg={14} md={10} sm={24} xs={24}>
                         <Button type='primary' style={{ marginLeft: '8px' }}>提取案件</Button>
                     </Col>
                     <Col xl={2} lg={10} md={14} sm={24} xs={24}>
                         <Button type='primary' style={{ marginLeft: '8px' }}>提取警情</Button>
                     </Col> */}
-					<Col xl={2} lg={10} md={14} sm={24} xs={24}>
+					<Col xl={4} lg={10} md={14} sm={24} xs={24}>
 						{/* <Link to='/extractCase' >
                             <Button type='primary' size='small' style={{ margin: '0 10px' }}>提取案件</Button>
                         </Link> */}
 						<Button type='primary' size='small' style={{ margin: '0 10px' }} onClick={this.extractCase}>提取案件</Button>
+						<Link to='/ajbz' >
+							<Button type="primary" size='small'>比中信息</Button>
+						</Link>
 					</Col>
 				</Row>
-				<CaseList searchValue={this.state.searchValue} reloadreload={this.state.reload} />
+				<CaseList searchValue={this.state.searchValue} reload={this.state.reload} />
 				<Modal visible={extractCase} titel='提取案件' onCancel={this.handelExtra} className='extractCaseM' footer={false}>
-					<ExtractList handelExtra={this.handelExtra} showType='extractCase' />
+					<ExtractList reloadFn={this.reloadFn} handelExtra={this.handelExtra} showType='extractCase' />
 				</Modal>
 			</CommonLayout>
 		)

@@ -38,7 +38,6 @@ export default class RequestList extends React.Component {
 	componentDidMount() {
 		// 延迟一秒的原因是，dom并未完全加载出来。
 		setTimeout(() => {
-			debugger;
 			let sessionanchor = sessionStorage.getItem("notic-anchor");
 			if (sessionanchor) {
 				this.fromNotie(sessionanchor);
@@ -77,7 +76,6 @@ export default class RequestList extends React.Component {
 		shl.init();
 		// callback里面写websocket有新消息的逻辑
 		shl.callback = (d) => {
-			debugger;
 			let td = d && JSON.parse(d).data;
 			let resultSource = null;
 			/*  获取返回类型，获取类型给对应的数据源新增 */
@@ -109,7 +107,6 @@ export default class RequestList extends React.Component {
 	// 加工数据，分离需求和对应的回复信息
 	machiningData = (d) => {
 		if (d) {
-			debugger;
 			let childList = {};
 			d.map((item, i) => {
 				let key = item.contentType + "_" + item.id, val = item.contentList || [];
@@ -176,7 +173,6 @@ export default class RequestList extends React.Component {
 
 	// 跳转到指定焦点
 	toscrollView = (id) => {
-		debugger;
 		let anchorElement = document.getElementById(id);
 		//if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
 		if (anchorElement) { anchorElement.scrollIntoViewIfNeeded(true); }

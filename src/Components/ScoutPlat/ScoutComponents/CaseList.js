@@ -32,7 +32,9 @@ class CaseList extends React.Component {
   }
 
   componentWillMount() {
-    this.setState({ loading: true});
+    this.setState({ loading: true });
+    // 传递给父组件
+    /*     this.props.reloadFn(() => { alert(1) }) */
     this.actionForLoad();
   }
 
@@ -145,7 +147,7 @@ class CaseList extends React.Component {
     const { loading, dataSource, createRequest, caseRecord, publishInfor, caseFinish } = this.state;
     const pager = { ...this.state.pagination };
     pager.showTotal = () => {
-      return `共${pager.total}条`
+      return `共 ${pager.total} 条`
     }
     const columns = [{
       title: '序号',
@@ -239,7 +241,7 @@ class CaseList extends React.Component {
         </Modal>
         {/* 破案/侦结 */}
         <Modal visible={caseFinish} title='破案/侦结' onCancel={this.handleCancel} footer={null}>
-          <CaseFinish caseRecord={caseRecord} handleCancel={this.handleCancel}  getDataSource = {this.getDataSource}/>
+          <CaseFinish caseRecord={caseRecord} handleCancel={this.handleCancel} getDataSource={this.getDataSource} />
         </Modal>
       </div>
     )

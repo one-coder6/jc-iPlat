@@ -15,12 +15,12 @@ export default class BaseInfo extends React.Component {
     }
     componentWillMount = () => {
         const ajbh = this.state.ajbh;
-        httpAjax("get", addressUrl + '/cases/detail', { params: { ajbh: ajbh } }).then(res => {
+       /*  httpAjax("get", addressUrl + 'cases/detail', { params: { ajbh: ajbh } }).then(res => {
             if (res.code == 200) {
                 this.state.infoEnity = { ...res.data.casesVO };
                 console.log(this.state.infoEnity)
             }
-        })
+        }) */
     }
     componentWillReceiveProps = (nextProps) => {
         let pp = nextProps;

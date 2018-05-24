@@ -58,7 +58,7 @@ class LoginForm extends React.Component {
                     //     userName: data.name,
                     //     account: data.account
                     // }))
-                    history.push(`/scoutPlat:${new Date()}`)
+                    history.push(`/scoutPlat`)
                 })
             }
         })

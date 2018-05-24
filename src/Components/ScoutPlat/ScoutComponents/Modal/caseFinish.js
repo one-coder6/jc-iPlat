@@ -37,7 +37,6 @@ class CaseFinish extends React.Component {
     }
 
     operationType = (e) => {
-        debugger;
         //console.log("key",e.target.value)
         if (e.target.value === 'finish') {
             this.setState({ operationType: "/cases/finish" })

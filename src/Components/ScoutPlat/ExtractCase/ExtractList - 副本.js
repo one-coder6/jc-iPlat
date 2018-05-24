@@ -19,7 +19,10 @@ class ExtractList extends React.Component {
                 showSizeChanger: true,
             },
             dataSource: [],
-            searchValue: { timeSection: 1 },
+            searchValue: {
+                beginCreateTime: moment(new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD'),
+                endCreateTime: moment().format('YYYY-MM-DD')
+            },
             selectedRowKeys: [],
             submitDisabled: false
         }
@@ -41,8 +44,8 @@ class ExtractList extends React.Component {
         let _this = this;
         //console.log("componentWillReceiveProps", searchValue)
         if (searchValue && searchValue.lasj !== undefined) {
-            searchValue.beginCreateTime = moment(searchValue.lasj[0]).format("YYYY-MM-DD");
-            searchValue.endCreateTime = moment(searchValue.lasj[1]).format("YYYY-MM-DD");
+            searchValue.beginCreateTime = moment(searchValue.lasj[0]).format("YYYY-MM-DD HH:mm:ss");
+            searchValue.endCreateTime = moment(searchValue.lasj[1]).format("YYYY-MM-DD HH:mm:ss");
             delete searchValue.lasj;
         }
         if (searchValue && searchValue.baqk !== undefined) {
@@ -54,19 +57,16 @@ class ExtractList extends React.Component {
             }
         }
         //delete searchValue.baqk;
-        // if (this.props.searchValue == null) {
-        //     return;
-        // } else {
-        this.setState({ searchValue: searchValue }, () => {
-            _this.getDataSource({
-                pageSize: pageSize,
-                pageNum: pageNum,
-                ...searchValue
-            });
-        })
-        // }
-        if (this.props.searchLoading) {
-            this.setState({ loading: true })
+        if (this.props.searchValue == null) {
+            return;
+        } else {
+            this.setState({ searchValue: searchValue }, () => {
+                _this.getDataSource({
+                    pageSize: pageSize,
+                    pageNum: pageNum,
+                    ...searchValue
+                });
+            })
         }
     }
     getDataSource = (page) => {
@@ -114,11 +114,10 @@ class ExtractList extends React.Component {
         httpAjax("get", reqUrl).then(res => {
             if (res.code === '200') {
                 message.success("提取成功")
-                this.setState({ submitDisabled: false, loading: false });
+                this.setState({ submitDisabled: false, loading: true });
                 hide();
                 this.props.handelExtra();
-                this.props.reloadFn();
-                //   this.props.history.push(`/scoutPlat:${new Date().valueOf()}`);
+                this.props.history.push(`/scoutPlat:${new Date().valueOf()}`);
             } else {
                 message.error("提取失败");
                 this.props.handelExtra();
@@ -187,10 +186,6 @@ class ExtractList extends React.Component {
         ]
         return (
             <div className='caseListContent'>
-                {/*     <button onClick={() => {
-                    console.log(this.props.reloadFns)
-                    this.props.reloadFns();
-                }}>确定</button> */}
                 <Table
                     columns={columns}
                     dataSource={dataSource}

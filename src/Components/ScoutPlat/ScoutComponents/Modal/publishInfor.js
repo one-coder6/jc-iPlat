@@ -88,7 +88,6 @@ class PublishInfor extends React.Component {
                 fileList && fileList.map((item, index) => {
                     formData.append("files", item);
                 })
-                debugger;
                 let ajbh = caseRecord ? caseRecord.ajbh : sessionStorage.getItem('ajbh');
                 formData.append("ajbh", ajbh);
                 formData.append("jsdwbh", treeSelectKeys && treeSelectKeys.join(","))

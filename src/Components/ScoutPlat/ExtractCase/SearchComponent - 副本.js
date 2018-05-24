@@ -29,7 +29,9 @@ class Search extends React.Component {
 	}
 
 	toggle = () => {
-		const { expand } = this.state;
+		const {
+			expand
+		} = this.state;
 		this.setState({
 			expand: !expand
 		});
@@ -45,7 +47,9 @@ class Search extends React.Component {
 		let timeData = 'range-time-picker';
 		this.props.form.validateFields((err, values) => {
 			//	{timeSection:1}
-			values["timeSection"] = 2;
+			if (values.sljjsj) {
+				values["timeSection"] = 1;
+			}
 			Search(values);
 		});
 	}
@@ -95,7 +99,7 @@ class Search extends React.Component {
 						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
 							<FormItem {...thirdLayout} label="立案时间" >
 								{getFieldDecorator('lasj', )(
-									<RangePicker allowClear={false} />
+									<RangePicker defaultValue={[moment(startTime).format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]} allowClear={false} />
 								)}
 							</FormItem>
 						</Col>

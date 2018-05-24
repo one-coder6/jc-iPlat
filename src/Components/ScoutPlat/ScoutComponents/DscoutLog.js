@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { Table, Icon, Button, Modal } from 'antd';
+import { Table, Icon, Button, Modal, Tooltip, Popover } from 'antd';
 
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
 class ScoutLog extends React.Component {
@@ -9,10 +9,12 @@ class ScoutLog extends React.Component {
         super(props);
         this.state = {
             dataSource: [],
+            viewLog: false,
+            logContent: ''
         }
     }
     componentWillMount() {
-        const ajbh =  sessionStorage.getItem("ajbh");
+        const ajbh = sessionStorage.getItem("ajbh");
         const reqUrl = addressUrl + `/timeNode/list?ajbh=${ajbh}`
         httpAjax("get", reqUrl, ).then(res => {
             console.log("res", res)
@@ -66,6 +68,12 @@ class ScoutLog extends React.Component {
             title: '日志描述',
             dataIndex: 'content',
             key: 'content',
+            align: "center",
+            render: (text, record, index) => {
+                return <Icon type="eye" title="点击查看" style={{ cursor: "pointer" }} onClick={() => {
+                    this.setState({ viewLog: true, logContent: text })
+                }} />
+            }
         }, {
             title: '附件',
             dataIndex: 'address',
@@ -77,7 +85,10 @@ class ScoutLog extends React.Component {
         }];
         return (
             <div>
-                <Table columns={columns} dataSource={dataSource} pagination={false} rowKey='id'bordered />
+                <Table columns={columns} dataSource={dataSource} pagination={false} rowKey='id' bordered />
+                <Modal visible={this.state.viewLog} title='日志描述' onCancel={() => { this.setState({ viewLog: false }) }} footer={null}>
+                    {this.state.logContent}
+                </Modal>
             </div>
         )
     }

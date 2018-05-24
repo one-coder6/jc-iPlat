@@ -64,14 +64,6 @@ import ContentComponent from '../Components/Content/Index'; //中间主内容
 import ArchivesDetial from '../Components/ScoutFiles/archivesdetial/cover' //档案列表详情
 //----------jc end-----
 
-//--------------------------------------------
-    //比重
-//--------------------------------------------
-import AjbzIndex from '../Components/Ajbz/Index'; //首页
-
-
-
-
 // 引入store
 import store from '../store/index';
 const routes = (App) => {
@@ -92,13 +84,12 @@ const routes = (App) => {
                         <Route path="/index" component={Index} />
                         <Route path="/userCenter" component={PersonalCenter} />
                         <Route path="/fightPlat" component={FightPlat} />
-                        <Route path="/scoutPlat" component={ScoutPlat} />
+                        <Route path="/scoutPlat:id" component={ScoutPlat} />
                         <Route path='/scoutFile' component={ScoutFile} />
                         <Route path='/caseDetail' component={CaseDetail} />
                         <Route path='/addCase' component={AddCase} />
                         <Route path='/archivesdetial' component={ArchivesDetial} />
                         <Route path='/extractCase' component={ExtractCase} />
-                        <Route path='/ajbz' component={AjbzIndex} />
                         {/* 没有匹配到的路由重定向到首页或者是自己写一个404提示页面 */}
                         <Redirect to="/" />
                     </Switch>
