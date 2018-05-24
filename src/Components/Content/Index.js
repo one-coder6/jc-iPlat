@@ -35,7 +35,7 @@ export default class ContentComponent extends React.Component {
                     onClick={this.handleClick}
                     selectedKeys={[this.state.current]}
                     mode="horizontal"
-                    className = 'menuNav'
+                    className='menuNav'
                 >
                     <Menu.Item key="index">
                         <NavLink to='/index' activeClassName="activeRouter" >
@@ -52,14 +52,14 @@ export default class ContentComponent extends React.Component {
                             <Icon type="team" />融合作战工作台
 						</NavLink>
                     </Menu.Item>
-                    <Menu.Item key="userCenter" >
-                        <NavLink to='/userCenter' activeClassName="activeRouter" >
-                            <Icon type="user" />个人工作台
-						</NavLink>
-                    </Menu.Item>
                     <Menu.Item key="scoutFile" >
                         <NavLink to='/scoutFile' activeClassName="activeRouter" >
                             <Icon type="profile" />侦查档案
+						</NavLink>
+                    </Menu.Item>
+                    <Menu.Item key="userCenter" >
+                        <NavLink to='/userCenter' activeClassName="activeRouter" >
+                            <Icon type="user" />我的档案
 						</NavLink>
                     </Menu.Item>
                 </Menu>
@@ -67,9 +67,9 @@ export default class ContentComponent extends React.Component {
                 <Content>
                     {this.props.children}
                 </Content>
-                <Footer style={{ textAlign: 'center' ,background:'#3ba0e9',color:'#fff'}}>
-                {/* {footerText} */}
-                    <p>制作单位：深圳市CID刑事侦查局</p>
+                <Footer style={{ textAlign: 'center', background: '#3ba0e9', color: '#fff' }}>
+                    {/* {footerText} */}
+                    <p>制作单位：深圳市刑事侦查局</p>
                     <p>研发单位：深圳市华云中盛科技有限公司</p>
                     <p>维护电话：13537883060（刘）</p>
                 </Footer>

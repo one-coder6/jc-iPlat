@@ -13,9 +13,10 @@ export default class MindMap extends React.Component {
 
     }
     render() {
+        const ajbh = sessionStorage.getItem("ajbh") || '';
         return (
             <div >
-                <iframe style={{ border: '1px solid #fff', width: '100%', height: '850px' }} src={MindMapUrl}></iframe>
+                <iframe style={{ border: '1px solid #fff', width: '100%', height: '850px' }} src={MindMapUrl + '?ajbh=' + ajbh}></iframe>
             </div>
         )
     }

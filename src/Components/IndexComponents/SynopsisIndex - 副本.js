@@ -13,7 +13,6 @@ import HonorTable from './HonorTable';
 import Gtasks from './Gtasks';
 import logo from '../../images/logo.png';
 import cases from '../../images/case2.png';
-import policeShield from '../../images/police.png'
 import '../../styles/index.less';
 import '../../styles/common.less';
 
@@ -55,12 +54,6 @@ export default class Index extends React.Component {
 	render() {
 		const { handleShow } = this.props;
 		const { caseData, WillBeDone, chartHeight, feedbackC } = this.state;
-		const policeDefault = [
-			{ name: "网警", id: "1" },
-			{ name: "技侦", id: "2" },
-			{ name: "视频", id: "3" },
-			{ name: "情报", id: "4" },
-			{ name: "刑侦", id: "5" }]
 		return (
 			<div className='IndexContent'>
 				<Button shape="circle" icon="shrink" onClick={handleShow} className='close_button' />
@@ -76,37 +69,20 @@ export default class Index extends React.Component {
 									<h1 style={{ color: '#fff' }}>每日侦查</h1>
 								</Col>
 								<Col span={18}>
-									{/* 		<img src={logo} alt="" /> */}
+									<img src={logo} alt="" />
 								</Col>
 							</Row>
 						</div>
 						<div className='caseCount'>
 							<img src={cases} alt="" />
-							<span style={{ left: "46%", top: "31%" }}>{caseData.totalCase} 宗案件</span>
+							<span style={{ left: "46%", top: "46%" }}>{caseData.totalCase}宗案件</span>
 						</div>
 						<Row type="flex" justify="space-around" gutter={16} style={{ marginTop: '-20px' }}>
 							{
 								caseData.records && caseData.records.map((item, index) => {
 									return <Col span={4} key={index}>
 										<CaseItem item={item} />
-									</Col>
-								})
-							}
-							{
-								// 没有数据的话默认展示
-								caseData.records && !caseData.records.length && policeDefault.map((item, index) => {
-									return <Col span={4} key={index}>
-										<div>
-											<div className='itemCount'>
-												<span>收到请求：- 条</span>
-												<span>签收请求：- 条</span>
-												<span>反馈数量：- 条</span>
-											</div>
-											<div className='itemLogo'>
-												<img src={policeShield} alt="" />
-												<span style={{ textIndent: 6 }}>{item.name}</span>
-											</div>
-										</div>
+										
 									</Col>
 								})
 							}

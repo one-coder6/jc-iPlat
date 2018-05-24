@@ -11,7 +11,7 @@ export function ScoketHandler(url) {
         let that = SHL;
         that.WS = null;
         that.callback = null;
-        let SLOG = true; //开启日志
+        let SLOG = false; //开启日志
         // 初始化
         that.init = () => {
             var support = "MozWebSocket" in window ? "MozWebSocket" : ('WebSocket' in window ? 'WebSocket' : null);

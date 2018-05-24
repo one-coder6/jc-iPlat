@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Row, Col } from 'antd';
-
 // 引入自定义组件    公共部分
 import CommonLayout from '../Content/Index';
 //引入自定义组件

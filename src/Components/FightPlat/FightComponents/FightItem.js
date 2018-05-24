@@ -1,21 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-    Route,
-    Link,
-    withRouter
-} from 'react-router-dom';
-import {
-    Row,
-    Col,
-    Badge,
-    Tag,
-    Modal,
-    Button,
-    Divider,
-    Icon
-} from 'antd';
-
+import { Route, Link, withRouter } from 'react-router-dom';
+import { Row, Col, Badge, Tag, Modal, Button, Divider, Icon } from 'antd';
 import '../../../styles/fightPlat.less';
 //引入自定义组件
 import ReplyClue from '../../Common/request/requestList';
@@ -30,7 +16,11 @@ class FightItem extends React.Component {
             feedbakClue: false,
             designateMember: false,
             signRequest: false,
-            requestRecord: ''
+            requestRecord: '',
+            Attachment: [
+                { filename: "需求文档1.doc", url: '' },
+                { filename: "需求文档2.doc", url: '' },
+                { filename: "需求文档3.doc", url: '' }]
         }
     }
     //回复线索
@@ -73,9 +63,13 @@ class FightItem extends React.Component {
     }
 
     render() {
-        const { replyClue, feedbakClue, designateMember, signRequest, requestRecord } = this.state;
+        const { replyClue, feedbakClue, designateMember, signRequest, requestRecord, lsAttachment } = this.state;
         const { record } = this.props;
-
+        const list = (<div>
+            {lsAttachment && lsAttachment.map((item, i) => {
+                return <a href="#">{item.filename}</a>
+            })}
+        </div>)
         return (
             <div className='caseItem'>
                 <Row gutter={16} >
@@ -106,18 +100,22 @@ class FightItem extends React.Component {
                         </Row>
                     </Col>
                 </Row>
+
                 <Row style={{ margin: '10px 0' }} gutter={16}>
                     <Col xl={17} lg={17} md={17} sm={24} xs={24} style={{ textIndent: '2em' }}>
                         <span >
                             {record.xqnr}
                         </span>
                     </Col>
+                    <Col xl={17} lg={17} md={17} sm={24} xs={24} style={{ textIndent: '2em' }}>
+                    {/* {"附件"} */}
+                    </Col>
                     <Col xl={7} lg={7} md={7} sm={24} xs={24}>
                         <p>{record.lrrymc}，{record.qqdw}，{record.qqsj}</p>
                         <div>
                             <Tag color="red">已超过{record.ccts}天未反馈</Tag> |  &nbsp;&nbsp;
 							<Button type='primary' size='small' onClick={() => this.replyClue(record)}>
-                                回复线索：{record.clueCount}条{replyClue ?<Icon type="up" /> :<Icon type="down" />}
+                                回复线索：{record.clueCount}条{replyClue ? <Icon type="up" /> : <Icon type="down" />}
                             </Button>
                         </div>
                     </Col>

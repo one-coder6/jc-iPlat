@@ -42,11 +42,13 @@ class Search extends React.Component {
 
 	handleSearch = (e) => {
 		e.preventDefault();
-		let {
-			Search
-		} = this.props;
+		let { Search } = this.props;
 		let timeData = 'range-time-picker';
 		this.props.form.validateFields((err, values) => {
+			//	{timeSection:1}
+			if (values.sljjsj) {
+				values["timeSection"] = 1;
+			}
 			Search(values);
 		});
 	}

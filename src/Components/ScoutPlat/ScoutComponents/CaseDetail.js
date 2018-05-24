@@ -70,21 +70,21 @@ class CaseDetail extends React.Component {
                             </div>
                             <RequestList showType='scoutPlat' />
                         </TabPane>
-                        <TabPane tab="合成作战小组" key="3">
+                        <TabPane tab="合成作战小组" key="3" style={{ paddingBottom: 20 }}>
                             <CaseMember />
                         </TabPane>
-                        <TabPane tab="侦查日志" key="4">
+                        <TabPane tab="侦查日志" key="4"  style={{ paddingBottom: 20 }}>
                             <ScoutLog />
                         </TabPane>
-                        <TabPane tab="思维导图" key="5">
+                        <TabPane tab="思维导图" key="5"  style={{ paddingBottom: 20 }}>
                             <MindMap />
                         </TabPane>
-                        <TabPane tab="进度列表" key="6">
+                        <TabPane tab="进度列表" key="6"  style={{ paddingBottom: 20 }}>
                             <Dprogress />
                         </TabPane>
                     </Tabs>
                     <Modal title='创建需求' visible={createDemand} onCancel={this.handleCancel} footer={null}>
-                        <CreateRequest  handleCancel={this.handleCancel} />
+                        <CreateRequest handleCancel={this.handleCancel} />
                     </Modal>
                     <Modal title='发布信息' visible={publishInfor} onCancel={this.handleCancel} footer={null}>
                         <PublishInfor handleCancel={this.handleCancel} />

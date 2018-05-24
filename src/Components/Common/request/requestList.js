@@ -36,6 +36,7 @@ export default class RequestList extends React.Component {
 	}
 	// dom完成
 	componentDidMount() {
+		// 延迟一秒的原因是，dom并未完全加载出来。
 		setTimeout(() => {
 			debugger;
 			let sessionanchor = sessionStorage.getItem("notic-anchor");
@@ -62,6 +63,7 @@ export default class RequestList extends React.Component {
 				index = i;
 			}
 		});
+
 		this.setState({ showCollapseIndex: index.toString() }, () => {
 			this.toscrollView(sessionanchor)
 		})
@@ -128,7 +130,6 @@ export default class RequestList extends React.Component {
 		this.setState({ showClue: true, replyRecord: record })
 	}
 
-
 	//评价
 	appraiseRequest = (record) => {
 		this.setState({ showAppraise: true })
@@ -177,8 +178,9 @@ export default class RequestList extends React.Component {
 	toscrollView = (id) => {
 		debugger;
 		let anchorElement = document.getElementById(id);
-		if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
-		// 这里需要触发聚焦动画
+		//if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+		if (anchorElement) { anchorElement.scrollIntoViewIfNeeded(true); }
+		// 触发聚焦动画
 		this.showAnimateShow(id)
 	}
 
@@ -211,8 +213,7 @@ export default class RequestList extends React.Component {
 				const reqUrl = addressUrl + '/notice/readNotice';
 				let _ids = ids.join(',');
 				httpAjax("get", reqUrl, { params: { noticeId: _ids } }).then(res => {
-					if (res.code === '200') {
-					}
+					if (res.code === '200') { }
 				})
 			}
 		}
@@ -232,7 +233,7 @@ export default class RequestList extends React.Component {
 					return <List.Item style={{ padding: "10px 25px" }} id={_id}>
 						<List.Item.Meta
 							title={
-								<div >
+								<div>
 									<span >{ele.fromUserName || '-'} &nbsp;</span>
 									<span >{ele.date || '-'}  &nbsp;</span>
 									<span style={{ color: 'orange' }}> {this.mapReplyType(ele.type)}</span>
@@ -286,11 +287,11 @@ export default class RequestList extends React.Component {
 							})
 						}
 					</Collapse>
-					: <div style={{ background: '#e5e5e5', padding: '10px', marginTop: '10px' }}>
-						<h3>回复列表</h3>
+					: <div style={{ background: '#efefef', padding: '30px', marginTop: '10px' }}>
+						<h3 style={{ display: requestSource && requestSource.length > 0 ? 'block' : 'none' }}>回复列表：</h3>
 						< List dataSource={requestSource}
 							renderItem={(ele, index) => (
-								<List.Item   >
+								<List.Item>
 									<List.Item.Meta
 										title={
 											<div >

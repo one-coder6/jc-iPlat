@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Card, Steps, Icon, Tag } from 'antd';
-
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
+import moment from 'moment'
 //引入redux
 //import { getTimeNode } from '../../store/actions/index.js';
 import { getTimeNode } from '../../../store/actions/index';
@@ -22,6 +22,7 @@ class CaseProgress extends React.Component {
 		let { dispatch, timeNode } = this.props;
 		httpAjax("get", reqUrl, ).then(res => {
 			if (res.code === '200') {
+				debugger;
 				dispatch(getTimeNode({
 					timeNode: res.data,
 				}))
@@ -46,7 +47,7 @@ class CaseProgress extends React.Component {
 			case "CREATE_DEMAND":
 				return '发布需求';
 				break;
-			case "RETURN_CLUE":
+			case "CLUE_RETURN":
 				return '反馈线索';
 				break;
 			case "REPLY":
@@ -63,16 +64,18 @@ class CaseProgress extends React.Component {
 				return "#2db7f5";
 				break;
 			case "CASE_PICK":
-				return "#76EE00";
+				return "#3ba0e9";
+				//return "#215968";
 				break;
 			case "CASE_MERGE":
 				return "#108ee9";
 				break;
 			case "CREATE_DEMAND":
-				return "#C1FFC1";
+				//	return "#3ba0e9";
+				return "rgb(224,0,0)";
 				break;
-			case "RETURN_CLUE":
-				return "#FF3E96";
+			case "CLUE_RETURN":
+				return "#009900";
 				break;
 			case "REPLY":
 				return "#E066FF";
@@ -85,7 +88,6 @@ class CaseProgress extends React.Component {
 			<Card className='progressContent'>
 				{
 					stepsSource && stepsSource.length >= 1 ?
-
 						<Steps className='pItem' style={{ width: '800px', height: '160px' }}>
 							{stepsSource && stepsSource.map((item, index) => {
 								if (index % 2 == 1) {
@@ -93,11 +95,11 @@ class CaseProgress extends React.Component {
 										status="finish"
 										title={
 											<div className='stepTitle stepTitles'>
-												<div className='caesDescrition'>标题：<span style={{color:'blue'}}>{this.mapTitleType(item.referenceType)}</span></div>
-												<div className='caesDescrition'>发送单位：{item.sendOrgName}</div>
-												<div className='caesDescrition'>接收单位：{item.receiveOrgName}</div>
-												<div className='caesDescrition'>说明：{item.content}</div>
-												<Tag color={this.mapTimeColor(item.referenceType)}>{item.lrsj}</Tag>
+												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{this.mapTitleType(item.referenceType)}</span></div>
+												<div className='caesDescrition'>发送单位：{item.sendOrgName || '-'}</div>
+												<div className='caesDescrition'>接收单位：{item.receiveOrgName || '-'}</div>
+												<div className='caesDescrition'>说明：{item.content || '-'}</div>
+												<Tag color={this.mapTimeColor(item.referenceType)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
 											</div>
 										}
 										icon={<Icon type="right-circle-o" />} key={index}>
@@ -107,11 +109,11 @@ class CaseProgress extends React.Component {
 										status="finish"
 										title={
 											<div className='stepTitle stepTitles'>
-												<Tag color={this.mapTimeColor(item.referenceType)}>{item.lrsj}</Tag>
-												<div className='caesDescrition'>标题：<span style={{color:'blue'}}>{this.mapTitleType(item.referenceType)}</span></div>
-												<div className='caesDescrition'>发送单位：{item.sendOrgName}</div>
-												<div className='caesDescrition'>接收单位：{item.receiveOrgName}</div>
-												<div className='caesDescrition'>说明：{item.content}</div>
+												<Tag color={this.mapTimeColor(item.referenceType)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
+												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceType?this.mapTitleType(item.referenceType):'-'}</span></div>
+												<div className='caesDescrition'>发送单位：{item.sendOrgName || '-'}</div>
+												<div className='caesDescrition'>接收单位：{item.receiveOrgName || '-'}</div>
+												<div className='caesDescrition'>说明：{item.content || '-'}</div>
 											</div>
 										}
 										icon={<Icon type="right-circle-o" />} key={index}>

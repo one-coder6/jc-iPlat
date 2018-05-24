@@ -140,7 +140,7 @@ export default class DbaseInfor extends React.Component {
 				</Card>
 				<Card title='办案人员' style={{ marginBottom: '10px' }}  >
 					<Card.Grid style={{ width: '20%' }}>主办人员</Card.Grid>
-					<Card.Grid style={{ width: '20%' }}>{casesVO.ajzbryCn}</Card.Grid>
+					<Card.Grid style={{ width: '20%' }}>{casesVO.ajzbryCn || ''}</Card.Grid>
 					<Card.Grid style={{ width: '20%' }}>协办人员</Card.Grid>
 					<Card.Grid style={{ width: '40%' }}>
 						{casesVO.ajxbryCn && typeof (casesVO.ajxbryCn) == 'object' ? casesVO.ajxbryCn.join(",") : casesVO.ajxbryCn}
@@ -188,21 +188,21 @@ export default class DbaseInfor extends React.Component {
 					}
 
 				</Card>
-				<Card title='现场勘察' style={{ marginBottom: '10px' }}>
+				<Card title='现场勘查' style={{ marginBottom: '10px' }}>
 					{
 						lsSceneVO && lsSceneVO.length >= 1 ?
 							<List
 								size="small"
 								dataSource={lsSceneVO}
 								renderItem={item => (
-									<List.Item>勘察人员:{item.kyjcry}；勘察情况:{item.kyjcqk}；勘验地点:{item.kydd}；</List.Item>
+									<List.Item>勘查人员:{item.kyjcry}；勘查情况:{item.kyjcqk}；勘验地点:{item.kydd}；</List.Item>
 								)}
 							/> : '无'
 					}
 				</Card>
-				<Card title='现场勘察图片' style={{ marginBottom: '10px' }} className='sceneImages'>
+				<Card title='现场勘查图片' style={{ marginBottom: '10px' }} className='sceneImages'>
 					{
-						(lsSceneVO && lsSceneVO).length>=1 ?
+						(lsSceneVO && lsSceneVO).length >= 1 ?
 							lsSceneVO.map((item, index) => {
 								return <div key={index} style={{ height: '200px' }}>
 									{
@@ -240,17 +240,17 @@ export default class DbaseInfor extends React.Component {
 				</Card>
 				<Card title='笔录信息' style={{ marginBottom: '10px' }}>
 					{
-                        lsCasesRecordVO && lsCasesRecordVO.length>=1 
-                        ?
-                        <RecordInfor  lsCasesRecordVO = {lsCasesRecordVO}/> :'暂无数据'
-                        // lsCasesRecordVO.map((item,index)=>{
-                        //     return <span>
-                        //         {index},记录地点：{item.jldd}；记录人员：{item.recorder}；笔录对象性别：{item.targetXbCn}；
-                        //         笔录对象名称：{item.targetXm}；开始时间：{item.starttime}；结束时间：{item.endtime}；
-                        //         笔录内容：{item.body}笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：
-                        //         </span>
-                        // }):'暂无记录'
-                        // RecordInfor
+						lsCasesRecordVO && lsCasesRecordVO.length >= 1
+							?
+							<RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无数据'
+						// lsCasesRecordVO.map((item,index)=>{
+						//     return <span>
+						//         {index},记录地点：{item.jldd}；记录人员：{item.recorder}；笔录对象性别：{item.targetXbCn}；
+						//         笔录对象名称：{item.targetXm}；开始时间：{item.starttime}；结束时间：{item.endtime}；
+						//         笔录内容：{item.body}笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：笔录内容：
+						//         </span>
+						// }):'暂无记录'
+						// RecordInfor
 					}
 				</Card>
 				{/* 添加串并案 */}
