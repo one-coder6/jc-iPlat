@@ -17,10 +17,12 @@ class CaseList extends React.Component {
       loading: false,
       pagination: {
         total: 0,
-        pageSize: 10,
+        pageSize: 2,
         pageNum: 1,
         showQuickJumper: true,
         showSizeChanger: true,
+        onShowSizeChange: (current, pageSize) => {
+        }
       },
       dataSource: [],
       createRequest: false,
