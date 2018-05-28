@@ -240,9 +240,7 @@ export default class DbaseInfor extends React.Component {
 				</Card>
 				<Card title='笔录信息' style={{ marginBottom: '10px' }}>
 					{
-						lsCasesRecordVO && lsCasesRecordVO.length >= 1
-							?
-							<RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无数据'
+						<RecordInfor lsCasesRecordVO={lsCasesRecordVO} />
 						// lsCasesRecordVO.map((item,index)=>{
 						//     return <span>
 						//         {index},记录地点：{item.jldd}；记录人员：{item.recorder}；笔录对象性别：{item.targetXbCn}；

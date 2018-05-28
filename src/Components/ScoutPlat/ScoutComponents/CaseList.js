@@ -17,11 +17,15 @@ class CaseList extends React.Component {
       loading: false,
       pagination: {
         total: 0,
-        pageSize: 2,
+        pageSize: 10,
         pageNum: 1,
         showQuickJumper: true,
         showSizeChanger: true,
         onShowSizeChange: (current, pageSize) => {
+          // 切换每页数目量
+          let showSizeChanger = this.state.pagination;
+          showSizeChanger["pageSize"] = pageSize;
+          this.setState({ pagination: showSizeChanger });
         }
       },
       dataSource: [],
@@ -56,11 +60,18 @@ class CaseList extends React.Component {
     if (reload) {
       this.actionForLoad();
     }
+    // 案发时间
     //console.log("componentWillReceiveProps", searchValue)
     if (searchValue && searchValue.sljjsj !== undefined) {
       searchValue.beginCreateTime = moment(searchValue.sljjsj[0]).format("YYYY-MM-DD HH:mm:ss");
       searchValue.endCreateTime = moment(searchValue.sljjsj[1]).format("YYYY-MM-DD HH:mm:ss");
       delete searchValue.sljjsj;
+    }
+    // 立案时间
+    if (searchValue && searchValue.lasj !== undefined) {
+      searchValue.beginLasj = moment(searchValue.lasj[0]).format("YYYY-MM-DD HH:mm:ss");
+      searchValue.endLasj = moment(searchValue.lasj[1]).format("YYYY-MM-DD HH:mm:ss");
+      delete searchValue.lasj;
     }
     if (searchValue && searchValue.baqk !== undefined) {
       let caseSponsor = searchValue.baqk.join();
@@ -169,7 +180,7 @@ class CaseList extends React.Component {
       title: '案件名称',
       dataIndex: 'ajmc',
     }, {
-      title: '受理单位',
+      title: '主办单位',
       dataIndex: 'zbdwCn',
     }, {
       title: '案件类别',

@@ -1,13 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Row, Col, Button, Form, DatePicker, Tag, Checkbox, Input, Select, Icon } from 'antd';
+import { Row, Col, Button, Form, DatePicker, Tag, Checkbox, Input, Select, Icon, TreeSelect } from 'antd';
 //引入自适应文件
 import { thirdLayout } from '../../../Util/Flexout.js';
+import { httpAjax, addressUrl, UC_URL } from '../../../Util/httpAjax';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 const CheckboxGroup = Checkbox.Group;
+const TreeNode = TreeSelect.TreeNode;
 
 class Search extends React.Component {
 	constructor(props) {
@@ -21,9 +23,24 @@ class Search extends React.Component {
 				value: 'Pear'
 			}],
 			expand: true,
+			treeDefaultValue: [],
+			treeData: [],
 		}
 	}
 
+	componentWillMount() {
+		//获取作战单位首层
+		const reqUrl = UC_URL + "getTopDepartment";
+		httpAjax("post", reqUrl, {}).then(res => {
+			this.setState({ treeDefaultValue: res })
+			const treeDataSource = res && res.map((item, index) => ({
+				title: item.fullname,
+				value: item.code,
+				key: item.code,
+			}))
+			this.setState({ treeData: treeDataSource })
+		})
+	}
 	caseTypeChange = (value) => {
 		console.log("value", value)
 	}
@@ -51,15 +68,39 @@ class Search extends React.Component {
 			Search(values);
 		});
 	}
-
+	//异步加载子节点
+	loadTreeData = (treeNode) => {
+		const reqUrl = UC_URL + "getDepartmentByAny";
+		return httpAjax("post", reqUrl, { pcode: treeNode.props.eventKey }).then(res => {
+			const treeDataSource = res && res.map((item, index) => ({
+				title: item.fullname,
+				value: item.code,
+				key: item.code,
+			}))
+			treeNode.props.dataRef.children = treeDataSource;
+			this.setState({ treeData: [...this.state.treeData] });
+		})
+	}
+	//获取树节点的Key
+	treeSelectKeys = (value) => {
+		this.setState({ treeSelectKeys: value })
+	}
+	//渲染树子节点
+	renderTreeNodes = (data) => {
+		return data.map((item) => {
+			if (item.children) {
+				return (
+					<TreeNode title={item.title} key={item.key} value={item.value} dataRef={item}>
+						{this.renderTreeNodes(item.children)}
+					</TreeNode>
+				);
+			}
+			return <TreeNode {...item} dataRef={item} />
+		});
+	}
 	render() {
-		const {
-			getFieldDecorator
-		} = this.props.form;
-		const {
-			caseStatus,
-			expand
-		} = this.state;
+		const { getFieldDecorator } = this.props.form;
+		const { caseStatus, expand, treeDefaultValue, treeData } = this.state;
 		const FormItemLayout = {
 			wrapperCol: {
 				xs: {
@@ -109,7 +150,7 @@ class Search extends React.Component {
 						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
 							<FormItem {...thirdLayout} label="案发时间" >
 								{getFieldDecorator('sljjsj', )(
-									<RangePicker allowClear={false} />
+									<RangePicker />
 								)}
 							</FormItem>
 						</Col>
@@ -146,7 +187,36 @@ class Search extends React.Component {
 								)}
 							</FormItem>
 						</Col>
+					{/* 	<Col xl={8} lg={8} md={8} sm={24} xs={24}>
+							<FormItem {...thirdLayout} label="立案时间">
+								{getFieldDecorator('lasj', {
+									// initialValue: ['Orange']
+								})(
+									<RangePicker />
+								)}
+							</FormItem>
+						</Col> */}
 					</Row>
+				{/* 	<Row style={{ display: expand ? 'none' : 'block' }}>
+						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
+							<FormItem {...thirdLayout} label="主办单位">
+								{getFieldDecorator('zbdw', {
+									initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code,
+									//rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+								})(
+									<TreeSelect
+										loadData={this.loadTreeData}
+										dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+										onSelect={this.treeSelectKeys}
+										searchPlaceholder='主办单位'
+										treeDefaultExpandAll
+									>
+										{this.renderTreeNodes(treeData)}
+									</TreeSelect>
+								)}
+							</FormItem>
+						</Col>
+					</Row> */}
 					<Row>
 						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
 						</Col>

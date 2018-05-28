@@ -54,32 +54,24 @@ class CaseProgress extends React.Component {
 				break;
 		}
 	}
-	mapTimeColor = (time) => {
-		switch (time) {
-			case "CREATE_INFO":
-				return "#f50";
-				break;
-			case "CASE_CREATE":
-				return "#2db7f5";
-				break;
-			case "CASE_PICK":
-				return "#3ba0e9";
-				//return "#215968";
-				break;
-			case "CASE_MERGE":
-				return "#108ee9";
-				break;
-			case "CREATE_DEMAND":
-				//	return "#3ba0e9";
-				return "rgb(224,0,0)";
-				break;
-			case "CLUE_RETURN":
-				return "#009900";
-				break;
-			case "REPLY":
-				return "#E066FF";
-				break;
+	//  设置时间轴颜色
+	mapTimeColor = (time, org) => {
+		debugger;
+		let resultColor = "";
+		if (time == "CASE_CREATE" || time == "CASE_PICK" || time == "CASE_MERGE") {
+			// 红色
+			resultColor = "#ff0000"
+		} else {
+			let b = org.indexOf('技') > -1 || org.indexOf('网') > -1 || org.indexOf('视') > -1 || org.indexOf('技术') > -1;
+			if (b) {
+				// 紫色
+				resultColor = "#9900ff"
+			} else {
+				// 蓝色
+				resultColor = "#0000ff"
+			}
 		}
+		return resultColor;
 	}
 	render() {
 		const { stepsSource } = this.state;
@@ -98,7 +90,7 @@ class CaseProgress extends React.Component {
 												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''}>发送单位：{item.sendOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.content ? item.content : ''}>说明：{item.content ? item.content : '-'}</div>
-												<Tag color={this.mapTimeColor(item.referenceType)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
+												<Tag color={this.mapTimeColor(item.referenceType, item.receiveOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
 											</div>
 										}
 										icon={<Icon type="right-circle-o" />} key={index}>
@@ -108,7 +100,7 @@ class CaseProgress extends React.Component {
 										status="finish"
 										title={
 											<div className='stepTitle stepTitles'>
-												<Tag color={this.mapTimeColor(item.referenceType)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
+												<Tag color={this.mapTimeColor(item.referenceType, item.receiveOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
 												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceType ? this.mapTitleType(item.referenceType) : '-'}</span></div>
 												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''} >发送单位：{item.sendOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>
