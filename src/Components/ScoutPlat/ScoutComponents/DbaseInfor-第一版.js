@@ -41,6 +41,7 @@ export default class DbaseInfor extends React.Component {
 	}
 	render() {
 		const { visible } = this.state;
+
 		const casesVO = this.state.detailSource && this.state.detailSource.casesVO;
 		const lsCasesSuspectVO = this.state.detailSource && this.state.detailSource.lsCasesSuspectVO;
 		const lsCasesInformantVO = this.state.detailSource && this.state.detailSource.lsCasesInformantVO;
@@ -58,6 +59,13 @@ export default class DbaseInfor extends React.Component {
 			key: 'sary',
 			tab: '涉案人员',
 		}
+	/* 	, {
+			key: 'xyr',
+			tab: '嫌疑人',
+		}, {
+			key: 'barandshr',
+			tab: '报案人/受害人',
+		} */
 		, {
 			key: 'sawp',
 			tab: '涉案物品',
@@ -80,42 +88,26 @@ export default class DbaseInfor extends React.Component {
 			key: 'dbxx',
 			tab: '比中信息',
 		}];
-
-	    // 模拟数据
 		let temp = {
-			d_xyr: [
+			d1: [
 				{ xm: "张三", xbCn: "男", csrq: '2018-01-01', hjdz: '深圳市龙岗区', lxdh: '13312345678' },
 				{ xm: "李四", xbCn: "女", csrq: '1918-01-01', hjdz: '深圳市保安区', lxdh: '13312345678' }
 			],
-			d_shr: [
+			d2: [
 				{ rylxCn: "报案人", xm: "王五五", xbCn: "男", csrq: '2018-01-01', hjdz: '深圳市龙岗区三联村委', lxdh: '13312345678' },
 				{ rylxCn: "受害人", xm: "赵柳", xbCn: "男", csrq: '1818-01-01', hjdz: '深圳市龙岗区宝岗派出所吉祥花园11栋', lxdh: '13312345678' },
 				{ rylxCn: "受害人", xm: "王久", xbCn: "女", csrq: '1918-01-01', hjdz: '深圳市保安区', lxdh: '13312345678' }
 			],
-			d_sawp: [
+			d3: [
 				{ wpmcCn: "现金2000w", wpsz: "王五五", wplbCn: "现金"},
 				{ wpmcCn: "笔记本电脑", wpsz: "赵柳", wplbCn: "数码产品"  },
 				{ wpmcCn: "苹果手机1部", wpsz: "王久", wplbCn: "数码产品"  }
 			],
-			d_zj: [
-				{ ylbw: "走廊", tqrq: "2018-6-5"},
-				{ ylbw: "门", tqrq: "2018-6-5"  },
-				{ ylbw: "窗", tqrq: "2018-6-5"   }
-			], 
-			d_sy: [
-				{ ylbw: "走廊", tqrq: "2018-6-5"},
-				{ ylbw: "窗", tqrq: "2018-6-5"   }
-			], 
-			d_xckc:[
-				{ kyjcry: "张三", kydd: "宝钢派出所1", kysjks: "2018-12-11",kysjjs: "2018-05-11 09:00:00", kyjcqk: "宝钢派出所记录很多内容" },
-				{ kyjcry: "李四", kydd: "宝钢派出所2", kysjks: "2018-10-11",kysjjs: "2018-06-11", kyjcqk: "宝钢派出所记录很多内容2" },
-				{ kyjcry: "王五", kydd: "宝钢派出所3", kysjks: "2018-09-11",kysjjs: "2018-07-11",kyjcqk: "宝钢派出所记录很多内容3" },
-				{ kyjcry: "张柳", kydd: "宝钢派出所4", kysjks: "2018-04-11",kysjjs: "2018-08-11", kyjcqk: "宝钢派出所记录很多内容4" }
-			] 
 		}
 		// 涉案物品
 		const sawp_columns= [{
 			title: '序号',
+			width:90,
 			align:"center",
 			dataIndex: 'name',
 			render: (text, record, index) =>{ 
@@ -123,6 +115,7 @@ export default class DbaseInfor extends React.Component {
 			} 
 		  }, {
 			title: '失主',
+			width:140,
 			align:"center",
 			className: 'column-money',
 			dataIndex: 'wpsz',
@@ -135,48 +128,7 @@ export default class DbaseInfor extends React.Component {
 			dataIndex: 'wplbCn',
 		  }];
 
-		// 手印
-		const sy_columns= [{
-			title: '序号',
-			align:"center",
-			dataIndex: 'name',
-			render: (text, record, index) =>{ 
-				return <a href="javascript:;">{index+1}</a>
-			} 
-		  }, {
-			title: '提取部位',
-			align:"center",
-			className: 'column-money',
-			dataIndex: 'ylbw',
-		  }, {
-			title: '提取日期',
-			align:"center",
-			className: 'column-money',
-			dataIndex: 'tqrq',
-		  }];
-
-		// 足迹
-		const zj_columns= [{
-			title: '序号',
-			align:"center",
-			dataIndex: 'name',
-			render: (text, record, index) =>{ 
-				return <a href="javascript:;">{index+1}</a>
-			} 
-		  }, {
-			title: '提取部位',
-			align:"center",
-			className: 'column-money',
-			dataIndex: 'ylbw',
-		  }, {
-			title: '提取日期',
-			align:"center",
-			className: 'column-money',
-			dataIndex: 'tqrq',
-		  }];
-
-		 // 切换的tabs
-		  const contentListNoTitle = {
+		const contentListNoTitle = {
 			// 办案人员
 			bary: <Card style={{ marginBottom: '10px' }} bordered={false} >
 				<Card.Grid style={{ width: '20%' }}>主办人员</Card.Grid>
@@ -189,27 +141,53 @@ export default class DbaseInfor extends React.Component {
 			// 涉案人员
 			sary: <Card style={{ marginBottom: '10px' }} bordered={false} >
 				{
-				  lsCasesInformantVO && lsCasesInformantVO.length >= 1||1  ?
+				  lsCasesInformantVO && lsCasesInformantVO.length >= 1  ?
 					<List size="small"
 					style={{borderBottom:"1px solid #e8e8e8"}}
-					dataSource={temp.d_shr}
+					dataSource={lsCasesInformantVO}
 						renderItem={item => (
 							<List.Item>{item.rylxCn}：{item.xm}　{item.xbCn}　{item.csrq}　户籍：{item.hjdz}　手机：{item.lxdh ? item.lxdh : '无'}</List.Item>
 						)}
 					/> : "无"
 				}
 				{
-					lsCasesSuspectVO && lsCasesSuspectVO.length >= 1 ||1 ?
+					lsCasesSuspectVO && lsCasesSuspectVO.length >= 1  ?
 					<List size="small"
 				    	style={{borderBottom:"1px solid #e8e8e8"}}
-						dataSource={temp.d_xyr}
+						dataSource={lsCasesSuspectVO}
 						renderItem={item => (
 							<List.Item>	嫌疑人：{item.xm}　{item.xbCn}　{item.csrq}　户籍：{item.hjdz}　手机：{item.lxdh ? item.lxdh : '无'}</List.Item>
 						)} />
 					: ''
 				}
 			</Card>,
-			// 涉案物品
+		/* 	// 嫌疑人
+			xyr: <Card style={{ marginBottom: '10px' }} bordered={false} >
+				{lsCasesSuspectVO && lsCasesSuspectVO.length >= 1 ?
+					<List size="small"
+						dataSource={lsCasesSuspectVO}
+						renderItem={item => (
+							<List.Item>
+								{item.xm}，{item.xbCn}，{item.csrq}，户籍：{item.hjdz}，手机：{item.lxdh ? item.lxdh : '无'};
+							违法情况：{item.wfqk}；教育经历:{item.reservation10 ? item.reservation10 : '无'}
+							</List.Item>
+						)}
+					/> : '无'}
+			</Card>,
+			// 报案人和受害人
+			barandshr: <Card style={{ marginBottom: '10px' }} bordered={false} >
+				{lsCasesInformantVO && lsCasesInformantVO.length >= 1 ?
+					<List
+						size="small"
+						dataSource={lsCasesInformantVO}
+						renderItem={item => (
+							<List.Item>{item.rylxCn}，{item.xm}，{item.xbCn}，{item.csrq}，户籍：{item.hjdz}，手机：{item.lxdh ? item.lxdh : '无'}</List.Item>
+						)}
+					/> : '无'
+				}
+
+			</Card>
+			, */
 			sawp: <Card style={{ marginBottom: '10px' }} bordered={false} >
 			{/* lsCasesGoodsVO */}
 			<Table	columns={sawp_columns}
@@ -220,27 +198,17 @@ export default class DbaseInfor extends React.Component {
 				footer={null}
 			/>
 			</Card>,
-			// 现场勘查
 			xckc: <Card style={{ marginBottom: '10px' }} bordered={false} >
-				{/* lsSceneVO */}
-				{lsSceneVO && lsSceneVO.map((item, index) => {
-						return <Card style={{ marginBottom: 10 }}
-							title={<p style={{ position: 'absolute', marginTop: 10, fontSize: 12, color: '#1890ff' }}>
-								<span style={{ marginRight: 15 }}>勘查人员: {item.kyjcry || '-'}</span>
-								{/*   <span style={{ marginRight: 15 }}>记录地点: {item.jldd || '-'}</span> */}
-								<span style={{ marginRight: 15 }}>　地点: {item.kydd || ''}</span>
-								<span style={{ marginRight: 15 }}>　开始时间: {item.kysjks || ''}</span>
-								<span style={{ marginRight: 15 }}>　结束时间: {item.kysjjs || ''}</span>
-							</p>}
-						/*  extra={<a href="#">记录时间：{item.starttime || '-'}</a>} */
-						>
-							<div style={{ padding: "1px 28px" }}>勘查情况：{item.kyjcqk || '-'}</div>
-						</Card>
-					})
+				{lsSceneVO && lsSceneVO.length >= 1 ?
+					<List
+						size="small"
+						dataSource={lsSceneVO}
+						renderItem={item => (
+							<List.Item>勘查人员:{item.kyjcry}；勘查情况:{item.kyjcqk}；勘验地点:{item.kydd}；</List.Item>
+						)}
+					/> : '无'
 				}
-				{!lsSceneVO||lsSceneVO.length==0?'暂无记录':""}
 			</Card>,
-			// 现场勘查图片
 			xckctp: <Card style={{ marginBottom: '10px' }} className='sceneImages' bordered={false} >
 				{(lsSceneVO && lsSceneVO).length >= 1 ?
 					lsSceneVO.map((item, index) => {
@@ -254,32 +222,30 @@ export default class DbaseInfor extends React.Component {
 					}) : '暂无图片'
 				}
 			</Card>,
-			// 手印
 			sy: <Card style={{ marginBottom: '10px' }} bordered={false} >
-			{/* lsSceneFingerPrintVO */}
-		    <Table	columns={sy_columns}
-				dataSource={lsSceneFingerPrintVO}
-				bordered
-				pagination={false}
-				title={null}
-				footer={null}/>
+				{lsSceneFingerPrintVO && lsSceneFingerPrintVO.length >= 1 ?
+					<List
+						size="small"
+						dataSource={lsSceneFingerPrintVO}
+						renderItem={item => (
+							<List.Item>提取日期:{item.tqrq}；遗留部位:{item.ylbw ? item.ylbw : '无'}；</List.Item>
+						)}
+					/> : '暂无记录'
+				}
 			</Card>,
-			// 足迹
 			zj: <Card style={{ marginBottom: '10px' }} bordered={false} >
-			 {/* lsSceneFootPrintVO */}
-			 <Table	columns={zj_columns}
-				dataSource={lsSceneFootPrintVO}
-				bordered
-				pagination={false}
-				title={null}
-				footer={null}
-			/>
+				{lsSceneFootPrintVO && lsSceneFootPrintVO.length >= 1 ?
+					<List
+						size="small"
+						dataSource={lsSceneFootPrintVO}
+						renderItem={item => (
+							<List.Item>提取日期:{item.tqrq}；遗留部位:{item.ylbw}；</List.Item>
+						)}
+					/> : '暂无记录'}
 			</Card>,
-			// 笔录信息
 			blxx: <Card style={{ marginBottom: '10px' }} bordered={false} >
-				{lsCasesRecordVO && lsCasesRecordVO.length > 0||1? <RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无记录'}
+				{lsCasesRecordVO && lsCasesRecordVO.length > 0? <RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无记录'}
 			</Card>,
-			// 比中信息
 			dbxx: <Card style={{ marginBottom: '10px' }} bordered={false} >
 				{<ContrastInfo />}
 			</Card>
@@ -289,8 +255,11 @@ export default class DbaseInfor extends React.Component {
 			<div className='detailBaseInfo'>
 				<div style={{ marginBottom: 10 }}>
 					{casesVO.lasj}{casesVO.ajmc}
+					{/* <Link to='/addCase' > */}
 					<Button type='primary' size='small' style={{ margin: '0 10px' }} onClick={this.addCBA}>添加串并案</Button>
-					<span>串并案件：{casesVO.sfcba == 1 ? casesVO.lsCasesMegerVO && casesVO.lsCasesMegerVO.map((item, index) => {
+					{/* </Link> */}
+					<span>串并案件：{
+						casesVO.sfcba == 1 ? casesVO.lsCasesMegerVO && casesVO.lsCasesMegerVO.map((item, index) => {
 							return <span key={index}>{item.ajbh}：{item.ajmc} </span>;
 						}) : '无'
 					}</span>

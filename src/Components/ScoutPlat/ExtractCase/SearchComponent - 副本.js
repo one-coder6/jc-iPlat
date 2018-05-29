@@ -99,7 +99,7 @@ class Search extends React.Component {
 						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
 							<FormItem {...thirdLayout} label="立案时间" >
 								{getFieldDecorator('lasj', )(
-									<RangePicker defaultValue={[moment(startTime).format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]} allowClear={false} />
+									<RangePicker defaultValue={[moment(startTime, 'YYYY-MM-DD'), moment(new Date(), 'YYYY-MM-DD')]} format={'YYYY-MM-DD'} />
 								)}
 							</FormItem>
 						</Col>

@@ -68,7 +68,7 @@ class CaseProgress extends React.Component {
 				resultColor = "#9900ff"
 			} else {
 				// 蓝色
-				resultColor = "#0000ff"
+				resultColor = "#40a9ff"
 			}
 		}
 		return resultColor;
@@ -90,7 +90,7 @@ class CaseProgress extends React.Component {
 												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''}>发送单位：{item.sendOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.content ? item.content : ''}>说明：{item.content ? item.content : '-'}</div>
-												<Tag color={this.mapTimeColor(item.referenceType, item.receiveOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
+												<Tag color={this.mapTimeColor(item.referenceType, item.sendOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
 											</div>
 										}
 										icon={<Icon type="right-circle-o" />} key={index}>
@@ -100,7 +100,7 @@ class CaseProgress extends React.Component {
 										status="finish"
 										title={
 											<div className='stepTitle stepTitles'>
-												<Tag color={this.mapTimeColor(item.referenceType, item.receiveOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
+												<Tag color={this.mapTimeColor(item.referenceType, item.sendOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
 												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceType ? this.mapTitleType(item.referenceType) : '-'}</span></div>
 												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''} >发送单位：{item.sendOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>

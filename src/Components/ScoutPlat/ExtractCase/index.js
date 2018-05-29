@@ -37,7 +37,8 @@ export default class ExtractCase extends React.Component {
         return (
             <div>
                 <Search Search={this.handleSearch} />
-                <ExtractList searchValue={this.state.searchValue} showType={this.props.showType} searchLoading={this.state.searchLoading} reloadFn={this.props.reloadFn} handelExtra={this.props.handelExtra} />
+                <ExtractList searchValue={this.state.searchValue} showType={this.props.showType} searchLoading={this.state.searchLoading} 
+                 reloadFn={this.props.reloadFn} handelExtra={this.props.handelExtra} />
                 {/* <CommonLayout>
                     <Search Search={this.handleSearch} />
                     <ExtractList searchValue={this.state.searchValue} />

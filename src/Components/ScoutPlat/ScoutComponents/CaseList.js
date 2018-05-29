@@ -10,6 +10,7 @@ import PublishInfor from './Modal/publishInfor'
 import CaseFinish from './Modal/caseFinish'
 import '../../../styles/scoutPlat.less';
 
+
 class CaseList extends React.Component {
   constructor(props) {
     super(props);
@@ -53,6 +54,7 @@ class CaseList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    let userInfor = JSON.parse(sessionStorage.getItem("user"));
     let searchValue = nextProps.searchValue;
     let { pageSize, pageNum } = this.state.pagination;
     let _this = this;
@@ -63,8 +65,8 @@ class CaseList extends React.Component {
     // 案发时间
     //console.log("componentWillReceiveProps", searchValue)
     if (searchValue && searchValue.sljjsj !== undefined) {
-      searchValue.beginCreateTime = moment(searchValue.sljjsj[0]).format("YYYY-MM-DD HH:mm:ss");
-      searchValue.endCreateTime = moment(searchValue.sljjsj[1]).format("YYYY-MM-DD HH:mm:ss");
+      searchValue.fasjcz = moment(searchValue.sljjsj[0]).format("YYYY-MM-DD HH:mm:ss");
+      searchValue.fasjzz = moment(searchValue.sljjsj[1]).format("YYYY-MM-DD HH:mm:ss");
       delete searchValue.sljjsj;
     }
     // 立案时间
@@ -73,15 +75,15 @@ class CaseList extends React.Component {
       searchValue.endLasj = moment(searchValue.lasj[1]).format("YYYY-MM-DD HH:mm:ss");
       delete searchValue.lasj;
     }
+    // 办案情况
     if (searchValue && searchValue.baqk !== undefined) {
-      let caseSponsor = searchValue.baqk.join();
-      if (caseSponsor === '1,2') {
-        searchValue.caseSponsor = "";
-      } else {
-        searchValue.caseSponsor = caseSponsor
+      if (searchValue.baqk.length) {
+        searchValue.ajzbry = userInfor.account;
       }
+      // 
+      delete searchValue.baqk;
     }
-    //delete searchValue.baqk;
+  
     if (searchValue != this.state.searchValue) {
       this.setState({ searchValue: searchValue }, () => {
         _this.getDataSource({
@@ -187,7 +189,7 @@ class CaseList extends React.Component {
       dataIndex: 'abCn',
     }, {
       title: '立案时间',
-      dataIndex: 'sljjsj',
+      dataIndex: 'lasj',
     },
     // {
     //   title: '来源',

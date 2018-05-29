@@ -6,6 +6,7 @@ import moment from 'moment';
 
 //引入自定义组件
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
+
 class ExtractList extends React.Component {
     constructor(props) {
         super(props);
@@ -19,7 +20,11 @@ class ExtractList extends React.Component {
                 showSizeChanger: true,
             },
             dataSource: [],
-            searchValue: { timeSection: 1 },
+            searchValue: {
+                // 默认需要7天之内的立案时间
+                beginLasj: moment(new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000)).format('YYYY-MM-DD'),
+                endLasj: moment(new Date()).format('YYYY-MM-DD')
+            },
             selectedRowKeys: [],
             submitDisabled: false
         }
@@ -36,27 +41,33 @@ class ExtractList extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        let userInfor = JSON.parse(sessionStorage.getItem("user"));
         let searchValue = nextProps.searchValue;
         let { pageSize, pageNum } = this.state.pagination;
         let _this = this;
-        //console.log("componentWillReceiveProps", searchValue)
+        // 立案时间
         if (searchValue && searchValue.lasj !== undefined) {
             searchValue.beginCreateTime = moment(searchValue.lasj[0]).format("YYYY-MM-DD");
             searchValue.endCreateTime = moment(searchValue.lasj[1]).format("YYYY-MM-DD");
             delete searchValue.lasj;
         }
-        if (searchValue && searchValue.baqk !== undefined) {
-            let caseSponsor = searchValue.baqk.join();
-            if (caseSponsor === '1,2') {
-                searchValue.caseSponsor = "";
-            } else {
-                searchValue.caseSponsor = caseSponsor
-            }
+
+        // 案发时间
+        if (searchValue && searchValue.sljjsj !== undefined) {
+            searchValue.fasjcz = moment(searchValue.sljjsj[0]).format("YYYY-MM-DD HH:mm:ss");
+            searchValue.fasjzz = moment(searchValue.sljjsj[1]).format("YYYY-MM-DD HH:mm:ss");
+            delete searchValue.sljjsj;
         }
-        //delete searchValue.baqk;
-        // if (this.props.searchValue == null) {
-        //     return;
-        // } else {
+
+        // 办案情况
+        if (searchValue && searchValue.baqk !== undefined) {
+            if (searchValue.baqk.length) {
+                searchValue.ajzbry = userInfor.account;
+            }
+            // 
+            delete searchValue.baqk;
+        }
+
         this.setState({ searchValue: searchValue }, () => {
             _this.getDataSource({
                 pageSize: pageSize,
@@ -64,12 +75,13 @@ class ExtractList extends React.Component {
                 ...searchValue
             });
         })
-        // }
+
         if (this.props.searchLoading) {
             this.setState({ loading: true })
         }
     }
     getDataSource = (page) => {
+        debugger;
         const pager = {
             ...this.state.pagination
         };

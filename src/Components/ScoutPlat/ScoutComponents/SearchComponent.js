@@ -77,6 +77,7 @@ class Search extends React.Component {
 				value: item.code,
 				key: item.code,
 			}))
+
 			treeNode.props.dataRef.children = treeDataSource;
 			this.setState({ treeData: [...this.state.treeData] });
 		})
@@ -150,7 +151,46 @@ class Search extends React.Component {
 						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
 							<FormItem {...thirdLayout} label="案发时间" >
 								{getFieldDecorator('sljjsj', )(
-									<RangePicker />
+									<RangePicker allowClear={false} />
+								)}
+							</FormItem>
+						</Col>
+					</Row>
+					<Row style={{ display: expand ? 'none' : 'block' }}>
+
+						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
+							<FormItem {...thirdLayout} label="主办单位">
+								{getFieldDecorator('zbdw', {
+									/* initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code, */
+									//rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+								})(
+									<TreeSelect
+										loadData={this.loadTreeData}
+										dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+										onSelect={this.treeSelectKeys}
+										searchPlaceholder='主办单位'
+										treeDefaultExpandAll
+									>
+										{this.renderTreeNodes(treeData)}
+									</TreeSelect>
+								)}
+							</FormItem>
+						</Col>
+						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
+							<FormItem {...thirdLayout} label="主要案情">
+								{getFieldDecorator('zyaq', {
+									// initialValue: ['Orange']
+								})(
+									<Input />
+								)}
+							</FormItem>
+						</Col>
+						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
+							<FormItem {...thirdLayout} label="立案时间">
+								{getFieldDecorator('lasj', {
+									// initialValue: ['Orange']
+								})(
+									<RangePicker allowClear={false} />
 								)}
 							</FormItem>
 						</Col>
@@ -173,50 +213,11 @@ class Search extends React.Component {
 								})(
 									<Checkbox.Group >
 										<Checkbox value="1">我主办</Checkbox>
-										<Checkbox value="2">其他</Checkbox>
 									</Checkbox.Group>,
 								)}
 							</FormItem>
 						</Col>
-						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
-							<FormItem {...thirdLayout} label="主要案情">
-								{getFieldDecorator('zyaq', {
-									// initialValue: ['Orange']
-								})(
-									<Input />
-								)}
-							</FormItem>
-						</Col>
-					{/* 	<Col xl={8} lg={8} md={8} sm={24} xs={24}>
-							<FormItem {...thirdLayout} label="立案时间">
-								{getFieldDecorator('lasj', {
-									// initialValue: ['Orange']
-								})(
-									<RangePicker />
-								)}
-							</FormItem>
-						</Col> */}
 					</Row>
-				{/* 	<Row style={{ display: expand ? 'none' : 'block' }}>
-						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
-							<FormItem {...thirdLayout} label="主办单位">
-								{getFieldDecorator('zbdw', {
-									initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code,
-									//rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-								})(
-									<TreeSelect
-										loadData={this.loadTreeData}
-										dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
-										onSelect={this.treeSelectKeys}
-										searchPlaceholder='主办单位'
-										treeDefaultExpandAll
-									>
-										{this.renderTreeNodes(treeData)}
-									</TreeSelect>
-								)}
-							</FormItem>
-						</Col>
-					</Row> */}
 					<Row>
 						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
 						</Col>
