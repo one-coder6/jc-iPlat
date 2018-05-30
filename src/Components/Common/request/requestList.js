@@ -33,39 +33,60 @@ export default class RequestList extends React.Component {
 	componentWillMount() {
 		this.getRequestSource();
 		//console.log("this.record", this.props.showType)
+		// 首次通过案件进度点击跳转
+		let caseanchor = this.props.caseProgressKey
+		if (caseanchor) {
+			 alert(caseanchor)
+			// this.fromNotieOrCaseProgress(caseanchor)
+		}
 	}
+
 	// dom完成
 	componentDidMount() {
 		// 延迟一秒的原因是，dom并未完全加载出来。
 		setTimeout(() => {
 			let sessionanchor = sessionStorage.getItem("notic-anchor");
 			if (sessionanchor) {
-				this.fromNotie(sessionanchor);
+				this.fromNotieOrCaseProgress(sessionanchor);
 			}
 		}, 1000);
 	}
+
 	componentWillUnmount() {
 		WS && WS.onclose();
 		// 离开了 需要clear
 		sessionStorage.removeItem("notic-anchor")
 	}
-	// 来自全局notice进入
-	fromNotie = (sessionanchor) => {
+
+	componentWillReceiveProps(nextProps) {
+		// 父组件的数据发生改变，从案件进度的时间点击进来那么需要跳转到指定那条信息，效果类似右上角消息跳转
+		let pp = nextProps;
+		alert(123)
+		alert(nextProps.caseProgressKey);
+		debugger;
+		//	caseProgressKey
+		// this.fromNotieOrCaseProgress(nextProps.caseProgressKey)
+	}
+
+	// 来自全局notice进入或者案件进度点击
+	fromNotieOrCaseProgress = (sessionanchor) => {
 		// 如果是消息点击进来
 		/* 
 		1、通过案件编号找到一级的 索引 展开，然后跳转到新消息的位置
 		*/
 		let arr = sessionanchor.split('_');
-		let index = 0;
-		this.state.requestSource.map((item, i) => {
-			if (item.id == arr[1]) {
-				index = i;
-			}
-		});
+		if (arr.length >= 2) {
+			let index = 0;
+			this.state.requestSource.map((item, i) => {
+				if (item.id == arr[1]) {
+					index = i;
+				}
+			});
 
-		this.setState({ showCollapseIndex: index.toString() }, () => {
-			this.toscrollView(sessionanchor)
-		})
+			this.setState({ showCollapseIndex: index.toString() }, () => {
+				this.toscrollView(sessionanchor)
+			})
+		}
 	}
 
 	// 连接回话
@@ -180,7 +201,7 @@ export default class RequestList extends React.Component {
 		this.showAnimateShow(id)
 	}
 
-	//提交评价
+	// 提交评价
 	submitAppraise = () => {
 		this.setState({ showAppraise: false })
 	}
@@ -260,7 +281,7 @@ export default class RequestList extends React.Component {
 						{
 							requestSource && requestSource.map((item, index) => {
 								return <Panel header={
-									<div >
+									<div>
 										<div>
 											<Tag color="#87d068">{item.contentType == 'DEMAND' ? '需求 ' : '信息 '}{index + 1}</Tag>
 											<span style={{ color: 'red' }}>主题：{item.xqmc}；</span>

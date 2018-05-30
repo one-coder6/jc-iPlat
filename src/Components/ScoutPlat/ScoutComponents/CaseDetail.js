@@ -24,7 +24,8 @@ class CaseDetail extends React.Component {
         this.state = {
             createDemand: false,
             publishInfor: false,
-            showTabsIndex: "1" //显示tab的索引
+            showTabsIndex: "1", //显示tab的索引
+            caseProgressKey: "" // 跳转到需求和回复列表的key
         }
     }
 
@@ -42,22 +43,33 @@ class CaseDetail extends React.Component {
         sessionStorage.removeItem("notic-anchor")
     }
 
+    // 进度图点击跳转到需求
+    fromProgress = (id) => {
+        debugger;
+        /*  传递一个id跳转到需求和反馈的列表  */
+        this.setState({ caseProgressKey: id })
+        this.setState({ showTabsIndex: "2", caseProgressKey: id })
+    }
+
     createDemand = () => {
         this.setState({ createDemand: true })
     }
+
     publishInfor = () => {
         this.setState({ publishInfor: true })
     }
+
     handleCancel = () => {
         this.setState({ createDemand: false, publishInfor: false })
     }
+
     render() {
         const { createDemand, publishInfor } = this.state;
         return (
             <ContentComponent>
                 <div className='detailContent'>
                     <Card title="案件进度" style={{ width: '100%' }}>
-                        <CaseProgress />
+                        <CaseProgress fromProgress={this.fromProgress} />
                     </Card>
                     <Tabs defaultActiveKey="1" activeKey={this.state.showTabsIndex} onChange={(e) => { this.setState({ showTabsIndex: e.toString() }); }} style={{ padding: '0 20px ' }}>
                         <TabPane tab="案件基本信息" key="1">
@@ -68,18 +80,18 @@ class CaseDetail extends React.Component {
                                 <Button size='small' style={{ marginRight: '10px' }} onClick={this.createDemand}>创建需求</Button>
                                 <Button size='small' style={{ marginRight: '10px' }} onClick={this.publishInfor}>发布信息</Button>
                             </div>
-                            <RequestList showType='scoutPlat' />
+                            <RequestList showType='scoutPlat' caseProgressKey={this.state.caseProgressKey} />
                         </TabPane>
                         <TabPane tab="合成作战小组" key="3" style={{ paddingBottom: 20 }}>
                             <CaseMember />
                         </TabPane>
-                        <TabPane tab="侦查日志" key="4"  style={{ paddingBottom: 20 }}>
+                        <TabPane tab="侦查日志" key="4" style={{ paddingBottom: 20 }}>
                             <ScoutLog />
                         </TabPane>
-                        <TabPane tab="思维导图" key="5"  style={{ paddingBottom: 20 }}>
+                        <TabPane tab="思维导图" key="5" style={{ paddingBottom: 20 }}>
                             <MindMap />
                         </TabPane>
-                        <TabPane tab="进度列表" key="6"  style={{ paddingBottom: 20 }}>
+                        <TabPane tab="进度列表" key="6" style={{ paddingBottom: 20 }}>
                             <Dprogress />
                         </TabPane>
                     </Tabs>

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Table, Icon, Button, Modal, Tooltip, Card } from 'antd';
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
 /* 对比信息 */
-class RecordInfor extends React.Component {
+class ContrastInfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,7 +21,7 @@ class RecordInfor extends React.Component {
 
     componentWillMount() {
         this.ajaxLoadData();
-        //this.machiningData();
+        // this.machiningData();
     }
     // 请求
     ajaxLoadData = () => {
@@ -135,9 +135,7 @@ class RecordInfor extends React.Component {
             targetSource.push(tempObj);
         })
 
-        this.setState({
-            dataSource: targetSource
-        })
+        this.setState({ dataSource: targetSource })
     }
 
     render() {
@@ -192,7 +190,7 @@ class RecordInfor extends React.Component {
             render: (text, record, index) => {
                 let temp = JSON.parse(text);
                 return <div className="cont-header-div">
-                    <span>案情：{temp.createDate}</span>
+                    <span>案情：{temp.jyaq}</span>
                 </div>
             }
         }, {
@@ -235,4 +233,4 @@ class RecordInfor extends React.Component {
     }
 }
 
-export default RecordInfor;
+export default ContrastInfo;

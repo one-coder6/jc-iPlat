@@ -29,6 +29,7 @@ class CaseProgress extends React.Component {
 			}
 		})
 	}
+
 	mapTitleType = (type) => {
 		switch (type) {
 			case "CREATE_INFO":
@@ -54,9 +55,9 @@ class CaseProgress extends React.Component {
 				break;
 		}
 	}
+
 	//  设置时间轴颜色
 	mapTimeColor = (time, org) => {
-		debugger;
 		let resultColor = "";
 		if (time == "CASE_CREATE" || time == "CASE_PICK" || time == "CASE_MERGE") {
 			// 红色
@@ -73,6 +74,12 @@ class CaseProgress extends React.Component {
 		}
 		return resultColor;
 	}
+	// 点击跳转到需求和回复列表
+	fromProgress = (id) => {
+		const { fromProgress } = this.props;
+		fromProgress(id)
+	}
+
 	render() {
 		const { stepsSource } = this.state;
 		return (
@@ -86,7 +93,8 @@ class CaseProgress extends React.Component {
 										status="finish"
 										title={
 											<div className='stepTitle stepTitles'>
-												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{this.mapTitleType(item.referenceType)}</span></div>
+												{/* <div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{this.mapTitleType(item.referenceType)}</span></div> */}
+												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceTypeCn || '-'}</span></div>
 												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''}>发送单位：{item.sendOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.content ? item.content : ''}>说明：{item.content ? item.content : '-'}</div>
@@ -100,8 +108,9 @@ class CaseProgress extends React.Component {
 										status="finish"
 										title={
 											<div className='stepTitle stepTitles'>
-												<Tag color={this.mapTimeColor(item.referenceType, item.sendOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
-												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceType ? this.mapTitleType(item.referenceType) : '-'}</span></div>
+												<Tag onClick={() => { this.fromProgress(item.sendOrgName) }} color={this.mapTimeColor(item.referenceType, item.sendOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
+												{/* <div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceType ? this.mapTitleType(item.referenceType) : '-'}</span></div> */}
+												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceTypeCn || '-'}</span></div>
 												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''} >发送单位：{item.sendOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.content ? item.content : ''}>说明：{item.content ? item.content : '-'}</div>

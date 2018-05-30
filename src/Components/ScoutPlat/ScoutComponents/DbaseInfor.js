@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import { Row, Col, Card, List, Button, Modal,Table } from 'antd';
+import {Spin, Row, Col, Card, List, Button, Modal,Table } from 'antd';
+import moment from 'moment';
 
 //引入自定义组件
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
@@ -9,13 +10,16 @@ import AddCBA from '../AddCBA/index';
 import RecordInfor from './RecordInfor'; // 笔录信息
 import ContrastInfo from './ContrastInfo'; // 对比信息
 import '../../../styles/scoutPlat.less';
+
 export default class DbaseInfor extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			detailSource: '',
 			visible: false,
-			noTitleKey: 'bary' // 默认显示第一个“办案人员”
+			loading:true,
+			noTitleKey: 'bary', // 默认显示第一个“办案人员”
+			contrastInfoCount:null
 		}
 	}
 
@@ -24,13 +28,81 @@ export default class DbaseInfor extends React.Component {
 		const reqUrl = addressUrl + `/cases/detail?ajbh=${ajbh}`;
 		httpAjax("get", reqUrl).then(res => {
 			if (res.code === '200') {
-				this.setState({ detailSource: res.data && res.data })
+				this.setState({	detailSource: res.data && res.data,	loading:false});
 			}
 		})
 	}
+
+	// dom加载完成
+    componentDidMount(){
+		let list = [
+			{
+				bzly: "比中来源(数据来源) 0-DNA比中，1-指纹比中1",
+				birthday: "生日1",
+				createDate: "比中时间1",
+				xchjbh: "现场痕迹编号1",
+				tqbw: "提取部位1",
+				jqbh: "警情编号1",
+				ajbh: "案件编号1",
+				xkbh: "现勘编号1",
+				zwbh: "指纹编号1",
+				dna: "DNA1",
+				ajlb: "案件类别1",
+				afsj: "发案时间1",
+				afdd: "案发地点1",
+				jyaq: "简要案情1",
+				rybh: "人员编号1",
+				rywzbh: "人员采样作业编号1",
+				xm: "姓名1",
+				birthday: "生日1",
+				sfzh: "身份证号1",
+				hjd: "户籍地1"
+			},
+			{
+				bzly: "比中来源(数据来源) 0-DNA比中，1-指纹比中2",
+				birthday: "生日",
+				createDate: "比中时间2",
+				xchjbh: "现场痕迹编号2",
+				tqbw: "提取部位2",
+				jqbh: "警情编号2",
+				ajbh: "案件编号2",
+				xkbh: "现勘编号2",
+				zwbh: "指纹编号2",
+				dna: "DNA2",
+				ajlb: "案件类别2",
+				afsj: "发案时间2",
+				afdd: "案发地点2",
+				jyaq: "简要案情2",
+				rybh: "人员编号2",
+				rywzbh: "人员采样作业编号2",
+				xm: "姓名2",
+				birthday: "生日2",
+				sfzh: "身份证号2",
+				hjd: "户籍地2"
+			}
+		]
+	 ajaxLoadData();
+
+     // 加载比中信息
+		function ajaxLoadData() {
+				const reqUrl = addressUrl + '/cases/caseCompareInfo';
+				let ajbh = sessionStorage.getItem("ajbh");
+				if (ajbh) {
+					httpAjax("get", reqUrl, { params: { ajbh: ajbh, pageNum: 1, pageSize: 10 } }).then(res => {
+						if (res.code == 200) {
+						this.setState({contrastInfoCount:res.data.list.length||0})
+						}
+					})
+				} else {
+					console.log("案件编号为空。");
+				}
+		}
+    }
+   
 	addCBA = () => {
 		this.setState({ visible: true })
 	}
+
 	handleCancel = () => {
 		this.setState({ visible: false })
 	}
@@ -39,46 +111,76 @@ export default class DbaseInfor extends React.Component {
 		console.log(key, type);
 		this.setState({ [type]: key });
 	}
-	render() {
-		const { visible } = this.state;
-		const casesVO = this.state.detailSource && this.state.detailSource.casesVO;
-		const lsCasesSuspectVO = this.state.detailSource && this.state.detailSource.lsCasesSuspectVO;
-		const lsCasesInformantVO = this.state.detailSource && this.state.detailSource.lsCasesInformantVO;
-		const lsCasesGoodsVO = this.state.detailSource && this.state.detailSource.lsCasesGoodsVO;
-		const lsSceneVO = this.state.detailSource && this.state.detailSource.lsSceneVO;
-		const lsCasesRecordVO = this.state.detailSource && this.state.detailSource.lsCasesRecordVO;
-		const lsSceneFingerPrintVO = this.state.detailSource && this.state.detailSource.lsSceneFingerPrintVO;
-		const lsSceneFootPrintVO = this.state.detailSource && this.state.detailSource.lsSceneFootPrintVO;
+	// 涉案人员
+	saryCount = (lsCasesInformantVO,lsCasesSuspectVO) => {
+		let count = 0;
+		if(lsCasesInformantVO && lsCasesInformantVO.length){
+			count = lsCasesInformantVO.length ;
+			if(lsCasesSuspectVO&&lsCasesSuspectVO.length){
+				count += lsCasesSuspectVO.length;
+			}
+			count = "（" + count + "）";
+		}
+		return count ? count : '';
+	}
 
-		// 改显示模式
+    // 统计现场勘查的图片数量
+    mapCounts = (lsSceneVO) =>{
+		let count=0;
+		if(lsSceneVO && lsSceneVO.length){
+			lsSceneVO.forEach(element => {
+				let _temp=element.lsSceneImageCidVO||[];
+				count+=_temp.length;
+			});
+			count="（"+count+"）";
+		}
+		return count?count:'';
+	}
+
+	render() {
+		const { visible ,detailSource } = this.state;
+		const casesVO = detailSource && detailSource.casesVO;
+		const lsCasesSuspectVO = detailSource && detailSource.lsCasesSuspectVO;
+		const lsCasesInformantVO = detailSource && detailSource.lsCasesInformantVO;
+		const lsCasesGoodsVO = detailSource && detailSource.lsCasesGoodsVO;
+		const lsSceneVO = detailSource && detailSource.lsSceneVO;
+		const lsCasesRecordVO = detailSource && detailSource.lsCasesRecordVO;
+		const lsSceneFingerPrintVO = detailSource && detailSource.lsSceneFingerPrintVO;
+		const lsSceneFootPrintVO = detailSource && detailSource.lsSceneFootPrintVO;
+	    // 生物痕迹（DNA）
+		const lsSceneBiologyPrintVO = detailSource && detailSource.lsSceneBiologyPrintVO;
+     
+		// 第一版为竖排显示，现在改为tab横排切换方式
 		const tabListNoTitle = [{
 			key: 'bary',
-			tab: '办案人员',
+			tab: '办案人员'+ (casesVO.ajzbryCn ? '（1）' : '') 
 		}, {
 			key: 'sary',
-			tab: '涉案人员',
-		}
-		, {
+			tab: '涉案人员'+ this.saryCount(lsCasesInformantVO,lsCasesSuspectVO)
+		}, {
 			key: 'sawp',
-			tab: '涉案物品',
+			tab: '涉案物品'+ (lsCasesGoodsVO && lsCasesGoodsVO.length?'（'+lsCasesGoodsVO.length+'）':'') 
 		}, {
 			key: 'xckc',
-			tab: '现场勘查',
+			tab: '现场勘查' + (lsSceneVO && lsSceneVO.length?'（'+lsSceneVO.length+'）':'') 
 		}, {
 			key: 'xckctp',
-			tab: '现场勘查图片',
+			tab: '现场勘查图片'+ this.mapCounts(lsSceneVO)
 		}, {
 			key: 'sy',
-			tab: '手印',
+			tab: '手印'+ (lsSceneFingerPrintVO && lsSceneFingerPrintVO.length?'（'+lsSceneFingerPrintVO.length+'）':'') 
 		}, {
 			key: 'zj',
-			tab: '足迹',
+			tab: '足迹'+ (lsSceneFootPrintVO && lsSceneFootPrintVO.length?'（'+lsSceneFootPrintVO.length+'）':'') 
+		},{
+			key: 'dna',
+			tab: 'DNA'+ (lsSceneBiologyPrintVO && lsSceneBiologyPrintVO.length?'（'+lsSceneBiologyPrintVO.length+'）':'') 
 		}, {
 			key: 'blxx',
-			tab: '笔录信息',
+			tab: '笔录信息'+ (lsCasesRecordVO && lsCasesRecordVO.length?'（'+lsCasesRecordVO.length+'）':'') 
 		}, {
 			key: 'dbxx',
-			tab: '比中信息',
+			tab: '比中信息'+(this.state.contrastInfoCount && this.state.contrastInfoCount?'（'+this.state.contrastInfoCount+'）':'')
 		}];
 
 	    // 模拟数据
@@ -121,17 +223,14 @@ export default class DbaseInfor extends React.Component {
 			render: (text, record, index) =>{ 
 				return <a href="javascript:;">{index+1}</a>
 			} 
-		  }, {
-			title: '失主',
-			align:"center",
-			className: 'column-money',
-			dataIndex: 'wpsz',
-		  }, {
+		  } , {
 			title: '物品名称',
+			align:"center",
 			className: 'column-money',
 			dataIndex: 'wpmcCn',
 		  }, {
 			title: '物品类别',
+			align:"center",
 			dataIndex: 'wplbCn',
 		  }];
 
@@ -152,7 +251,7 @@ export default class DbaseInfor extends React.Component {
 			title: '提取日期',
 			align:"center",
 			className: 'column-money',
-			dataIndex: 'tqrq',
+			dataIndex: 'tqrq' 
 		  }];
 
 		// 足迹
@@ -172,37 +271,61 @@ export default class DbaseInfor extends React.Component {
 			title: '提取日期',
 			align:"center",
 			className: 'column-money',
-			dataIndex: 'tqrq',
+			dataIndex: 'tqrq' 
 		  }];
+		// 生物痕迹（DNA）
+		const dna_columns= [{
+			title: '序号',
+			align:"center",
+			dataIndex: 'name',
+			render: (text, record, index) =>{ 
+				return <a href="javascript:;">{index+1}</a>
+			} 
+		}/* , {
+			title: '痕迹名称',
+			align:"center",
+			className: 'column-money',
+			dataIndex: 'jcms',
+		} */, {
+			title: '提取部位',
+			align:"center",
+			className: 'column-money',
+			dataIndex: 'ylbw',
+		}, {
+			title: '提取日期',
+			align:"center",
+			className: 'column-money',
+			dataIndex: 'tqrq' 
+		}];
 
 		 // 切换的tabs
 		  const contentListNoTitle = {
 			// 办案人员
 			bary: <Card style={{ marginBottom: '10px' }} bordered={false} >
 				<Card.Grid style={{ width: '20%' }}>主办人员</Card.Grid>
-				<Card.Grid style={{ width: '20%' }}>{casesVO.ajzbryCn || ''}</Card.Grid>
+				<Card.Grid style={{ width: '20%' }}>{casesVO.ajzbryCn || '-'}</Card.Grid>
 				<Card.Grid style={{ width: '20%' }}>协办人员</Card.Grid>
 				<Card.Grid style={{ width: '40%' }}>
-					{casesVO.ajxbryCn && typeof (casesVO.ajxbryCn) == 'object' ? casesVO.ajxbryCn.join(",") : casesVO.ajxbryCn}
+					{casesVO.ajxbryCn && typeof (casesVO.ajxbryCn) == 'object' ? casesVO.ajxbryCn.join(",") : (casesVO.ajxbryCn||'-')}
 				</Card.Grid>
 			</Card>,
 			// 涉案人员
 			sary: <Card style={{ marginBottom: '10px' }} bordered={false} >
 				{
-				  lsCasesInformantVO && lsCasesInformantVO.length >= 1||1  ?
+				  lsCasesInformantVO && lsCasesInformantVO.length >= 1  ?
 					<List size="small"
 					style={{borderBottom:"1px solid #e8e8e8"}}
-					dataSource={temp.d_shr}
+					dataSource={lsCasesInformantVO}
 						renderItem={item => (
 							<List.Item>{item.rylxCn}：{item.xm}　{item.xbCn}　{item.csrq}　户籍：{item.hjdz}　手机：{item.lxdh ? item.lxdh : '无'}</List.Item>
 						)}
-					/> : "无"
+					/> : "暂无记录"
 				}
 				{
-					lsCasesSuspectVO && lsCasesSuspectVO.length >= 1 ||1 ?
+					lsCasesSuspectVO && lsCasesSuspectVO.length >= 1  ?
 					<List size="small"
 				    	style={{borderBottom:"1px solid #e8e8e8"}}
-						dataSource={temp.d_xyr}
+						dataSource={lsCasesSuspectVO}
 						renderItem={item => (
 							<List.Item>	嫌疑人：{item.xm}　{item.xbCn}　{item.csrq}　户籍：{item.hjdz}　手机：{item.lxdh ? item.lxdh : '无'}</List.Item>
 						)} />
@@ -213,7 +336,7 @@ export default class DbaseInfor extends React.Component {
 			sawp: <Card style={{ marginBottom: '10px' }} bordered={false} >
 			{/* lsCasesGoodsVO */}
 			<Table	columns={sawp_columns}
-				dataSource={lsCasesGoodsVO}
+				dataSource={lsCasesGoodsVO||[]}
 				bordered
 				pagination={{pageSize:40}}
 				title={null}
@@ -258,7 +381,7 @@ export default class DbaseInfor extends React.Component {
 			sy: <Card style={{ marginBottom: '10px' }} bordered={false} >
 			{/* lsSceneFingerPrintVO */}
 		    <Table	columns={sy_columns}
-				dataSource={lsSceneFingerPrintVO}
+				dataSource={lsSceneFingerPrintVO||[]}
 				bordered
 				pagination={false}
 				title={null}
@@ -268,24 +391,36 @@ export default class DbaseInfor extends React.Component {
 			zj: <Card style={{ marginBottom: '10px' }} bordered={false} >
 			 {/* lsSceneFootPrintVO */}
 			 <Table	columns={zj_columns}
-				dataSource={lsSceneFootPrintVO}
+				dataSource={lsSceneFootPrintVO||[]}
 				bordered
 				pagination={false}
 				title={null}
 				footer={null}
 			/>
 			</Card>,
+			// 生物痕迹（dna）
+				dna: <Card style={{ marginBottom: '10px' }} bordered={false} >
+				{/* lsSceneBiologyPrintVO */}
+				<Table	columns={dna_columns}
+				   dataSource={lsSceneBiologyPrintVO||[]}
+				   bordered
+				   pagination={false}
+				   title={null}
+				   footer={null}
+			   />
+			   </Card>,
 			// 笔录信息
 			blxx: <Card style={{ marginBottom: '10px' }} bordered={false} >
-				{lsCasesRecordVO && lsCasesRecordVO.length > 0||1? <RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无记录'}
+				{lsCasesRecordVO && lsCasesRecordVO.length > 0? <RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无记录'}
 			</Card>,
 			// 比中信息
 			dbxx: <Card style={{ marginBottom: '10px' }} bordered={false} >
-				{<ContrastInfo />}
+				{<ContrastInfo contrastInfoData={this.state.contrastInfoData}  />}
 			</Card>
 		};
 
-		return (
+		return (<Spin spinning={this.state.loading}>
+		<RecordInfor lsCasesRecordVO={[]} />
 			<div className='detailBaseInfo'>
 				<div style={{ marginBottom: 10 }}>
 					{casesVO.lasj}{casesVO.ajmc}
@@ -307,7 +442,7 @@ export default class DbaseInfor extends React.Component {
 					<Card.Grid >发案结束时间</Card.Grid>
 					<Card.Grid >{casesVO.fasjzz ? casesVO.fasjzz : '无'}</Card.Grid>
 					<Card.Grid >发案地点</Card.Grid>
-					<Card.Grid >{casesVO.fadd ? casesVO.fadd : '无'}</Card.Grid>
+					<Card.Grid title={casesVO.fadd ? casesVO.fadd : ''} >{casesVO.fadd ? casesVO.fadd : '无'}</Card.Grid>
 					<Card.Grid >发案地域</Card.Grid>
 					<Card.Grid >{casesVO.fadyCn ? casesVO.fadyCn : '无'}</Card.Grid>
 					<Card.Grid >案件状态</Card.Grid>
@@ -380,7 +515,8 @@ export default class DbaseInfor extends React.Component {
 				<Modal visible={visible} title='添加串并案' onCancel={this.handleCancel} className='extractCaseM' footer={false}>
 					{/* <AddCBA handleCancel={this.handleCancel} showType='addCBA' /> */}
 				</Modal>
-			</div>
+			 </div>
+			</Spin>
 		)
 	}
 }

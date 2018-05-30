@@ -8,24 +8,24 @@ class RecordInfor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataSource: []
+            dataSource: [],
+            testTxt: ""
         }
     }
 
     componentWillMount() {
+        /*   debugger;
+          httpAjax("get", addressUrl + '/cases/getBL', {}).then(res => {
+              debugger;
+              let aaa = this.convertText(res.data[0].body)
+              this.setState({ testTxt: aaa })
+          }); */
     }
+
     convertText = (txt) => {
-        debugger;
         let resultHtml = "暂无记录"
         if (txt) {
-            resultHtml = txt.split('').map(item => {
-                if (item == "↲") {
-                    return "<br />"
-                } else {
-                    return item;
-                }
-            })
-            resultHtml = resultHtml.join('')
+            resultHtml = "<pre>" + txt + "</pre>"
         }
         return resultHtml;
     }
@@ -68,15 +68,16 @@ class RecordInfor extends React.Component {
                 return <Tooltip placement="bottom" title={text}><span>{text.toString().length > 6 ? text.toString().substring(0, 26) + '...' : text}</span></Tooltip>
             }
         }];
-
         const { lsCasesRecordVO } = this.props;
-        //    const lsCasesRecordVO = [
-        // { recorder: "张三", jldd: "宝钢派出所1", starttime: "2018-12-11", body: "宝钢派出所记录很多内容" },
-        // { recorder: "李四", jldd: "宝钢派出所2", starttime: "2018-10-11", body: "宝钢派出所记录很多内容2" },
-        // { recorder: "王五", jldd: "宝钢派出所3", starttime: "2018-09-11", body: "宝钢派出所记录很多内容3" },
-        // { recorder: "张柳", jldd: "宝钢派出所4", starttime: "2018-04-11", body: "问：宝钢派出所记录很多内容4↲答：是的↲问：多大了4↲答：18岁" }
-        //        ]
+        /*   const lsCasesRecordVO = [
+              { recorder: "张三", jldd: "宝钢派出所1", starttime: "2018-12-11", body: "宝钢派出所记录很多内容" },
+              { recorder: "李四", jldd: "宝钢派出所2", starttime: "2018-10-11", body: "问：宝钢派出所记录很多内容4↲答：是的↲问：多大了4↵答：18岁" },
+              { recorder: "王五", jldd: "宝钢派出所3", starttime: "2018-09-11", body: "宝钢派出所记录很多内容3" },
+              { recorder: "张柳", jldd: "宝钢派出所4", starttime: "2018-04-11", body: "asdas" }
+          ] 
+          */
         return (<div>
+            {/* <div dangerouslySetInnerHTML={{ __html: this.state.testTxt }}  ></div> */}
             {
                 lsCasesRecordVO && lsCasesRecordVO.map((item, index) => {
                     return <Card style={{ marginBottom: 10 }}
@@ -87,7 +88,7 @@ class RecordInfor extends React.Component {
                         </p>}
                     /*  extra={<a href="#">记录时间：{item.starttime || '-'}</a>} */
                     >
-                        <div style={{ padding: "1px 28px" }} dangerouslySetInnerHTML={{ __html: this.convertText(item.body) }} ></div>
+                        <div style={{ padding: "1px 28px" }} dangerouslySetInnerHTML={{ __html: "<pre>" + (item.body || '无') + "</pre>" }} ></div>
                     </Card>
                 })
             }

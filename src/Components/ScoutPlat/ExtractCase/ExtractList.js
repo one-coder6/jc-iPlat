@@ -47,8 +47,8 @@ class ExtractList extends React.Component {
         let _this = this;
         // 立案时间
         if (searchValue && searchValue.lasj !== undefined) {
-            searchValue.beginCreateTime = moment(searchValue.lasj[0]).format("YYYY-MM-DD");
-            searchValue.endCreateTime = moment(searchValue.lasj[1]).format("YYYY-MM-DD");
+            searchValue.beginLasj = moment(searchValue.lasj[0]).format("YYYY-MM-DD");
+            searchValue.endLasj = moment(searchValue.lasj[1]).format("YYYY-MM-DD");
             delete searchValue.lasj;
         }
 
@@ -81,7 +81,6 @@ class ExtractList extends React.Component {
         }
     }
     getDataSource = (page) => {
-        debugger;
         const pager = {
             ...this.state.pagination
         };
