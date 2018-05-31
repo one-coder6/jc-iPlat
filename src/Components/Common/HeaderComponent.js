@@ -18,6 +18,18 @@ class Header extends React.Component {
         }
     }
     componentWillMount() {
+        this.reloadNotice();
+    }
+    // 更新了值
+    componentWillReceiveProps(nextprops) {
+        this.reloadNotice();
+    }
+
+    componentWillUnmount() {
+        Goloal_WS && Goloal_WS.onclose();
+    }
+    // 请求未读消息
+    reloadNotice = () => {
         const user = JSON.parse(sessionStorage.getItem("user"));
         this.setState({ user: user })
         //console.log("user",this.props.user)
@@ -28,14 +40,12 @@ class Header extends React.Component {
                 this.setState({ newNoticeList: data })
                 // 保存起来 noticelist
                 sessionStorage.setItem("noticelistobj", JSON.stringify(data));
-                this.connSocket();
+                if (!Goloal_WS) { this.connSocket(); }
             }
         })
     }
-    componentWillUnmount() {
-        Goloal_WS && Goloal_WS.onclose();
-    }
-    //退出
+
+    // 退出
     logout = () => {
         console.log("props", this.props)
         const reqUrl = addressUrl + '/user/logout';
@@ -50,27 +60,27 @@ class Header extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 if (values.newPwd != values.newPwd2) {
-                    message.warning('2次输入的新密码不一致，请重试。', 10);
+                    message.warning('2次输入的新密码不一致，请重试。', 8);
                     return false;
                 } else if (values.oldPwd == values.newPwd) {
-                    message.warning('新密码和旧密码不能一样，请重试。', 10);
+                    message.warning('新密码和旧密码不能一样，请重试。', 8);
                     return false;
                 }
                 else {
-                    const reqUrl = UC_URL + '/uc/changePassword';
+                    const reqUrl = UC_URL + '/changePassword';
                     var user = JSON.parse(sessionStorage.getItem("user"));
                     let params = {
                         account: user.account,
                         oldPassword: values.oldPwd,
                         newPassword: values.newPwd
                     };
-                    /*    httpAjax("post", reqUrl, params).then(res => {
-                           if (res.code == 200) {
-                               message.success('密码修改成功', 10);
-                           } else {
-                               message.error('密码修改失败【' + res.message + '】', 10);
-                           }
-                       }) */
+                    httpAjax("post", reqUrl, params).then(res => {
+                        if (res.code == 200) {
+                            message.success('密码修改成功', 8);
+                        } else {
+                            message.error('密码修改失败【' + res.message + '】', 10);
+                        }
+                    })
                 }
             }
         });
@@ -129,7 +139,7 @@ class Header extends React.Component {
         );
 
         const logoutMenu = (<Menu>
-            <Menu.Item key="0" style={{ display: 'none' }}>
+            <Menu.Item key="0" >
                 <a href="javaScript:void(0)" onClick={() => { this.setState({ viewModifePwd: true }) }} style={{ cursor: 'pointer' }} >修改密码</a>
             </Menu.Item>
             <Menu.Item key="1">
@@ -179,11 +189,11 @@ class Header extends React.Component {
                     </Col>
                 </Row>
                 <Modal
-                    title={<span><Icon type="tool" /> 修改密码</span>}
+                    title={<span><Icon type="setting" /> 修改密码</span>}
                     wrapClassName="vertical-center-modal"
                     visible={this.state.viewModifePwd}
                     onOk={this.updatePwd}
-                    onCancel={() => { this.setState({ viewModifePwd: false }) }}
+                    onCancel={() => { this.props.form.resetFields(); this.setState({ viewModifePwd: false }) }}
                     footer={null}
                 >
                     <Form /*  layout="inline" */ onSubmit={this.updatePwd} className="login-form">

@@ -80,7 +80,7 @@ class CaseDetail extends React.Component {
                                 <Button size='small' style={{ marginRight: '10px' }} onClick={this.createDemand}>创建需求</Button>
                                 <Button size='small' style={{ marginRight: '10px' }} onClick={this.publishInfor}>发布信息</Button>
                             </div>
-                            <RequestList showType='scoutPlat' caseProgressKey={this.state.caseProgressKey} />
+                            <RequestList showType='scoutPlat' caseProgressKey={this.state.caseProgressKey} showTabsIndex={this.state.showTabsIndex} />
                         </TabPane>
                         <TabPane tab="合成作战小组" key="3" style={{ paddingBottom: 20 }}>
                             <CaseMember />

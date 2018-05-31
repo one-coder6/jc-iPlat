@@ -1,14 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-    Link,
-    Redirect
-} from "react-router-dom";
-import {
-    Row,
-    Col
-} from 'antd';
-
+import { Link, Redirect } from "react-router-dom";
+import { Row, Col } from 'antd';
 import CommonLayout from './Content/Index';
 import SynopsisIndex from './IndexComponents/SynopsisIndex'
 import Spokesperson from '../images/spokesperson.png';
@@ -23,7 +16,6 @@ export default class App extends React.Component {
 
     componentWillMount() {
         // 判断是否登陆 记错了 不能这样用 需要自己写一个组件来进行权限控制和跳转。
-
     }
 
     showPandect = () => {
@@ -68,24 +60,19 @@ export default class App extends React.Component {
         //     wscript.SendKeys("{F11}");
         //   }
         // }
-
     }
 
     render() {
-        const {
-            showPic
-        } = this.state;
+        const { showPic } = this.state;
         return (
             <div>
                 {
-                    showPic ? <SynopsisIndex handleShow={this.showPandect} />:
-                    <CommonLayout>
-                        <SynopsisIndex handleShow={this.showPandect} />
-                    </CommonLayout> 
+                    showPic ? <SynopsisIndex handleShow={this.showPandect} /> :
+                        <CommonLayout>
+                            <SynopsisIndex handleShow={this.showPandect} />
+                        </CommonLayout>
                 }
             </div>
-
-
         )
     }
 }

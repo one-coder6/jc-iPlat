@@ -76,8 +76,10 @@ class CaseProgress extends React.Component {
 	}
 	// 点击跳转到需求和回复列表
 	fromProgress = (id) => {
-		const { fromProgress } = this.props;
-		fromProgress(id)
+		if (id) {
+			const { fromProgress } = this.props;
+			fromProgress(id)
+		}
 	}
 
 	render() {
@@ -89,26 +91,24 @@ class CaseProgress extends React.Component {
 						<Steps className='pItem' style={{ width: '800px', height: '160px' }}>
 							{stepsSource && stepsSource.map((item, index) => {
 								if (index % 2 == 1) {
-									return <Step
-										status="finish"
+									return <Step status="finish"
 										title={
 											<div className='stepTitle stepTitles'>
-												{/* <div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{this.mapTitleType(item.referenceType)}</span></div> */}
+												{/* <div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{this.mapTitleType(item.referenceType)}</span></div>  */}
 												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceTypeCn || '-'}</span></div>
 												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''}>发送单位：{item.sendOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.receiveOrgName ? item.receiveOrgName : ''}>接收单位：{item.receiveOrgName || '-'}</div>
 												<div className='caesDescrition' title={item.content ? item.content : ''}>说明：{item.content ? item.content : '-'}</div>
-												<Tag color={this.mapTimeColor(item.referenceType, item.sendOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
+												<Tag onClick={() => { this.fromProgress(item.contentType) }} color={this.mapTimeColor(item.referenceType, item.sendOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
 											</div>
 										}
 										icon={<Icon type="right-circle-o" />} key={index}>
 									</Step>
 								} else {
-									return <Step
-										status="finish"
+									return <Step status="finish"
 										title={
 											<div className='stepTitle stepTitles'>
-												<Tag onClick={() => { this.fromProgress(item.sendOrgName) }} color={this.mapTimeColor(item.referenceType, item.sendOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
+												<Tag onClick={() => { this.fromProgress(item.contentType) }} color={this.mapTimeColor(item.referenceType, item.sendOrgName)}>{item.lrsj ? moment(item.lrsj).format("YYYY/MM/DD HH:mm") : '-'}</Tag>
 												{/* <div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceType ? this.mapTitleType(item.referenceType) : '-'}</span></div> */}
 												<div className='caesDescrition'>标题：<span style={{ color: 'blue' }}>{item.referenceTypeCn || '-'}</span></div>
 												<div className='caesDescrition' title={item.sendOrgName ? item.sendOrgName : ''} >发送单位：{item.sendOrgName || '-'}</div>

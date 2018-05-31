@@ -33,11 +33,12 @@ export default class RequestList extends React.Component {
 	componentWillMount() {
 		this.getRequestSource();
 		//console.log("this.record", this.props.showType)
-		// 首次通过案件进度点击跳转
+		// 如果首次通过案件进度点击跳转
 		let caseanchor = this.props.caseProgressKey
 		if (caseanchor) {
-			 alert(caseanchor)
-			// this.fromNotieOrCaseProgress(caseanchor)
+			setTimeout(() => {
+				this.fromNotieOrCaseProgress(caseanchor)
+			}, 500);
 		}
 	}
 
@@ -49,7 +50,7 @@ export default class RequestList extends React.Component {
 			if (sessionanchor) {
 				this.fromNotieOrCaseProgress(sessionanchor);
 			}
-		}, 1000);
+		}, 500);
 	}
 
 	componentWillUnmount() {
@@ -60,12 +61,13 @@ export default class RequestList extends React.Component {
 
 	componentWillReceiveProps(nextProps) {
 		// 父组件的数据发生改变，从案件进度的时间点击进来那么需要跳转到指定那条信息，效果类似右上角消息跳转
-		let pp = nextProps;
-		alert(123)
-		alert(nextProps.caseProgressKey);
-		debugger;
+		//	alert("gaibian");
+		let showTabsIndex = nextProps.showTabsIndex;
+		let targetVal = nextProps.caseProgressKey;// "A4403035300002018050117_603_CLUE_830"
 		//	caseProgressKey
-		// this.fromNotieOrCaseProgress(nextProps.caseProgressKey)
+		if (showTabsIndex == 2) {
+			this.fromNotieOrCaseProgress(targetVal)
+		}
 	}
 
 	// 来自全局notice进入或者案件进度点击
@@ -82,7 +84,6 @@ export default class RequestList extends React.Component {
 					index = i;
 				}
 			});
-
 			this.setState({ showCollapseIndex: index.toString() }, () => {
 				this.toscrollView(sessionanchor)
 			})
@@ -194,6 +195,7 @@ export default class RequestList extends React.Component {
 
 	// 跳转到指定焦点
 	toscrollView = (id) => {
+		debugger;
 		let anchorElement = document.getElementById(id);
 		//if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
 		if (anchorElement) { anchorElement.scrollIntoViewIfNeeded(true); }
@@ -208,31 +210,49 @@ export default class RequestList extends React.Component {
 
 	// 显示动画
 	showAnimateShow = (id) => {
+		debugger;
 		// 1.如果当前父级下面有多个列表则都显示聚焦动画
 		// 2.将这些设为已读
-		let noticelistobj = sessionStorage.getItem("noticelistobj"),
-			b = this.state.isFirstGet;
-		if (noticelistobj) {
-			let obj = JSON.parse(noticelistobj),
-				ids = [],
-				domId = [],
-				tempArr = id.split('_'),
-				code = tempArr[1];
-			obj && obj.map((item, i) => {
-				let _code = item.anchor.split('_')[1];
-				if (_code == code) {
-					ids.push(item.id);
-					domId.push("#" + item.anchor);
+		// 3.可能来自案件进度的点击
+		let noticelistobj = sessionStorage.getItem("noticelistobj") || [], // 右上角的消息
+			caseanchor = this.props.caseProgressKey,// 案件进度的key
+			domId = [], // 需要触发的dom对象
+			ids = []; // 将未读设为已读的id列表
+
+
+		let obj = JSON.parse(noticelistobj),
+			tempArr = id.split('_'),
+			code = tempArr[1];
+		obj && obj.length && obj.map((item, i) => {
+			let _code = item.anchor.split('_')[1];
+			if (_code == code) {
+				ids.push(item.id);
+				if (!caseanchor) domId.push("#" + item.anchor);
+			}
+		})
+
+		// 来自案件进度点击
+		if (caseanchor) {
+			domId.push("#" + caseanchor);
+		}
+
+		// 负责将dom对象添加动画
+		let doms = $(domId.join(','));
+		doms.addClass("focusFind");
+		setTimeout(() => {
+			doms.removeClass("focusFind");
+		}, 6500)
+
+		// 负责将未读设为已读
+		if (ids.length) {
+			const reqUrl = addressUrl + '/notice/readNotice';
+			let _ids = ids.join(',');
+			httpAjax("get", reqUrl, { params: { noticeId: _ids } }).then(res => {
+				if (res.code === '200') {
+					// 更新角标
+					window.changerNotice();
 				}
 			})
-			$(domId.join(',')).addClass("focusFind");
-			if (ids.length) {
-				const reqUrl = addressUrl + '/notice/readNotice';
-				let _ids = ids.join(',');
-				httpAjax("get", reqUrl, { params: { noticeId: _ids } }).then(res => {
-					if (res.code === '200') { }
-				})
-			}
 		}
 	}
 
@@ -281,7 +301,7 @@ export default class RequestList extends React.Component {
 						{
 							requestSource && requestSource.map((item, index) => {
 								return <Panel header={
-									<div>
+									<div id={item.ajbh + '_' + item.id + '_' + item.contentType}>
 										<div>
 											<Tag color="#87d068">{item.contentType == 'DEMAND' ? '需求 ' : '信息 '}{index + 1}</Tag>
 											<span style={{ color: 'red' }}>主题：{item.xqmc}；</span>
@@ -289,9 +309,8 @@ export default class RequestList extends React.Component {
 											<span> 创建时间 ：{item.lrsj}</span>
 										</div>
 										<div>主要描述：{item.xqnr}</div>
-									</div>
-								} key={index}>
-									<div >
+									</div>} key={index}>
+									<div>
 										<div style={{ textAlign: 'right', marginBottom: 10 }}>
 											{item.contentType == 'DEMAND' ? <Button type='primary' onClick={() => this.feedbackClue(item)} size='small'>反馈线索</Button> : ""}
 											<Button type='primary' onClick={() => this.relayRequestClue(item, item.contentType + "_" + item.id)} size='small' style={{ marginLeft: '20px' }}>回复</Button>

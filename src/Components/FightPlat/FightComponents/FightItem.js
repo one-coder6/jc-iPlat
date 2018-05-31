@@ -75,11 +75,8 @@ class FightItem extends React.Component {
                 <Row gutter={16} >
                     <Col span={22}>
                         <Row style={{ marginTop: '10px' }}>
-                            <Col xl={2} lg={2} md={2} sm={4} xs={4}>
-                                【<span style={{ color: 'red' }}>需求</span>】
-							</Col>
-                            <Col xl={6} lg={6} md={6} sm={10} xs={10}>
-                                <span style={{ color: '#108ee9', margin: '0 10px' }}>{record.xqmc}</span>
+                            <Col xl={8} lg={8} md={8} sm={14} xs={14}>
+                                【<span style={{ color: 'red' }}>需求</span>】<Link to={{ pathname: '/caseDetail', query: { ajbh: record.ajbh } }} onClick={() => sessionStorage.setItem("ajbh", record.ajbh)}>{record.xqmc}</Link>
                             </Col>
                             {
                                 record.operationStatus === 'INIT' ? <Col xl={1} lg={1} md={1} sm={2} xs={2}>
@@ -108,7 +105,7 @@ class FightItem extends React.Component {
                         </span>
                     </Col>
                     <Col xl={17} lg={17} md={17} sm={24} xs={24} style={{ textIndent: '2em' }}>
-                    {/* {"附件"} */}
+                        {/* {"附件"} */}
                     </Col>
                     <Col xl={7} lg={7} md={7} sm={24} xs={24}>
                         <p>{record.lrrymc}，{record.qqdw}，{record.qqsj}</p>

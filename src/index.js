@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux'; 
+import { Provider } from 'react-redux';
 import registerServiceWorker from './registerServiceWorker';
-import {
-  HashRouter,
-  Route,
-  Link,
-  Switch
-} from 'react-router-dom';
+import { HashRouter, Route, Link, Switch } from 'react-router-dom';
 
 // 引入路由
 import routes from './router/index'
@@ -16,14 +11,12 @@ import 'antd/dist/antd.css';
 class App extends Component {
   render() {
     return (
-    	<div style={{height:'100%'}}>
-            {this.props.children}
-    	</div>
+      <div style={{ height: '100%' }}>
+        {this.props.children}
+      </div>
     );
   }
 }
-
-
 
 ReactDOM.render(
   routes(App),

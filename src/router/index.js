@@ -1,11 +1,7 @@
 // import React from 'react';
 // import {HashRouter as Router, Route, Switch ,Redirect} from 'react-router-dom';
-
-
 // import AppComponent from 'containers/admin/main/AppComponent';
-
 // import LoginComponent from 'containers/login/login';
-
 // import ViewComponent from 'containers/view/main/ViewComponent';
 // import Sysset from '../Components/SystemSet/Index';
 // 路由配置
@@ -68,9 +64,6 @@ import ArchivesDetial from '../Components/ScoutFiles/archivesdetial/cover' //档
     //比重
 //--------------------------------------------
 import AjbzIndex from '../Components/Ajbz/Index'; //首页
-
-
-
 
 // 引入store
 import store from '../store/index';

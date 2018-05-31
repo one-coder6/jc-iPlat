@@ -16,6 +16,7 @@ export default class ContentComponent extends React.Component {
         super(props);
         this.state = {
             current: 'index',
+            changerNotice: false
         }
     }
     handleClick = (e) => {
@@ -24,12 +25,17 @@ export default class ContentComponent extends React.Component {
             current: e.key,
         });
     }
-
+    componentWillMount() {
+        // 保存获取消息的开关
+        window.changerNotice = () => {
+            this.setState({ changerNotice: true })
+        };
+    }
     render() {
         return (
             <Layout className='mainContent'>
                 <Header>
-                    <HeaderCom />
+                    <HeaderCom changerNotice={this.state.changerNotice} />
                 </Header>
                 <Menu
                     onClick={this.handleClick}

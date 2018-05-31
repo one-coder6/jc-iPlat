@@ -411,7 +411,7 @@ export default class DbaseInfor extends React.Component {
 			   </Card>,
 			// 笔录信息
 			blxx: <Card style={{ marginBottom: '10px' }} bordered={false} >
-				{lsCasesRecordVO && lsCasesRecordVO.length > 0? <RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无记录'}
+				{lsCasesRecordVO && lsCasesRecordVO.length > 0 ||1? <RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无记录'}
 			</Card>,
 			// 比中信息
 			dbxx: <Card style={{ marginBottom: '10px' }} bordered={false} >
@@ -423,7 +423,7 @@ export default class DbaseInfor extends React.Component {
 		<RecordInfor lsCasesRecordVO={[]} />
 			<div className='detailBaseInfo'>
 				<div style={{ marginBottom: 10 }}>
-					{casesVO.lasj}{casesVO.ajmc}
+					{casesVO.lasj} {casesVO.ajmc}
 					<Button type='primary' size='small' style={{ margin: '0 10px' }} onClick={this.addCBA}>添加串并案</Button>
 					<span>串并案件：{casesVO.sfcba == 1 ? casesVO.lsCasesMegerVO && casesVO.lsCasesMegerVO.map((item, index) => {
 							return <span key={index}>{item.ajbh}：{item.ajmc} </span>;
@@ -504,7 +504,7 @@ export default class DbaseInfor extends React.Component {
 					<Card.Grid >&nbsp;</Card.Grid>
 					<Card.Grid >&nbsp;</Card.Grid>
 					<Card.Grid style={{ width: '16%' }}>主要案情</Card.Grid>
-					<Card.Grid style={{ width: '80%' }} title={casesVO.zyaq || ''}>{casesVO.zyaq ? casesVO.zyaq : '无'}</Card.Grid>
+					<Card.Grid style={{ width: '80%',textAlign:"left" }} title={casesVO.zyaq || ''}>{casesVO.zyaq ? casesVO.zyaq : '无'}</Card.Grid>
 				</Card>
 				<Card style={{ width: '100%', marginBottom: 30 }} tabList={tabListNoTitle}
 					activeTabKey={this.state.noTitleKey}
