@@ -57,6 +57,7 @@ class Header extends React.Component {
     }
     // 修改密码
     updatePwd = (e) => {
+        e.preventDefault()
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 if (values.newPwd != values.newPwd2) {
@@ -76,9 +77,11 @@ class Header extends React.Component {
                     };
                     httpAjax("post", reqUrl, params).then(res => {
                         if (res.code == 200) {
-                            message.success('密码修改成功', 8);
+                            message.success('密码修改成功', 8,()=>{
+                                this.setState({viewModifePwd:false})
+                            });
                         } else {
-                            message.error('密码修改失败【' + res.message + '】', 10);
+                            message.error('密码修改失败【原' + res.message + '】', 8);
                         }
                     })
                 }

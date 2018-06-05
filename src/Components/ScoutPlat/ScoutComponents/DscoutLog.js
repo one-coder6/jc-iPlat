@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { Table, Icon, Button, Modal, Tooltip, Popover } from 'antd';
+import { Table, Icon, Menu, Dropdown, Button, Modal, Tooltip, Popover } from 'antd';
 
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
 class ScoutLog extends React.Component {
@@ -68,19 +68,37 @@ class ScoutLog extends React.Component {
             title: '日志描述',
             dataIndex: 'content',
             key: 'content',
-            align: "center",
             render: (text, record, index) => {
-                return <Icon type="eye" title="点击查看" style={{ cursor: "pointer" }} onClick={() => {
-                    this.setState({ viewLog: true, logContent: text })
-                }} />
+                let all = text ? text.toString() : '';
+                let temp = all.length > 80 ? all.substring(0, 80) + '...' : all;
+                return <span title={all}>{temp}</span>
             }
+            /*  render: (text, record, index) => {
+                 return <Icon type="eye" title="点击查看" style={{ cursor: "pointer" }} onClick={() => {
+                     this.setState({ viewLog: true, logContent: text })
+                 }} />
+             } */
         }, {
             title: '附件',
-            dataIndex: 'address',
+            align: "center",
+            dataIndex: 'lsAttachment',
             render: (text, record, index) => {
-                return <div>
-                    附件
-                </div>
+                let menu = (
+                    <Menu>
+                        {record.lsAttachment && record.lsAttachment.map((item) => {
+                            return <Menu.Item>
+                               <a title='点击下载' href={'/attachment/download?id=' + item.fileId}><Icon type="paper-clip" />{item.fileName}</a>
+                            </Menu.Item>
+                        })
+                        }
+                    </Menu>
+                );
+
+                return record.lsAttachment ? <Dropdown overlay={menu}>
+                    <a className="ant-dropdown-link" href="#">
+                        查看 <Icon type="down" />
+                    </a>
+                </Dropdown> : '-'
             }
         }];
         return (

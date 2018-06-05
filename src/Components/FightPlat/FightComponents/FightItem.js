@@ -104,10 +104,13 @@ class FightItem extends React.Component {
                             {record.xqnr}
                         </span>
                     </Col>
-                    <Col xl={17} lg={17} md={17} sm={24} xs={24} style={{ textIndent: '2em' }}>
-                        {/* {"附件"} */}
+                    <Col xl={17} lg={17} md={17} sm={24} xs={24} style={{ marginTop: 38 }}>
+                        {record.lsAttachment ? <span style={{ marginLeft: '2em' }}>附件：</span> : ''}
+                        {record.lsAttachment && record.lsAttachment.map((item) => {
+                            return <a title='点击下载' href={'/attachment/download?id=' + item.fileId}><Icon type="paper-clip" />{item.fileName}　</a>
+                        })}
                     </Col>
-                    <Col xl={7} lg={7} md={7} sm={24} xs={24}>
+                    <Col xl={7} lg={7} md={7} sm={24} xs={24} >
                         <p>{record.lrrymc}，{record.qqdw}，{record.qqsj}</p>
                         <div>
                             <Tag color="red">已超过{record.ccts}天未反馈</Tag> |  &nbsp;&nbsp;

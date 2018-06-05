@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Row, Col, Collapse, Input, Button, Rate, List, Divider, Tag, Modal, Spin } from 'antd';
+import { Row, Col, Collapse, Input, Button, Rate, List, Divider, Tag, Modal, Spin ,Icon} from 'antd';
 import { httpAjax, addressUrl, DemandFeedbackWSUrl } from '../../../Util/httpAjax';
 import ReplyClue from './relayRequest'; // 回复评论
 import FeedbackClue from '../feedbackClue'; //反馈线索
@@ -56,7 +56,7 @@ export default class RequestList extends React.Component {
 	componentWillUnmount() {
 		WS && WS.onclose();
 		// 离开了 需要clear
-		sessionStorage.removeItem("notic-anchor")
+		sessionStorage.removeItem("notic-anchor");
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -65,7 +65,7 @@ export default class RequestList extends React.Component {
 		let showTabsIndex = nextProps.showTabsIndex;
 		let targetVal = nextProps.caseProgressKey;// "A4403035300002018050117_603_CLUE_830"
 		//	caseProgressKey
-		if (showTabsIndex == 2) {
+		if (showTabsIndex == 2 && targetVal) {
 			this.fromNotieOrCaseProgress(targetVal)
 		}
 	}
@@ -195,7 +195,6 @@ export default class RequestList extends React.Component {
 
 	// 跳转到指定焦点
 	toscrollView = (id) => {
-		debugger;
 		let anchorElement = document.getElementById(id);
 		//if (anchorElement) { anchorElement.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
 		if (anchorElement) { anchorElement.scrollIntoViewIfNeeded(true); }
@@ -210,7 +209,6 @@ export default class RequestList extends React.Component {
 
 	// 显示动画
 	showAnimateShow = (id) => {
-		debugger;
 		// 1.如果当前父级下面有多个列表则都显示聚焦动画
 		// 2.将这些设为已读
 		// 3.可能来自案件进度的点击
@@ -218,7 +216,6 @@ export default class RequestList extends React.Component {
 			caseanchor = this.props.caseProgressKey,// 案件进度的key
 			domId = [], // 需要触发的dom对象
 			ids = []; // 将未读设为已读的id列表
-
 
 		let obj = JSON.parse(noticelistobj),
 			tempArr = id.split('_'),
@@ -309,6 +306,12 @@ export default class RequestList extends React.Component {
 											<span> 创建时间 ：{item.lrsj}</span>
 										</div>
 										<div>主要描述：{item.xqnr}</div>
+										<div>
+											{item.attacments ? '附件：' : ''}
+											{item.attacments && item.attacments.map((jtem) => {
+												return <a title='点击下载' href={'/attachment/download?id=' + jtem.fileId}><Icon type="paper-clip" />{jtem.fileName}；</a>
+											})}
+										</div>
 									</div>} key={index}>
 									<div>
 										<div style={{ textAlign: 'right', marginBottom: 10 }}>

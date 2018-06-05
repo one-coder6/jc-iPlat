@@ -45,10 +45,14 @@ class CaseDetail extends React.Component {
 
     // 进度图点击跳转到需求
     fromProgress = (id) => {
-        debugger;
         /*  传递一个id跳转到需求和反馈的列表  */
-        this.setState({ caseProgressKey: id })
-        this.setState({ showTabsIndex: "2", caseProgressKey: id })
+        this.setState({
+            showTabsIndex: "2",
+            caseProgressKey: id
+        })
+    }
+    removeCaseKey = () => {
+        this.setState({ caseProgressKey: "" })
     }
 
     createDemand = () => {
@@ -71,7 +75,7 @@ class CaseDetail extends React.Component {
                     <Card title="案件进度" style={{ width: '100%' }}>
                         <CaseProgress fromProgress={this.fromProgress} />
                     </Card>
-                    <Tabs defaultActiveKey="1" activeKey={this.state.showTabsIndex} onChange={(e) => { this.setState({ showTabsIndex: e.toString() }); }} style={{ padding: '0 20px ' }}>
+                    <Tabs defaultActiveKey="1" activeKey={this.state.showTabsIndex} onChange={(e) => { this.setState({ showTabsIndex: e.toString(),caseProgressKey:'' }); }} style={{ padding: '0 20px ' }}>
                         <TabPane tab="案件基本信息" key="1">
                             <DbaseInfor />
                         </TabPane>
@@ -80,7 +84,7 @@ class CaseDetail extends React.Component {
                                 <Button size='small' style={{ marginRight: '10px' }} onClick={this.createDemand}>创建需求</Button>
                                 <Button size='small' style={{ marginRight: '10px' }} onClick={this.publishInfor}>发布信息</Button>
                             </div>
-                            <RequestList showType='scoutPlat' caseProgressKey={this.state.caseProgressKey} showTabsIndex={this.state.showTabsIndex} />
+                            <RequestList showType='scoutPlat' caseProgressKey={this.state.caseProgressKey} showTabsIndex={this.state.showTabsIndex} removeCaseKey={this.removeCaseKey} />
                         </TabPane>
                         <TabPane tab="合成作战小组" key="3" style={{ paddingBottom: 20 }}>
                             <CaseMember />

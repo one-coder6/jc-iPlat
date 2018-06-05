@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, Select, Upload, Button, Icon, message } from 'antd';
+import { Form, Input, Select, Upload, Button, Icon, message, Switch } from 'antd';
 import { httpAjax, addressUrl, UC_URL } from '../../Util/httpAjax';
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -28,6 +28,7 @@ class FeedfackClue extends React.Component {
 				formData.append("ajbh", requestRecord.ajbh);
 				formData.append("theme", value.theme);
 				formData.append("xsnr", value.xsnr);
+				formData.append("sendMessage", value.sendMessage);
 				formData.append("fileComment", value.fileComment);
 				if (fileList && fileList.length) {
 					fileList.map((item, index) => {
@@ -104,6 +105,11 @@ class FeedfackClue extends React.Component {
 						//rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
 					})(
 						<TextArea placeholder='请输入线索内容' />
+					)}
+				</FormItem>
+				<FormItem {...formItemLayout} label="短信通知">
+					{getFieldDecorator('sendMessage', { valuePropName: 'checked', initialValue: false, })(
+						<Switch />
 					)}
 				</FormItem>
 				<FormItem  {...formItemLayout} label="附件">

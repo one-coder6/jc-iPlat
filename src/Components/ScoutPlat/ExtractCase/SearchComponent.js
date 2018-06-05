@@ -96,7 +96,7 @@ class Search extends React.Component {
 								{getFieldDecorator('lasj', {
 									initialValue: [moment(startTime, 'YYYY-MM-DD'), moment(new Date(), 'YYYY-MM-DD')]
 								})(
-									<RangePicker format={'YYYY-MM-DD'} />
+									<RangePicker format={'YYYY-MM-DD'}  allowClear={false} />
 								)}
 							</FormItem>
 						</Col>

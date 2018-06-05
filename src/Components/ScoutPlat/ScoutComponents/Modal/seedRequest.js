@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, Select, Upload, Button, Icon, DatePicker, message, TreeSelect } from 'antd';
+import { Form, Input, Select, List, Avatar, Upload, Button, Icon, DatePicker, message, TreeSelect, notification, Switch } from 'antd';
 import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
+import LeftRightDoor from '../../../Common/LeftRightDoor/leftrightdoor'
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
@@ -21,11 +22,13 @@ class CreateRequest extends React.Component {
             requestTypeCn: '',
             requestContent: '',
             treeDefaultValue: [],
-            fileList: []
+            fileList: [],
+            tempRequestData: [], // 保存多个需求
+            tempListLoading: false, // 列表的loading
         }
     }
     componentWillMount() {
-        
+
         //获取作战单位首层
         const reqUrl = UC_URL + "getTopDepartment";
         httpAjax("post", reqUrl, {}).then(res => {
@@ -68,9 +71,9 @@ class CreateRequest extends React.Component {
         e.preventDefault();
         const { treeSelectKeys, fileList } = this.state;
         const { caseRecord } = this.props;
-        const reqUrl = addressUrl + '/demand/insert';
         this.props.form.validateFields((err, value) => {
             if (!err) {
+                debugger;
                 const beginCreateTime = moment(value.qqsj).format("YYYY-MM-DD HH:mm:ss");
                 let formData = new FormData();
                 const params = { ...value };
@@ -92,25 +95,76 @@ class CreateRequest extends React.Component {
                         formData.append("files", item);
                     })
                 }
+                let temp = this.state.tempRequestData || [],
+                    timekey = new Date().valueOf();
+                temp.push({ title: value.xqmc, cont: value.xqnr, fd: formData });
+                this.setState({ tempRequestData: temp, /* tempListLoading: true  */ }, () => {
 
-                let config = {
-                    headers: {
-                        "Content-Type": 'multipart/form-data'
-                    }
-                }
-                httpAjax("post", reqUrl, formData, config).then(res => {
-                    if (res.code === '200') {
-                        message.success("创建需求成功");
-                        this.props.form.resetFields();
-                        this.props.handleCancel();
-                    } else {
-                        message.error("创建需求失败")
-                        this.props.handleCancel();
-                    }
+                    this.openNotification();
+                    // this.ajaxLoad(formData)
                 })
+
             }
         })
     }
+    ajaxLoad = (formData) => {
+        const reqUrl = addressUrl + '/demand/insert';
+        let config = {
+            headers: {
+                "Content-Type": 'multipart/form-data'
+            }
+        }
+        httpAjax("post", reqUrl, formData, config).then(res => {
+            if (res.code === '200') {
+                message.success("创建需求成功");
+                this.props.form.resetFields();
+                this.props.handleCancel();
+            } else {
+                message.error("创建需求失败")
+                this.props.handleCancel();
+            }
+        })
+    }
+    // 列表
+    list = () => {
+        return <div><List
+            style={{
+                maxHeight: 700,
+                overflow: "auto"
+            }}
+            loading={this.state.tempListLoading}
+            itemLayout="horizontal"
+            dataSource={this.state.tempRequestData}
+            renderItem={(item, index) => (
+                <List.Item style={{ borderBottom: "1px dashed #e8e8e8" }}>
+                    <List.Item.Meta
+                        title={<span ><a href="#"><Icon type="delete" title="移除" onClick={() => { alert(index) }} /> {item.title}</a></span>}
+                        description={item.cont}
+                    />
+                </List.Item>
+            )}
+        />
+            <p style={{ padding: 20, textAlign: "center" }}><Button style={{ width: "80%" }} type="primary">确认提交</Button></p>
+        </div>
+    }
+    // 右侧显示临时多个需求
+    openNotification = () => {
+        notification.open({
+            message: <div style={{ width: '356px', padding: "10px 0", borderBottom: "1px solid  #e8e8e8" }}><Icon type="appstore" /> 已添加的需求</div>,
+            duration: null,
+            description: <div>{this.list()}</div>,
+            style: {
+                marginRight: 0,
+                marginRight: '-25px',
+                bordeRadius: 0,
+                marginTop: '-21px',
+                /*  height: '1200px', */
+                marginLeft: 0,
+            }
+        });
+        this.setState({ tempListLoading: false })
+    };
+
     //异步加载子节点
     loadTreeData = (treeNode) => {
         const reqUrl = UC_URL + "getDepartmentByAny";
@@ -188,91 +242,125 @@ class CreateRequest extends React.Component {
                 },
             },
         };
+        const ContentBody = <div style={{ border: '1px solid red' }}><p>标题</p><p>内容</p></div>
+        const data = [
+            {
+                title: 'Ant Design Title 1',
+            },
+            {
+                title: 'Ant Design Title 2',
+            },
+            {
+                title: 'Ant Design Title 3',
+            },
+            {
+                title: 'Ant Design Title 4',
+            }, {
+                title: 'Ant Design Title 1',
+            },
+            {
+                title: 'Ant Design Title 2',
+            },
+            {
+                title: 'Ant Design Title 3',
+            }
+        ];
 
         return (
-            <Form onSubmit={this.handleSubmit} method="post">
-                <FormItem {...formItemLayout} label="融合作战单位" className='fightTeamForm'>
-                    {getFieldDecorator('jsdwbh', {
-                        initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code,
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                    })(
-                        <TreeSelect
-                            loadData={this.loadTreeData}
-                            dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
-                            onSelect={this.treeSelectKeys}
-                            searchPlaceholder='融合作战单位'
-                            treeDefaultExpandAll
-                        >
-                            {this.renderTreeNodes(treeData)}
-                        </TreeSelect>
-                    )}
-                </FormItem>
-                <FormItem {...formItemLayout} label="需求类型">
-                    {getFieldDecorator('xqlx', {
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                    })(
-                        <Select placeholder='请选择需求类型' onChange={this.selectType}>
-                            {this.renderOption(demandType)}
-                        </Select>
-                    )}
-                </FormItem>
-                <FormItem {...formItemLayout} label="需求内容">
-                    {getFieldDecorator('xqnr', {
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                    })(
-                        <Input placeholder='请输入需求内容' onChange={this.changeXqnr} />
-                    )}
-                </FormItem>
-                <FormItem {...formItemLayout} label="需求说明">
-                    {getFieldDecorator('smbz', {
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                    })(
-                        <TextArea placeholder='请输入需求说明' />
-                    )}
-                </FormItem>
-                <FormItem {...formItemLayout} label="需求名称">
-                    {getFieldDecorator('xqmc', {
-                        initialValue: `${requestTypeCn}${requestContent}`,
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                    })(
-                        <Input placeholder='请输入需求名称' />
-                    )}
-                </FormItem>
-                <FormItem {...formItemLayout} label="创建时间">
-                    {getFieldDecorator('qqsj', {
-                        initialValue: moment(new Date()),
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                    })(
-                        <DatePicker
-                            showTime
-                            format="YYYY-MM-DD HH:mm:ss"
-                            placeholder="请选择创建时间"
-                            onChange={this.onChange}
-                            onOk={this.onOk}
-                        />
-                    )}
-                </FormItem>
-                <FormItem  {...formItemLayout} label="附件">
-                    {getFieldDecorator('files', {
-                        // valuePropName: 'fileList',
-                        // getValueFromEvent: this.normFile,
-                        initialValue: fileList
-                    })(
-                        <Upload {...props} multiple >
-                            <Button>
-                                <Icon type="upload" /> 添加附件
+            <div>
+                <LeftRightDoor
+                    titleCont={<span><Icon type="appstore" /> 已添加的需求</span>}
+                    content={<p>一个标签</p>}
+                    onOpen={true}
+                    onClose={true}></LeftRightDoor>
+                <Form onSubmit={this.handleSubmit} method="post">
+                    <FormItem {...formItemLayout} label="融合作战单位" className='fightTeamForm'>
+                        {getFieldDecorator('jsdwbh', {
+                            initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code,
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <TreeSelect
+                                loadData={this.loadTreeData}
+                                dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+                                onSelect={this.treeSelectKeys}
+                                searchPlaceholder='融合作战单位'
+                                treeDefaultExpandAll
+                            >
+                                {this.renderTreeNodes(treeData)}
+                            </TreeSelect>
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="需求类型">
+                        {getFieldDecorator('xqlx', {
+                            rules: [{ required: true, message: '请选择需求类型' },],
+                        })(
+                            <Select placeholder='请选择需求类型' onChange={this.selectType}>
+                                {this.renderOption(demandType)}
+                            </Select>
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="需求内容">
+                        {getFieldDecorator('xqnr', {
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <Input placeholder='请输入需求内容' onChange={this.changeXqnr} />
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="需求说明">
+                        {getFieldDecorator('smbz', {
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <TextArea placeholder='请输入需求说明' />
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="需求名称">
+                        {getFieldDecorator('xqmc', {
+                            initialValue: `${requestTypeCn}${requestContent}`,
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <Input placeholder='请输入需求名称' />
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="创建时间">
+                        {getFieldDecorator('qqsj', {
+                            initialValue: moment(new Date()),
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <DatePicker
+                                showTime
+                                format="YYYY-MM-DD HH:mm:ss"
+                                placeholder="请选择创建时间"
+                                onChange={this.onChange}
+                                onOk={this.onOk}
+                            />
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="短信通知">
+                        {getFieldDecorator('sendMessage', { valuePropName: 'checked', initialValue: false, })(
+                            <Switch />
+                        )}
+                    </FormItem>
+                    <FormItem  {...formItemLayout} label="附件">
+                        {getFieldDecorator('files', {
+                            // valuePropName: 'fileList',
+                            // getValueFromEvent: this.normFile,
+                            initialValue: fileList
+                        })(
+                            <Upload {...props} multiple >
+                                <Button>
+                                    <Icon type="upload" /> 添加附件
 		                     </Button>
-                        </Upload>
-                    )}
-                </FormItem>
-                <FormItem {...formItemLayout} label="附件说明">
-                    {getFieldDecorator('fileComment', {
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                    })(
-                        <TextArea placeholder='请输入附件说明' />
-                    )}
-                </FormItem>
-                {/*<FormItem {...formItemLayout} label="审批文书">
+                            </Upload>
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="附件说明">
+                        {getFieldDecorator('fileComment', {
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <TextArea placeholder='请输入附件说明' />
+                        )}
+                    </FormItem>
+                    {/*<FormItem {...formItemLayout} label="审批文书">
 				  {getFieldDecorator('isApprove', {
 				    //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
 				  })(
@@ -282,11 +370,13 @@ class CreateRequest extends React.Component {
 				    </Select>
 				  )}
 				</FormItem>*/}
-                <div style={{ textAlign: 'center' }}>
-                    <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button>
-                    <Button onClick={this.props.handleCancel}>取消</Button>
-                </div>
-            </Form>
+                    <div style={{ textAlign: 'center' }}>
+                        {/*   <Button type="primary" style={{ marginRight: '10px' }} onClick={openNotification}>添加</Button> */}
+                        <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button>
+                        <Button onClick={this.props.handleCancel}>取消</Button>
+                    </div>
+                </Form>
+            </div>
         )
     }
 }

@@ -10,6 +10,7 @@ import AddCBA from '../AddCBA/index';
 import RecordInfor from './RecordInfor'; // 笔录信息
 import ContrastInfo from './ContrastInfo'; // 对比信息
 import '../../../styles/scoutPlat.less';
+import { WSAEPROCLIM } from 'constants';
 
 export default class DbaseInfor extends React.Component {
 	constructor(props) {
@@ -24,6 +25,10 @@ export default class DbaseInfor extends React.Component {
 	}
 
 	componentWillMount() {
+	  this.reloadData();
+	}
+
+	reloadData=()=>{
 		const ajbh = sessionStorage.getItem("ajbh");
 		const reqUrl = addressUrl + `/cases/detail?ajbh=${ajbh}`;
 		httpAjax("get", reqUrl).then(res => {
@@ -108,7 +113,6 @@ export default class DbaseInfor extends React.Component {
 	}
 
 	onTabChange = (key, type) => {
-		console.log(key, type);
 		this.setState({ [type]: key });
 	}
 	// 涉案人员
@@ -365,7 +369,8 @@ export default class DbaseInfor extends React.Component {
 			</Card>,
 			// 现场勘查图片
 			xckctp: <Card style={{ marginBottom: '10px' }} className='sceneImages' bordered={false} >
-				{(lsSceneVO && lsSceneVO).length >= 1 ?
+			{/* 1、如果现场勘查为空那么现实暂无图片 */}
+				{lsSceneVO && lsSceneVO.length >= 1 ?
 					lsSceneVO.map((item, index) => {
 						return <div key={index} style={{ height: '200px' }}>
 							{
@@ -376,6 +381,8 @@ export default class DbaseInfor extends React.Component {
 						</div>
 					}) : '暂无图片'
 				}
+			{/* 2、如果现场勘查不为空，那么可能图片为空 */}
+
 			</Card>,
 			// 手印
 			sy: <Card style={{ marginBottom: '10px' }} bordered={false} >
@@ -411,16 +418,15 @@ export default class DbaseInfor extends React.Component {
 			   </Card>,
 			// 笔录信息
 			blxx: <Card style={{ marginBottom: '10px' }} bordered={false} >
-				{lsCasesRecordVO && lsCasesRecordVO.length > 0 ||1? <RecordInfor lsCasesRecordVO={lsCasesRecordVO} /> : '暂无记录'}
+			  <RecordInfor xyr={lsCasesInformantVO} shr={lsCasesSuspectVO} lsCasesRecordVO={lsCasesRecordVO}  reloadData={this.reloadData}/>
 			</Card>,
 			// 比中信息
 			dbxx: <Card style={{ marginBottom: '10px' }} bordered={false} >
-				{<ContrastInfo contrastInfoData={this.state.contrastInfoData}  />}
+				 <ContrastInfo   />
 			</Card>
 		};
 
 		return (<Spin spinning={this.state.loading}>
-		<RecordInfor lsCasesRecordVO={[]} />
 			<div className='detailBaseInfo'>
 				<div style={{ marginBottom: 10 }}>
 					{casesVO.lasj} {casesVO.ajmc}

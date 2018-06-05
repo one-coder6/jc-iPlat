@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { Form, Select, Button, Icon, Radio, Input, message } from 'antd';
+import { Form, Select, Button, Icon, Radio, Input, message,Switch } from 'antd';
 
 
 import { httpAjax, addressUrl, UC_URL } from '../../../Util/httpAjax';
@@ -19,7 +19,7 @@ class DesignateMemberForm extends React.Component {
     }
 
     componentWillMount() {
-        const deptCode =JSON.parse(sessionStorage.getItem("user")).department.code;
+        const deptCode = JSON.parse(sessionStorage.getItem("user")).department.code;
         const reqUrl = UC_URL + `/getUsersByDepartmentCode?deptCode=${deptCode}`;
         httpAjax("get", reqUrl).then(res => {
             this.setState({ memberList: res })
@@ -45,7 +45,7 @@ class DesignateMemberForm extends React.Component {
 
                 }
                 const jsrybh = value.jsrybh.join(",")
-                httpAjax("post", reqUrl, { jsrybh: jsrybh, xqid: requestRecord.id ,jjcd:value.jjcd}).then(res => {
+                httpAjax("post", reqUrl, { jsrybh: jsrybh, xqid: requestRecord.id, jjcd: value.jjcd, sendMessage: value.sendMessage }).then(res => {
                     if (res.code === '200') {
                         message.success("指派成功");
                         this.props.handleCancel();
@@ -66,7 +66,7 @@ class DesignateMemberForm extends React.Component {
             <Form onSubmit={this.handleSubmit}>
                 <FormItem {...thirdLayout} label="重要程度">
                     {getFieldDecorator('jjcd', {
-                        initialValue:2,
+                        initialValue: 2,
                         //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
                     })(
                         <RadioGroup >
@@ -83,6 +83,11 @@ class DesignateMemberForm extends React.Component {
                         <Select placeholder='请选择作战人员' showSearch mode="multiple" filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} >
                             {this.mapMemberList(memberList)}
                         </Select>
+                    )}
+                </FormItem>
+                <FormItem {...thirdLayout} label="短信通知">
+                    {getFieldDecorator('sendMessage', { valuePropName: 'checked', initialValue: false, })(
+                        <Switch />
                     )}
                 </FormItem>
                 <FormItem {...thirdLayout} label="备注">
