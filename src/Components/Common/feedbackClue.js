@@ -95,14 +95,14 @@ class FeedfackClue extends React.Component {
 			<Form onSubmit={this.handleSubmit}>
 				<FormItem {...formItemLayout} label="线索名称">
 					{getFieldDecorator('theme', {
-						//rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+						rules: [{ required: true, message: '请输入线索名称.' },],
 					})(
 						<Input placeholder='请输入线索名称' />
 					)}
 				</FormItem>
 				<FormItem {...formItemLayout} label="线索内容">
 					{getFieldDecorator('xsnr', {
-						//rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+						rules: [{ required: true, message: '请输入线索内容.' },],
 					})(
 						<TextArea placeholder='请输入线索内容' />
 					)}

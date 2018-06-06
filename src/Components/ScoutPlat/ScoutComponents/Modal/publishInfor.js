@@ -151,7 +151,7 @@ class PublishInfor extends React.Component {
             <Form onSubmit={this.handleSubmit}>
                 <FormItem {...formItemLayout} label="发布标题">
                     {getFieldDecorator('xxzt', {
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        rules: [{ required: true, message: '请输入发布标题.' },],
                     })(
                         <Input placeholder='请输入发布标题' />
                     )}
@@ -159,7 +159,7 @@ class PublishInfor extends React.Component {
                 <FormItem {...formItemLayout} label="可见单位" className='fightTeamForm'>
                     {getFieldDecorator('jsdwbh', {
                         // initialValue:[{ value: treeDefaultValue[0]&&treeDefaultValue[0].code, key:treeDefaultValue[0]&&treeDefaultValue[0].code,label: treeDefaultValue[0]&&treeDefaultValue[0].fullname }],
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                       rules: [{ required: true, message: '请输入可见单位.'  },],
                     })(
                         <TreeSelect
                             loadData={this.loadTreeData}
@@ -176,7 +176,7 @@ class PublishInfor extends React.Component {
                 </FormItem>
                 <FormItem {...formItemLayout} label="发布内容">
                     {getFieldDecorator('fbnr', {
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        rules: [{ required: true, message: '请输入发布内容.' },],
                     })(
                         <TextArea placeholder='请输入发布内容' />
                     )}

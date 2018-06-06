@@ -509,8 +509,10 @@ export default class DbaseInfor extends React.Component {
 					<Card.Grid >{casesVO.swrs ? casesVO.swrs : '无'}</Card.Grid>
 					<Card.Grid >&nbsp;</Card.Grid>
 					<Card.Grid >&nbsp;</Card.Grid>
-					<Card.Grid style={{ width: '16%' }}>主要案情</Card.Grid>
-					<Card.Grid style={{ width: '80%',textAlign:"left" }} title={casesVO.zyaq || ''}>{casesVO.zyaq ? casesVO.zyaq : '无'}</Card.Grid>
+					<Card.Grid style={{ width: '16%',height:100 ,lineHeight:'100px'}}>主要案情</Card.Grid>
+					<Card.Grid style={{ width: '80%',height:100,textAlign:"left",overflow:'auto',whiteSpace:'inherit' }} title={casesVO.zyaq || ''}>
+					<span>{casesVO.zyaq ? casesVO.zyaq : '无'}</span>
+					</Card.Grid>
 				</Card>
 				<Card style={{ width: '100%', marginBottom: 30 }} tabList={tabListNoTitle}
 					activeTabKey={this.state.noTitleKey}

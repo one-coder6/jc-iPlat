@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, Select, Upload, Button, Icon, DatePicker, Radio, Card, Table ,message} from 'antd';
+import { Form, Input, Select, Upload, Button, Icon, DatePicker, Radio, Card, Table, message } from 'antd';
 import { httpAjax, addressUrl } from '../../../../Util/httpAjax';
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -14,7 +14,7 @@ class CaseFinish extends React.Component {
             requestModal: false,
             options: [
                 { label: '破案', value: 'finish' },
-               // { label: '侦结', value: 'finish' },
+                // { label: '侦结', value: 'finish' },
                 { label: '挂起', value: 'hangUp' },
             ],
             dataSource: [{ id: '11', name: '深圳深圳', age: '张二二二地' }, { id: '22', name: '上海线', age: '张辊 国是地' }],
@@ -54,19 +54,19 @@ class CaseFinish extends React.Component {
             if (!err) {
                 httpAjax("get", reqUrl, {
                     params: {
-                        ajbh:caseRecord.ajbh,
+                        ajbh: caseRecord.ajbh,
                         bdajstatebz: value.bdajstatebz
                     }
                 }).then(res => {
-                    if(res.code==='200'){
+                    if (res.code === '200') {
                         message.success("破案/侦结成功");
                         this.props.handleCancel();
                         this.props.form.resetFields();
                         this.props.getDataSource({
                             pageSize: 10,
                             pageNum: 1,
-                          });
-                    }else{
+                        });
+                    } else {
                         message.error("破案/侦结失败")
                         this.props.handleCancel();
                     }
@@ -114,7 +114,7 @@ class CaseFinish extends React.Component {
                 <Form onSubmit={this.handleSubmit}>
                     <FormItem {...formItemLayout} label="案件状态">
                         {getFieldDecorator('xqnr', {
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                            rules: [{ required: true, message: '请选择案件状态.' },],
                         })(
                             <RadioGroup options={options} onChange={this.operationType} />
                         )}

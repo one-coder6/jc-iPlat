@@ -6,6 +6,7 @@ import { Form, Select, Button, Icon, Radio, Input, message } from 'antd';
 
 import { httpAjax, addressUrl, UC_URL } from '../../../Util/httpAjax';
 import { thirdLayout } from '../../../Util/Flexout';
+import { debug } from 'util';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
@@ -22,10 +23,9 @@ class SignRequestForm extends React.Component {
         e.preventDefault();
         const { requestRecord } = this.props;
         this.props.form.validateFields((err, value) => {
-            console.log("valie", value)
             if (!err) {
-                const reqUrl = addressUrl + '/demand/sign';
-                httpAjax("post", reqUrl, { id: requestRecord.id }).then(res => {
+                const reqUrl = addressUrl + (value.level == 1 ? '/demand/sign' : '/demand/retreat');
+                httpAjax("post", reqUrl, { id: requestRecord.id, qsztms: value.remark }).then(res => {
                     if (res.code === '200') {
                         message.success("指派成功");
                         this.props.handleCancel();
@@ -45,7 +45,7 @@ class SignRequestForm extends React.Component {
             <Form onSubmit={this.handleSubmit}>
                 <FormItem {...thirdLayout} label="业务类型">
                     {getFieldDecorator('level', {
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        rules: [{ required: true, message: '请选择业务类型' },],
                     })(
                         <RadioGroup >
                             <Radio value={1}>签收</Radio>

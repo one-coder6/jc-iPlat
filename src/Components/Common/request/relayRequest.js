@@ -78,7 +78,7 @@ class ReplyClueForm extends React.Component {
             <Form onSubmit={this.handleSubmit}>
                 <FormItem {...thirdLayout} label="内容">
                     {getFieldDecorator('fsnr', {
-                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        rules: [{ required: true, message: '请输入内容.' },],
                     })(
                         <TextArea placeholder='请输入...' />
                     )}

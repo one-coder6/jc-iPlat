@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, Select, List, Avatar, Upload, Button, Icon, DatePicker, message, TreeSelect, notification, Switch } from 'antd';
+import { Form, Input, Select, Radio, Popconfirm, List, Avatar, Upload, Button, Icon, Popover, DatePicker, message, TreeSelect, notification, Switch, Spin } from 'antd';
 import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
 import LeftRightDoor from '../../../Common/LeftRightDoor/leftrightdoor'
@@ -8,7 +8,7 @@ const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
 const TreeNode = TreeSelect.TreeNode;
-
+const RadioGroup = Radio.Group;
 class CreateRequest extends React.Component {
     constructor(props) {
         super(props);
@@ -19,8 +19,10 @@ class CreateRequest extends React.Component {
             treeData: [],
             demandType: [],
             treeSelectKeys: "",
-            requestTypeCn: '',
-            requestContent: '',
+            requestTypeCn: '', // 需求类型
+            requestContent: '',// 需求内容
+            fktsCount: '',// 反馈天数
+            remarkContent: '',// 说明内容
             treeDefaultValue: [],
             fileList: [],
             tempRequestData: [], // 保存多个需求
@@ -53,6 +55,7 @@ class CreateRequest extends React.Component {
     //渲染下拉框
     renderOption = (selectArr) => {
         const options = selectArr && selectArr.map((item, index) => {
+            //return <Option value={item.zdj} key={index}>{item.zdz}</Option>
             return <Option value={item.zdj + "&" + item.zdz} key={index}>{item.zdz}</Option>
         })
         return options;
@@ -66,6 +69,12 @@ class CreateRequest extends React.Component {
     changeXqnr = (e) => {
         this.setState({ requestContent: e.target.value })
     }
+
+    // 获取反馈天数
+    onChangeFkts = (e) => {
+        this.setState({ fktsCount: "（请在 " + e.target.value + " 天内反馈）" })
+    }
+
     //提交创建需求
     handleSubmit = (e) => {
         e.preventDefault();
@@ -77,15 +86,20 @@ class CreateRequest extends React.Component {
                 const beginCreateTime = moment(value.qqsj).format("YYYY-MM-DD HH:mm:ss");
                 let formData = new FormData();
                 const params = { ...value };
-                formData.append("xqlx", value.xqlx && value.xqlx.split("&")[0]);
-
                 Object.keys(params).forEach((item, index) => {
                     if (params[item] != undefined) {
+                        // 文件过滤掉
                         if (item !== 'files') {
-                            formData.append(item, params[item]);
+                            let val = params[item];
+                            // 需求类型加工
+                            if (item == 'xqlx') {
+                                val = val.split("&")[0];
+                            }
+                            formData.append(item, val);
                         }
                     }
                 })
+
                 // 传递 caseRecord 过来的为null？
                 let ajbh = caseRecord ? caseRecord.ajbh : sessionStorage.getItem('ajbh');
                 formData.append("ajbh", ajbh);
@@ -98,10 +112,11 @@ class CreateRequest extends React.Component {
                 let temp = this.state.tempRequestData || [],
                     timekey = new Date().valueOf();
                 temp.push({ title: value.xqmc, cont: value.xqnr, fd: formData });
-                this.setState({ tempRequestData: temp, /* tempListLoading: true  */ }, () => {
-
-                    this.openNotification();
+                this.setState({ tempRequestData: temp, tempListLoading: true }, () => {
                     // this.ajaxLoad(formData)
+                    setTimeout(() => {
+                        this.setState({ tempListLoading: false })
+                    }, 500)
                 })
 
             }
@@ -125,45 +140,28 @@ class CreateRequest extends React.Component {
             }
         })
     }
-    // 列表
-    list = () => {
-        return <div><List
-            style={{
-                maxHeight: 700,
-                overflow: "auto"
-            }}
-            loading={this.state.tempListLoading}
-            itemLayout="horizontal"
-            dataSource={this.state.tempRequestData}
-            renderItem={(item, index) => (
-                <List.Item style={{ borderBottom: "1px dashed #e8e8e8" }}>
-                    <List.Item.Meta
-                        title={<span ><a href="#"><Icon type="delete" title="移除" onClick={() => { alert(index) }} /> {item.title}</a></span>}
-                        description={item.cont}
-                    />
-                </List.Item>
-            )}
-        />
-            <p style={{ padding: 20, textAlign: "center" }}><Button style={{ width: "80%" }} type="primary">确认提交</Button></p>
-        </div>
-    }
-    // 右侧显示临时多个需求
-    openNotification = () => {
-        notification.open({
-            message: <div style={{ width: '356px', padding: "10px 0", borderBottom: "1px solid  #e8e8e8" }}><Icon type="appstore" /> 已添加的需求</div>,
-            duration: null,
-            description: <div>{this.list()}</div>,
-            style: {
-                marginRight: 0,
-                marginRight: '-25px',
-                bordeRadius: 0,
-                marginTop: '-21px',
-                /*  height: '1200px', */
-                marginLeft: 0,
-            }
-        });
-        this.setState({ tempListLoading: false })
-    };
+
+    /*  // 右侧显示临时多个需求
+     openNotification = () => {
+         const key = 'jc-1';
+         notification.open({
+             key,
+             message: <div style={{ width: '356px', padding: "10px 0", borderBottom: "1px solid  #e8e8e8" }}><Icon type="appstore" /> 已添加的需求</div>,
+             duration: null,
+             description: <div>为描述</div>,
+             style: {
+                 marginRight: 0,
+                 marginRight: '-25px',
+                 bordeRadius: 0,
+                 marginTop: '-21px',
+                 marginLeft: 0,
+             }
+         });
+ 
+         setTimeout(() => {
+             this.setState({ tempListLoading: false })
+         }, 500)
+     }; */
 
     //异步加载子节点
     loadTreeData = (treeNode) => {
@@ -215,7 +213,8 @@ class CreateRequest extends React.Component {
         });
     }
     render() {
-        const { demandType, treeSelectKeys, requestTypeCn, requestContent, treeDefaultValue, treeData, fileList } = this.state;
+        const { demandType, treeSelectKeys, requestTypeCn, requestContent,
+            treeDefaultValue, treeData, fileList, fktsCount } = this.state;
         const { getFieldDecorator } = this.props.form;
         const props = {
             action: `${addressUrl}/demand/insert`,
@@ -242,7 +241,6 @@ class CreateRequest extends React.Component {
                 },
             },
         };
-        const ContentBody = <div style={{ border: '1px solid red' }}><p>标题</p><p>内容</p></div>
         const data = [
             {
                 title: 'Ant Design Title 1',
@@ -268,11 +266,60 @@ class CreateRequest extends React.Component {
 
         return (
             <div>
-                <LeftRightDoor
+                {/*  <LeftRightDoor
                     titleCont={<span><Icon type="appstore" /> 已添加的需求</span>}
                     content={<p>一个标签</p>}
                     onOpen={true}
-                    onClose={true}></LeftRightDoor>
+                    onClose={true}>
+                </LeftRightDoor> */}
+                <div style={{
+                    width: 350,
+                    height: 792,
+                    top: 0,
+                    background: '#fff',
+                    position: 'absolute',
+                    zIndex: 1,
+                    right: -351,
+                    padding: 10,
+                    border: '1px solid #ededed',
+                    borderRadius: 5
+
+                }}>
+                    <div style={{ width: '100%', borderBottom: "1px solid  #e8e8e8" }}>
+                        <span style={{ padding: '8px 0px 14px', display: 'inline-block' }}>
+                            <span> <Icon type="pushpin" /> 已添加的需求</span>
+                        </span>
+                        <button aria-label="Close" className="ant-modal-close"  ><span className="ant-modal-close-x"></span></button>
+                    </div>
+                    <div><List
+                        style={{
+                            maxHeight: 659,
+                            overflow: "auto",
+                            padding: '0 10px'
+                        }}
+                        loading={this.state.tempListLoading}
+                        itemLayout="horizontal"
+                        dataSource={this.state.tempRequestData}
+                        renderItem={(item, index) => (
+                            <List.Item style={{ borderBottom: "1px dashed #e8e8e8" }}>
+                                <List.Item.Meta
+                                    title={<span><Popconfirm placement="topRight" title={"确定移除吗？"} onConfirm={() => {
+                                        this.setState({ tempListLoading: true })
+                                        let temp = this.state.tempRequestData;
+                                        temp.splice(temp.findIndex(() => temp[index]), 1);
+                                        this.setState({ tempRequestData: temp }, () => {
+                                            this.setState({ tempListLoading: false });
+                                        });
+                                    }} okText="确定" cancelText="取消">
+                                        <a href="javascript:"><Icon type="delete" title="移除" /></a> </Popconfirm> {item.title}</span>}
+                                    description={item.cont}
+                                />
+                            </List.Item>
+                        )}
+                    />
+                        <p style={{ padding: 20, textAlign: "center" }}><Button style={{ width: "80%" }} type="primary">确认提交</Button></p>
+                    </div>
+                </div>
                 <Form onSubmit={this.handleSubmit} method="post">
                     <FormItem {...formItemLayout} label="融合作战单位" className='fightTeamForm'>
                         {getFieldDecorator('jsdwbh', {
@@ -301,18 +348,31 @@ class CreateRequest extends React.Component {
                     </FormItem>
                     <FormItem {...formItemLayout} label="需求内容">
                         {getFieldDecorator('xqnr', {
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                            rules: [{ required: true, message: '请输入需求内容.' },],
                         })(
                             <Input placeholder='请输入需求内容' onChange={this.changeXqnr} />
                         )}
                     </FormItem>
                     <FormItem {...formItemLayout} label="需求说明">
                         {getFieldDecorator('smbz', {
+                            initialValue: fktsCount,
                             //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
                         })(
                             <TextArea placeholder='请输入需求说明' />
                         )}
                     </FormItem>
+                    <FormItem {...formItemLayout} label="反馈天数">
+                        {getFieldDecorator('fkts', {
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <RadioGroup onChange={this.onChangeFkts}  >
+                                <Radio value={1}>1天</Radio>
+                                <Radio value={3}>3天</Radio>
+                                <Radio value={5}>5天</Radio>
+                            </RadioGroup>
+                        )}
+                    </FormItem>
+
                     <FormItem {...formItemLayout} label="需求名称">
                         {getFieldDecorator('xqmc', {
                             initialValue: `${requestTypeCn}${requestContent}`,
@@ -332,6 +392,7 @@ class CreateRequest extends React.Component {
                                 placeholder="请选择创建时间"
                                 onChange={this.onChange}
                                 onOk={this.onOk}
+                                allowClear={false}
                             />
                         )}
                     </FormItem>
@@ -371,8 +432,8 @@ class CreateRequest extends React.Component {
 				  )}
 				</FormItem>*/}
                     <div style={{ textAlign: 'center' }}>
-                        {/*   <Button type="primary" style={{ marginRight: '10px' }} onClick={openNotification}>添加</Button> */}
-                        <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button>
+                        <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button>
+                        {/*   <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button> */}
                         <Button onClick={this.props.handleCancel}>取消</Button>
                     </div>
                 </Form>
