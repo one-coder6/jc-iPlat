@@ -159,8 +159,8 @@ class Search extends React.Component {
 					<Row style={{ display: expand ? 'none' : 'block' }}>
 
 						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
-							<FormItem {...thirdLayout} label="主办单位">
-								{getFieldDecorator('zbdw', {
+							<FormItem {...thirdLayout} label="受理单位">
+								{getFieldDecorator('sljsdw', {
 									/* initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code, */
 									//rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
 								})(
@@ -168,7 +168,7 @@ class Search extends React.Component {
 										loadData={this.loadTreeData}
 										dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
 										onSelect={this.treeSelectKeys}
-										searchPlaceholder='主办单位'
+										searchPlaceholder='受理单位'
 										treeDefaultExpandAll
 									>
 										{this.renderTreeNodes(treeData)}

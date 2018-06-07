@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, Select, Radio, Popconfirm, List, Avatar, Upload, Button, Icon, Popover, DatePicker, message, TreeSelect, notification, Switch, Spin } from 'antd';
+import { Form, Input, Select, Radio, Popconfirm, List, Avatar, Upload, Badge, Button, Icon, Popover, Modal, DatePicker, message, TreeSelect, notification, Switch, Spin } from 'antd';
 import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
 import LeftRightDoor from '../../../Common/LeftRightDoor/leftrightdoor'
+import { debug } from 'util';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
 const TreeNode = TreeSelect.TreeNode;
 const RadioGroup = Radio.Group;
+const confirm = Modal.confirm;
 class CreateRequest extends React.Component {
     constructor(props) {
         super(props);
@@ -21,12 +23,12 @@ class CreateRequest extends React.Component {
             treeSelectKeys: "",
             requestTypeCn: '', // 需求类型
             requestContent: '',// 需求内容
-            fktsCount: '',// 反馈天数
             remarkContent: '',// 说明内容
             treeDefaultValue: [],
             fileList: [],
             tempRequestData: [], // 保存多个需求
             tempListLoading: false, // 列表的loading
+            tempListShow: false, // 多个需求组件的显示状态
         }
     }
     componentWillMount() {
@@ -70,11 +72,6 @@ class CreateRequest extends React.Component {
         this.setState({ requestContent: e.target.value })
     }
 
-    // 获取反馈天数
-    onChangeFkts = (e) => {
-        this.setState({ fktsCount: "（请在 " + e.target.value + " 天内反馈）" })
-    }
-
     //提交创建需求
     handleSubmit = (e) => {
         e.preventDefault();
@@ -87,14 +84,19 @@ class CreateRequest extends React.Component {
                 let formData = new FormData();
                 const params = { ...value };
                 Object.keys(params).forEach((item, index) => {
-                    if (params[item] != undefined) {
-                        // 文件过滤掉
-                        if (item !== 'files') {
-                            let val = params[item];
-                            // 需求类型加工
-                            if (item == 'xqlx') {
-                                val = val.split("&")[0];
-                            }
+                    // 文件过滤掉
+                    if (item !== 'files') {
+                        let val = params[item];
+                        // 需求类型加工
+                        if (item == 'xqlx' && val) {
+                            val = val.split("&")[0];
+                        }
+                        // 加工需求说明
+                        if (item == 'smbz') {
+
+                            val = (val || '') + (params.fkts || '');
+                        }
+                        if (val) {
                             formData.append(item, val);
                         }
                     }
@@ -112,16 +114,17 @@ class CreateRequest extends React.Component {
                 let temp = this.state.tempRequestData || [],
                     timekey = new Date().valueOf();
                 temp.push({ title: value.xqmc, cont: value.xqnr, fd: formData });
-                this.setState({ tempRequestData: temp, tempListLoading: true }, () => {
-                    // this.ajaxLoad(formData)
+                this.ajaxLoad(formData)
+                /* this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
                     setTimeout(() => {
                         this.setState({ tempListLoading: false })
-                    }, 500)
-                })
+                    }, 500) 
+                })*/
 
             }
         })
     }
+    // 请求接口获取数据
     ajaxLoad = (formData) => {
         const reqUrl = addressUrl + '/demand/insert';
         let config = {
@@ -140,28 +143,6 @@ class CreateRequest extends React.Component {
             }
         })
     }
-
-    /*  // 右侧显示临时多个需求
-     openNotification = () => {
-         const key = 'jc-1';
-         notification.open({
-             key,
-             message: <div style={{ width: '356px', padding: "10px 0", borderBottom: "1px solid  #e8e8e8" }}><Icon type="appstore" /> 已添加的需求</div>,
-             duration: null,
-             description: <div>为描述</div>,
-             style: {
-                 marginRight: 0,
-                 marginRight: '-25px',
-                 bordeRadius: 0,
-                 marginTop: '-21px',
-                 marginLeft: 0,
-             }
-         });
- 
-         setTimeout(() => {
-             this.setState({ tempListLoading: false })
-         }, 500)
-     }; */
 
     //异步加载子节点
     loadTreeData = (treeNode) => {
@@ -214,7 +195,7 @@ class CreateRequest extends React.Component {
     }
     render() {
         const { demandType, treeSelectKeys, requestTypeCn, requestContent,
-            treeDefaultValue, treeData, fileList, fktsCount } = this.state;
+            treeDefaultValue, treeData, fileList } = this.state;
         const { getFieldDecorator } = this.props.form;
         const props = {
             action: `${addressUrl}/demand/insert`,
@@ -241,29 +222,32 @@ class CreateRequest extends React.Component {
                 },
             },
         };
-        const data = [
-            {
-                title: 'Ant Design Title 1',
-            },
-            {
-                title: 'Ant Design Title 2',
-            },
-            {
-                title: 'Ant Design Title 3',
-            },
-            {
-                title: 'Ant Design Title 4',
-            }, {
-                title: 'Ant Design Title 1',
-            },
-            {
-                title: 'Ant Design Title 2',
-            },
-            {
-                title: 'Ant Design Title 3',
-            }
-        ];
 
+        let toggleDelBtn = (e, t) => {
+            // e.nativeEvent.stopImmediatePropagation()
+            let dom = e.target.children;
+            //  let dom = e.target.nextElementSibling; // 下一个节点
+            debugger;
+            if (dom && dom.length == 2) {
+                dom[1].style.display = t == 'hide' ? 'none' : 'inline-block'
+            }
+
+            /*     if (dom && dom.tagName && dom.tagName == 'A') {
+                    dom.style.display = t == 'hide' ? 'none' : 'inline-block'
+                }   else if (dom && dom.tagName && dom.tagName == 'I') {
+                    dom.parentElement.style.display = 'none';
+                }   */
+        }
+        let delAloneList = (index) => {
+            if (window.confirm("确定删除吗？")) {
+                this.setState({ tempListLoading: true })
+                let temp = this.state.tempRequestData;
+                temp.splice(temp.findIndex(() => temp[index]), 1);
+                this.setState({ tempRequestData: temp }, () => {
+                    this.setState({ tempListLoading: false });
+                });
+            }
+        }
         return (
             <div>
                 {/*  <LeftRightDoor
@@ -282,14 +266,15 @@ class CreateRequest extends React.Component {
                     right: -351,
                     padding: 10,
                     border: '1px solid #ededed',
-                    borderRadius: 5
+                    borderRadius: 5,
+                    display: this.state.tempListShow ? 'block' : 'none'
 
                 }}>
                     <div style={{ width: '100%', borderBottom: "1px solid  #e8e8e8" }}>
                         <span style={{ padding: '8px 0px 14px', display: 'inline-block' }}>
                             <span> <Icon type="pushpin" /> 已添加的需求</span>
                         </span>
-                        <button aria-label="Close" className="ant-modal-close"  ><span className="ant-modal-close-x"></span></button>
+                        <button aria-label="Close" className="ant-modal-close" onClick={() => { this.setState({ tempListShow: false }) }}><span className="ant-modal-close-x"></span></button>
                     </div>
                     <div><List
                         style={{
@@ -303,22 +288,21 @@ class CreateRequest extends React.Component {
                         renderItem={(item, index) => (
                             <List.Item style={{ borderBottom: "1px dashed #e8e8e8" }}>
                                 <List.Item.Meta
-                                    title={<span><Popconfirm placement="topRight" title={"确定移除吗？"} onConfirm={() => {
-                                        this.setState({ tempListLoading: true })
-                                        let temp = this.state.tempRequestData;
-                                        temp.splice(temp.findIndex(() => temp[index]), 1);
-                                        this.setState({ tempRequestData: temp }, () => {
-                                            this.setState({ tempListLoading: false });
-                                        });
-                                    }} okText="确定" cancelText="取消">
-                                        <a href="javascript:"><Icon type="delete" title="移除" /></a> </Popconfirm> {item.title}</span>}
-                                    description={item.cont}
+                                    title={<span onMouseMove={(e) => { toggleDelBtn(e, 'show') }} onMouseLeave={(e) => { toggleDelBtn(e, 'hide') }}>
+                                        <span style={{ display: 'inline-block', width: 290, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{index + 1}、{item.title}</span>
+                                        <a style={{ display: 'none', float: 'right' }} href="javascript:"><Icon type="delete" title="删除" onClick={() => { delAloneList(index) }} /></a>
+                                    </span>}
+                                    description={<span>{item.cont}</span>}
                                 />
                             </List.Item>
                         )}
                     />
                         <p style={{ padding: 20, textAlign: "center" }}><Button style={{ width: "80%" }} type="primary">确认提交</Button></p>
                     </div>
+                </div>
+                <div style={{ zIndex: 2, position: 'absolute', top: 55, right: 14, display: 'none'/*  !this.state.tempListShow && this.state.tempRequestData && this.state.tempRequestData.length ? 'block' : 'none'  */ }}>
+                    <div style={{ height: 30, width: 1, background: '#52c41a', margin: '0px 10px -5px 10px' }}></div>
+                    <div style={{ cursor: 'pointer' }} onClick={() => { this.setState({ tempListShow: true }) }}><Badge count={this.state.tempRequestData.length} style={{ backgroundColor: '#52c41a' }} /></div>
                 </div>
                 <Form onSubmit={this.handleSubmit} method="post">
                     <FormItem {...formItemLayout} label="融合作战单位" className='fightTeamForm'>
@@ -355,7 +339,6 @@ class CreateRequest extends React.Component {
                     </FormItem>
                     <FormItem {...formItemLayout} label="需求说明">
                         {getFieldDecorator('smbz', {
-                            initialValue: fktsCount,
                             //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
                         })(
                             <TextArea placeholder='请输入需求说明' />
@@ -365,10 +348,10 @@ class CreateRequest extends React.Component {
                         {getFieldDecorator('fkts', {
                             //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
                         })(
-                            <RadioGroup onChange={this.onChangeFkts}  >
-                                <Radio value={1}>1天</Radio>
-                                <Radio value={3}>3天</Radio>
-                                <Radio value={5}>5天</Radio>
+                            <RadioGroup >
+                                <Radio value="（请在 1 天内反馈）">1天</Radio>
+                                <Radio value="（请在 3 天内反馈）">3天</Radio>
+                                <Radio value="（请在 5 天内反馈）">5天</Radio>
                             </RadioGroup>
                         )}
                     </FormItem>
@@ -432,8 +415,8 @@ class CreateRequest extends React.Component {
 				  )}
 				</FormItem>*/}
                     <div style={{ textAlign: 'center' }}>
-                        <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button>
-                        {/*   <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button> */}
+                        {/*   <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button> */}
+                        <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button>
                         <Button onClick={this.props.handleCancel}>取消</Button>
                     </div>
                 </Form>

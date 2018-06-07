@@ -115,8 +115,8 @@ class Search extends React.Component {
 						</Col>
 
 						<Col xl={8} lg={8} md={8} sm={24} xs={24}>
-							<FormItem {...thirdLayout} label="主办单位">
-								{getFieldDecorator('zbdw')(
+							<FormItem {...thirdLayout} label="受理单位">
+								{getFieldDecorator('sljsdw')(
 									<ZBDW />
 								)}
 							</FormItem>

@@ -8,6 +8,8 @@ import ReplyClue from '../../Common/request/requestList';
 import FeedfackClue from '../../Common/feedbackClue';
 import DesignateMember from './DesignateM';
 import SignRequest from './SignRequset';
+import ApplyDelay from './ApplyDelay';
+
 class FightItem extends React.Component {
     constructor(props) {
         super(props);
@@ -16,6 +18,7 @@ class FightItem extends React.Component {
             feedbakClue: false,
             designateMember: false,
             signRequest: false,
+            applyDelayView: false,// 申请延期
             requestRecord: '',
             Attachment: [
                 { filename: "需求文档1.doc", url: '' },
@@ -38,32 +41,30 @@ class FightItem extends React.Component {
             feedbakClue: false,
             designateMember: false,
             signRequest: false,
+            applyDelayView: false,
         })
     }
 
     //反馈线索
     feedbakClue = (record) => {
-        this.setState({
-            feedbakClue: true,
-            requestRecord: record
-        })
+        this.setState({ feedbakClue: true, requestRecord: record })
     }
 
     //指派
     designateMember = (record) => {
-        this.setState({
-            designateMember: true,
-            requestRecord: record
-        })
+        this.setState({ designateMember: true,  requestRecord: record  })
     }
 
     //签收
     signRequest = (record) => {
         this.setState({ signRequest: true, requestRecord: record })
     }
-
+    // 申请延期
+    applyDelay=(record)=>{
+        this.setState({ applyDelayView: true, requestRecord: record })
+    }
     render() {
-        const { replyClue, feedbakClue, designateMember, signRequest, requestRecord, lsAttachment } = this.state;
+        const { replyClue, feedbakClue, designateMember, signRequest, requestRecord, lsAttachment,applyDelayView } = this.state;
         const { record } = this.props;
         const list = (<div>
             {lsAttachment && lsAttachment.map((item, i) => {
@@ -93,6 +94,12 @@ class FightItem extends React.Component {
                                     <Col xl={1} lg={1} md={1} sm={2} xs={2}>
                                         <Tag className='tagTitle' onClick={() => this.feedbakClue(record)}>反馈</Tag>
                                     </Col> : null
+                            }   
+                            {
+                                record.operationStatus === 'DELAY' ?
+                                    <Col xl={1} lg={1} md={1} sm={2} xs={2}>
+                                        <Tag className='tagTitle' onClick={() => this.applyDelay(record)}>申请延期</Tag>
+                                    </Col> : null
                             }
                         </Row>
                     </Col>
@@ -111,12 +118,16 @@ class FightItem extends React.Component {
                         })}
                     </Col>
                     <Col xl={7} lg={7} md={7} sm={24} xs={24} >
-                        <p>{record.lrrymc}，{record.qqdw}，{record.qqsj}</p>
+                        <p style={{ textAlign:'right'} }>{record.lrrymc}，{record.qqdw}，{record.qqsj}</p>
                         <div>
-                            <Tag color="red">已超过{record.ccts}天未反馈</Tag> |  &nbsp;&nbsp;
-							<Button type='primary' size='small' onClick={() => this.replyClue(record)}>
+                        <Button style={{float:'right',marginBottom:5}} type='primary' size='small' onClick={() => this.replyClue(record)}>
                                 回复线索：{record.clueCount}条{replyClue ? <Icon type="up" /> : <Icon type="down" />}
-                            </Button>
+                        </Button>
+                          {/* operationStatusTip */}
+                    
+                       { record.ccts ? <Tag style={{float:'right',marginBottom:5}} color="red">已超过{record.ccts}天未反馈</Tag> :''}
+                       { record.operationStatusTip ? <Tag style={{float:'right'}} color="red"> {record.operationStatusTip}</Tag> :''}
+                    
                         </div>
                     </Col>
                 </Row>
@@ -142,6 +153,10 @@ class FightItem extends React.Component {
                 {/* 签收需求 */}
                 <Modal title='签收' visible={signRequest} onCancel={this.handleCancel} footer={false} >
                     <SignRequest requestRecord={requestRecord} handleCancel={this.handleCancel} getDataSource={this.props.getDataSource} />
+                </Modal>
+                     {/* 申请延期 */}
+                     <Modal title='申请延期' visible={applyDelayView} onCancel={this.handleCancel} footer={false} >
+                    <ApplyDelay requestRecord={requestRecord} handleCancel={this.handleCancel}   />
                 </Modal>
             </div>
         )

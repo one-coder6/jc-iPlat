@@ -67,7 +67,7 @@ class ZBDW extends React.Component {
             loadData={this.loadTreeData}
             dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
             onSelect={this.treeSelectKeys}
-            searchPlaceholder='主办单位'
+            searchPlaceholder='受理单位'
             treeDefaultExpandAll
         >
             {this.renderTreeNodes(treeData)}

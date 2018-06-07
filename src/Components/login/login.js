@@ -1,32 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-    connect
-} from 'react-redux';
+import { connect } from 'react-redux';
 import { withRouter, } from 'react-router-dom';
-import {
-    Row,
-    Col,
-    Form,
-    Input,
-    Button,
-    Icon,
-    Layout
-} from 'antd';
-
+import { Row, Col, Form, Input, Button, Icon, Layout } from 'antd';
 //引入redux
-import {
-    updateUser
-} from '../../store/actions/index.js';
-
-import {
-    footerText
-} from '../../Util/config';
-import {
-    httpAjax,
-    addressUrl
-} from '../../Util/httpAjax';
-
+import { updateUser } from '../../store/actions/index.js';
+import { footerText } from '../../Util/config';
+import { httpAjax, addressUrl } from '../../Util/httpAjax';
 import '../../styles/login.less';
 import LoginBg from '../../images/login_01.jpg'
 const FormItem = Form.Item;
@@ -104,7 +84,7 @@ class LoginForm extends React.Component {
                         <Col xl={8} lg={8} md={4} sm={24} xs={24}></Col>
                     </Row>
                 </Form>
-                 <Footer style={{ textAlign: 'center', background: '#fff', }}>
+                <Footer style={{ textAlign: 'center', background: '#fff', }}>
                     {footerText}
                     {/* <p>制作单位：深圳市CID刑事侦查局</p> color: '#fff' 
                     <p>研发单位：深圳市华云中盛科技有限公司</p>

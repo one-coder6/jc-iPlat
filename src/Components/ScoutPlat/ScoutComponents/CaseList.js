@@ -83,7 +83,7 @@ class CaseList extends React.Component {
       // 
       delete searchValue.baqk;
     }
-  
+
     if (searchValue != this.state.searchValue) {
       this.setState({ searchValue: searchValue }, () => {
         _this.getDataSource({
@@ -182,8 +182,8 @@ class CaseList extends React.Component {
       title: '案件名称',
       dataIndex: 'ajmc',
     }, {
-      title: '主办单位',
-      dataIndex: 'zbdwCn',
+      title: '受理单位',
+      dataIndex: 'sljsdwCn',
     }, {
       title: '案件类别',
       dataIndex: 'abCn',

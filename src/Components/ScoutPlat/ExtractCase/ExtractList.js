@@ -165,7 +165,7 @@ class ExtractList extends React.Component {
             dataIndex: 'ajmc',
         }, {
             title: '受理单位',
-            dataIndex: 'zbdwCn',
+            dataIndex: 'sljsdwCn',
         }, {
             title: '案件类别',
             dataIndex: 'abCn',
