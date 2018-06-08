@@ -5,6 +5,8 @@ import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
 import LeftRightDoor from '../../../Common/LeftRightDoor/leftrightdoor'
 import { debug } from 'util';
+import QueueAnim from 'rc-queue-anim';
+import Animate from 'rc-animate';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
@@ -32,7 +34,6 @@ class CreateRequest extends React.Component {
         }
     }
     componentWillMount() {
-
         //获取作战单位首层
         const reqUrl = UC_URL + "getTopDepartment";
         httpAjax("post", reqUrl, {}).then(res => {
@@ -113,13 +114,13 @@ class CreateRequest extends React.Component {
                 }
                 let temp = this.state.tempRequestData || [],
                     timekey = new Date().valueOf();
-                temp.push({ title: value.xqmc, cont: value.xqnr, fd: formData });
+                temp.push({ timekey: timekey, title: value.xqmc, cont: value.xqnr, fd: formData });
                 this.ajaxLoad(formData)
-                /* this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
-                    setTimeout(() => {
-                        this.setState({ tempListLoading: false })
-                    }, 500) 
-                })*/
+                /*   this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
+                      setTimeout(() => {
+                          this.setState({ tempListLoading: false })
+                      }, 500)
+                  }) */
 
             }
         })
@@ -225,21 +226,12 @@ class CreateRequest extends React.Component {
 
         let toggleDelBtn = (e, t) => {
             // e.nativeEvent.stopImmediatePropagation()
-            let dom = e.target.children;
+            let dom = document.getElementById(e);
             //  let dom = e.target.nextElementSibling; // 下一个节点
-            debugger;
-            if (dom && dom.length == 2) {
-                dom[1].style.display = t == 'hide' ? 'none' : 'inline-block'
-            }
-
-            /*     if (dom && dom.tagName && dom.tagName == 'A') {
-                    dom.style.display = t == 'hide' ? 'none' : 'inline-block'
-                }   else if (dom && dom.tagName && dom.tagName == 'I') {
-                    dom.parentElement.style.display = 'none';
-                }   */
+            dom.style.display = t == 'hide' ? 'none' : 'inline-block'
         }
         let delAloneList = (index) => {
-            if (window.confirm("确定删除吗？")) {
+            if (window.confirm("确定移除吗？")) {
                 this.setState({ tempListLoading: true })
                 let temp = this.state.tempRequestData;
                 temp.splice(temp.findIndex(() => temp[index]), 1);
@@ -248,28 +240,29 @@ class CreateRequest extends React.Component {
                 });
             }
         }
+
         return (
             <div>
-                {/*  <LeftRightDoor
-                    titleCont={<span><Icon type="appstore" /> 已添加的需求</span>}
-                    content={<p>一个标签</p>}
-                    onOpen={true}
-                    onClose={true}>
-                </LeftRightDoor> */}
+                {/*   <Animate showProp="visible" transitionAppear='true' transitionName="fade">
+                    {this.state.show ? <div visible key="1">示例</div> : null}
+                </Animate> */}
+                {/* 弹出层 */}
                 <div style={{
-                    width: 350,
+                    width: 363,
+                    opacity: this.state.tempListShow ? 1 : 0,
                     height: 792,
+                    //  height: this.state.tempListShow ? 792 : 0,
                     top: 0,
                     background: '#fff',
                     position: 'absolute',
                     zIndex: 1,
-                    right: -351,
+                    right: -364,
                     padding: 10,
                     border: '1px solid #ededed',
                     borderRadius: 5,
-                    display: this.state.tempListShow ? 'block' : 'none'
-
-                }}>
+                    /*     display: this.state.tempListShow ? 'block' : 'none', */
+                    transition: 'height 0.7s,opacity 0.3s'
+                }} key="1">
                     <div style={{ width: '100%', borderBottom: "1px solid  #e8e8e8" }}>
                         <span style={{ padding: '8px 0px 14px', display: 'inline-block' }}>
                             <span> <Icon type="pushpin" /> 已添加的需求</span>
@@ -286,24 +279,28 @@ class CreateRequest extends React.Component {
                         itemLayout="horizontal"
                         dataSource={this.state.tempRequestData}
                         renderItem={(item, index) => (
-                            <List.Item style={{ borderBottom: "1px dashed #e8e8e8" }}>
-                                <List.Item.Meta
-                                    title={<span onMouseMove={(e) => { toggleDelBtn(e, 'show') }} onMouseLeave={(e) => { toggleDelBtn(e, 'hide') }}>
-                                        <span style={{ display: 'inline-block', width: 290, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{index + 1}、{item.title}</span>
-                                        <a style={{ display: 'none', float: 'right' }} href="javascript:"><Icon type="delete" title="删除" onClick={() => { delAloneList(index) }} /></a>
-                                    </span>}
-                                    description={<span>{item.cont}</span>}
-                                />
-                            </List.Item>
+                            <QueueAnim type='left'>
+                                <List.Item style={{ borderBottom: "1px dashed #e8e8e8" }} key={index}>
+                                    <List.Item.Meta onMouseMove={() => { toggleDelBtn('tempLi' + item.timekey, 'show') }} onMouseLeave={() => { toggleDelBtn('tempLi' + item.timekey, 'hide') }}
+                                        title={<span>
+                                            <span title={item.title} style={{ display: 'inline-block', width: 290, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{index + 1}.{item.title}</span>
+                                            <a id={'tempLi' + item.timekey} style={{ display: 'none', float: 'right' }} href="javascript:"><Icon type="delete" title="移除" onClick={() => { delAloneList(index) }} /></a>
+                                        </span>}
+                                        description={<span>{item.cont}</span>}
+                                    />
+                                </List.Item>
+                            </QueueAnim>
                         )}
                     />
                         <p style={{ padding: 20, textAlign: "center" }}><Button style={{ width: "80%" }} type="primary">确认提交</Button></p>
                     </div>
                 </div>
-                <div style={{ zIndex: 2, position: 'absolute', top: 55, right: 14, display: 'none'/*  !this.state.tempListShow && this.state.tempRequestData && this.state.tempRequestData.length ? 'block' : 'none'  */ }}>
-                    <div style={{ height: 30, width: 1, background: '#52c41a', margin: '0px 10px -5px 10px' }}></div>
+                {/* 数量提示 */}
+                <div style={{ zIndex: 2, position: 'absolute', top: 55, right: 17, display: 'none'/* !this.state.tempListShow && this.state.tempRequestData && this.state.tempRequestData.length ? 'block' : 'none' */ }}>
+                    <div style={{ height: 30, width: 1, background: '#52c41a', margin: '0 auto', marginBottom: -5 }}></div>
                     <div style={{ cursor: 'pointer' }} onClick={() => { this.setState({ tempListShow: true }) }}><Badge count={this.state.tempRequestData.length} style={{ backgroundColor: '#52c41a' }} /></div>
                 </div>
+                {/* 表单 */}
                 <Form onSubmit={this.handleSubmit} method="post">
                     <FormItem {...formItemLayout} label="融合作战单位" className='fightTeamForm'>
                         {getFieldDecorator('jsdwbh', {
@@ -415,8 +412,8 @@ class CreateRequest extends React.Component {
 				  )}
 				</FormItem>*/}
                     <div style={{ textAlign: 'center' }}>
-                        {/*   <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button> */}
-                        <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button>
+                        <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button>
+                        {/*     <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button> */}
                         <Button onClick={this.props.handleCancel}>取消</Button>
                     </div>
                 </Form>

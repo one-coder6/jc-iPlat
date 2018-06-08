@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Row, Col, Collapse, Input, Button, Rate, List, Divider, Tag, Modal, Spin ,Icon} from 'antd';
+import { Row, Col, Collapse, Input, Button, Rate, List, Divider, Tag, Modal, Spin, Icon } from 'antd';
 import { httpAjax, addressUrl, DemandFeedbackWSUrl } from '../../../Util/httpAjax';
 import ReplyClue from './relayRequest'; // 回复评论
 import FeedbackClue from '../feedbackClue'; //反馈线索
@@ -270,11 +270,18 @@ export default class RequestList extends React.Component {
 								<div>
 									<span >{ele.fromUserName || '-'} &nbsp;</span>
 									<span >{ele.date || '-'}  &nbsp;</span>
-									<span style={{ color: 'orange' }}> {this.mapReplyType(ele.type)}</span>
+									<span style={{ color: 'orange' }}>1231 {this.mapReplyType(ele.type)}</span>
 								</div>
 							}
-							description={
-								(ele.toUserName) ? (`${ele.fromUserName}  回复 ${ele.toUserName}：${ele.content}`) : ele.content
+							description={<div>
+								<span>{(ele.toUserName) ? (`${ele.fromUserName}  回复 ${ele.toUserName}：${ele.content}`) : ele.content}</span>
+								<div>
+									{ele.attacments ? '附件：' : ''}
+									{ele.attacments && ele.attacments.map((jtem) => {
+										return <a title='点击下载' href={'/attachment/download?id=' + jtem.fileId}><Icon type="paper-clip" />{jtem.fileName}；</a>
+									})}
+								</div>
+							</div>
 							}
 						/>
 						<div>

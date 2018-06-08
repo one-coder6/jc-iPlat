@@ -92,7 +92,7 @@ http://192.168.1.108:9090/hyzs-uc/uc/getTopDepartment
 机构API：根据父级机构获取直属机构数据：POST 
 http://192.168.1.108:9090/hyzs-uc/uc/getDepartmentByAny?code=440300000000
 */
-
+ 
    // 服务器（本地）
 export const addressUrl = 'http://192.168.1.103:8080/cid/';
 export const UC_URL = 'http://192.168.1.103:8080/hyzs-uc/uc/';
@@ -103,7 +103,7 @@ export const GlobalWSUrl = "ws://192.168.1.103:9527/ws/global"; // 全局消息
 export const MindMapUrl = "http://68.64.16.139:9090/cidyth-mind/index.html"; // 思维导图   
  
  
-/* 
+/*  
   // 陈铭 ����������������
 export const addressUrl = 'http://68.64.16.139:8888/cid';
 export const UC_URL = 'http://68.64.16.139:9090/hyzs-uc/uc/';
@@ -113,8 +113,8 @@ export const DemandFeedbackWSUrl = "ws://68.64.16.139:9528/ws/chat"; // bbs��
 export const GlobalWSUrl = "ws://68.64.16.139:9527/ws/global"; // ȫ����Ϣ   
 export const MindMapUrl = "http://68.64.16.139:9090/cidyth-mind/index.html"; // 思维导图
    
- */
  
+  */
 /* // 服务器（生产机）
 export const addressUrl = 'http://68.64.17.37:8080/cid/';
 export const UC_URL = 'http://68.64.17.37:8080/hyzs-uc/uc/';

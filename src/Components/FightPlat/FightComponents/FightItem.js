@@ -73,11 +73,11 @@ class FightItem extends React.Component {
         </div>)
         return (
             <div className='caseItem'>
-                <Row gutter={16} >
-                    <Col span={22}>
-                        <Row style={{ marginTop: '10px' }}>
+                <Row gutter={16} style={{marginTop:20}}>
+                    <Col span={18}>
+                        <Row>
                             <Col xl={8} lg={8} md={8} sm={14} xs={14}>
-                                【<span style={{ color: 'red' }}>需求</span>】<Link to={{ pathname: '/caseDetail', query: { ajbh: record.ajbh } }} onClick={() => sessionStorage.setItem("ajbh", record.ajbh)}>{record.xqmc}</Link>
+                                【<span style={{ color: 'red' }}>需求{record.qsztCn?':'+record.qsztCn:''}</span>】<Link to={{ pathname: '/caseDetail', query: { ajbh: record.ajbh } }} onClick={() => sessionStorage.setItem("ajbh", record.ajbh)}>{record.xqmc}</Link>
                             </Col>
                             {
                                 record.operationStatus === 'INIT' ? <Col xl={1} lg={1} md={1} sm={2} xs={2}>
@@ -103,15 +103,22 @@ class FightItem extends React.Component {
                             }
                         </Row>
                     </Col>
+                    <Col span={6} style={{textAlign:'right'}}>
+                    {record.lsDemandFlowHisVO&&record.lsDemandFlowHisVO.map((item)=>{
+                        return  <Tag color="purple">{ item.qsztCn+'：'+item.jsrymc  }</Tag> 
+                         })
+                    }
+                   {/*  待签收：张三、李四、张三、李四、张三 已退回：王五 已反馈：赵柳 */}
+                    </Col>
                 </Row>
-
                 <Row style={{ margin: '10px 0' }} gutter={16}>
                     <Col xl={17} lg={17} md={17} sm={24} xs={24} style={{ textIndent: '2em' }}>
-                        <span >
-                            {record.xqnr}
-                        </span>
+                        <span >  {record.xqnr}  </span>
                     </Col>
                     <Col xl={17} lg={17} md={17} sm={24} xs={24} style={{ marginTop: 38 }}>
+                      {record.smbz ? <span  style={{ marginLeft: '2em' }}>说明：{record.smbz}</span> : ''}
+                    </Col>
+                    <Col xl={17} lg={17} md={17} sm={24} xs={24} >
                         {record.lsAttachment ? <span style={{ marginLeft: '2em' }}>附件：</span> : ''}
                         {record.lsAttachment && record.lsAttachment.map((item) => {
                             return <a title='点击下载' href={'/attachment/download?id=' + item.fileId}><Icon type="paper-clip" />{item.fileName}　</a>
@@ -124,10 +131,8 @@ class FightItem extends React.Component {
                                 回复线索：{record.clueCount}条{replyClue ? <Icon type="up" /> : <Icon type="down" />}
                         </Button>
                           {/* operationStatusTip */}
-                    
                        { record.ccts ? <Tag style={{float:'right',marginBottom:5}} color="red">已超过{record.ccts}天未反馈</Tag> :''}
                        { record.operationStatusTip ? <Tag style={{float:'right'}} color="red"> {record.operationStatusTip}</Tag> :''}
-                    
                         </div>
                     </Col>
                 </Row>

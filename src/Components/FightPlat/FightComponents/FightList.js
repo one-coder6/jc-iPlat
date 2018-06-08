@@ -76,7 +76,7 @@ export default class FightList extends React.Component {
 				{
 					loading ? <Spin size="large" style = {{margin:'6% 0 0 40%'}} /> :
 					dataSource.map((item, index) => {
-						return <FightItem record={item} key={index} getDataSource = {this.getDataSource} />
+						return <FightItem  record={item} key={index} getDataSource = {this.getDataSource} />
 					})
 				}
 				<Pagination
