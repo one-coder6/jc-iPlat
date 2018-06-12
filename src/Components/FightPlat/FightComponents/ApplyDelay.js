@@ -20,7 +20,6 @@ class ApplyDelayForm extends React.Component {
         this.props.form.validateFields((err, value) => {
             if (!err) {
                 const reqUrl = addressUrl + '/demand/delayApply';
-                debugger;
                 httpAjax("post", reqUrl, {xqid: requestRecord.id,  fksqyy: value.fksqyy }).then(res => {
                     if (res.code === '200') {
                         message.success("提交成功");

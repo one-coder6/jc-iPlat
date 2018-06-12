@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, Select, Upload, Button, Icon, TreeSelect, message } from 'antd';
-
+import { Form, Input, Select, Upload, Button, Icon, TreeSelect, message, DatePicker } from 'antd';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
-
+import moment from 'moment';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { TextArea } = Input;
@@ -79,9 +78,10 @@ class PublishInfor extends React.Component {
                 //params.ajbh = caseRecord.ajbh;
                 //params.fbfw = treeSelectKeys.join(",");
                 Object.keys(params).forEach((item, index) => {
-                    if (params[item] != undefined) {
+                    let val = params[item];
+                    if (val != undefined) {
                         if (item !== 'files') {
-                            formData.append(item, params[item]);
+                            formData.append(item, val);
                         }
                     }
                 })
@@ -159,7 +159,7 @@ class PublishInfor extends React.Component {
                 <FormItem {...formItemLayout} label="可见单位" className='fightTeamForm'>
                     {getFieldDecorator('jsdwbh', {
                         // initialValue:[{ value: treeDefaultValue[0]&&treeDefaultValue[0].code, key:treeDefaultValue[0]&&treeDefaultValue[0].code,label: treeDefaultValue[0]&&treeDefaultValue[0].fullname }],
-                       rules: [{ required: true, message: '请输入可见单位.'  },],
+                        rules: [{ required: true, message: '请输入可见单位.' },],
                     })(
                         <TreeSelect
                             loadData={this.loadTreeData}
@@ -199,6 +199,21 @@ class PublishInfor extends React.Component {
                         <TextArea placeholder='请输入类型说明' />
                     )}
                 </FormItem> */}
+                <FormItem {...formItemLayout} label="发布时间">
+                    {getFieldDecorator('fbrq', {
+                        initialValue: moment(new Date()),
+                        //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                    })(
+                        <DatePicker
+                            showTime
+                            format="YYYY-MM-DD HH:mm:ss"
+                            placeholder="请选择发布时间"
+                            onChange={this.onChange}
+                            onOk={this.onOk}
+                            allowClear={false}
+                        />
+                    )}
+                </FormItem>
                 <FormItem  {...formItemLayout} label="附件">
                     {getFieldDecorator('files', {
                         // valuePropName: 'fileList',

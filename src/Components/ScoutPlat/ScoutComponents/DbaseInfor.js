@@ -86,16 +86,16 @@ export default class DbaseInfor extends React.Component {
 				hjd: "户籍地2"
 			}
 		]
-	 ajaxLoadData();
+	 ajaxLoadData(this);
 
      // 加载比中信息
-		function ajaxLoadData() {
+		function ajaxLoadData(that) {
 				const reqUrl = addressUrl + '/cases/caseCompareInfo';
 				let ajbh = sessionStorage.getItem("ajbh");
 				if (ajbh) {
 					httpAjax("get", reqUrl, { params: { ajbh: ajbh, pageNum: 1, pageSize: 10 } }).then(res => {
 						if (res.code == 200) {
-						this.setState({contrastInfoCount:res.data.list.length||0})
+							that.setState({contrastInfoCount:res.data.list.length||0})
 						}
 					})
 				} else {
@@ -351,7 +351,7 @@ export default class DbaseInfor extends React.Component {
 			xckc: <Card style={{ marginBottom: '10px' }} bordered={false} >
 				{/* lsSceneVO */}
 				{lsSceneVO && lsSceneVO.map((item, index) => {
-						return <Card style={{ marginBottom: 10 }}
+						return <Card key={index} style={{ marginBottom: 10 }}
 							title={<p style={{ position: 'absolute', marginTop: 10, fontSize: 12, color: '#1890ff' }}>
 								<span style={{ marginRight: 15 }}>勘查人员: {item.kyjcry || '-'}</span>
 								{/*   <span style={{ marginRight: 15 }}>记录地点: {item.jldd || '-'}</span> */}
@@ -507,8 +507,8 @@ export default class DbaseInfor extends React.Component {
 					<Card.Grid >{casesVO.sdtdCn ? casesVO.sdtdCn : '无'}</Card.Grid>
 					<Card.Grid >死亡人数</Card.Grid>
 					<Card.Grid >{casesVO.swrs ? casesVO.swrs : '无'}</Card.Grid>
-					<Card.Grid >&nbsp;</Card.Grid>
-					<Card.Grid >&nbsp;</Card.Grid>
+					<Card.Grid >犯罪主体类型</Card.Grid>
+					<Card.Grid >{casesVO.fzztlxCn ? casesVO.fzztlxCn : '无'}</Card.Grid>
 					<Card.Grid style={{ width: '16%',height:100 ,lineHeight:'100px'}}>主要案情</Card.Grid>
 					<Card.Grid style={{ width: '80%',height:100,textAlign:"left",overflow:'auto',whiteSpace:'inherit' }} title={casesVO.zyaq || ''}>
 					<span>{casesVO.zyaq ? casesVO.zyaq : '无'}</span>

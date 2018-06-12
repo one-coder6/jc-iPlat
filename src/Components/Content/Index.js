@@ -15,21 +15,20 @@ export default class ContentComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            current: 'index',
+            current: '',
             changerNotice: false
         }
     }
     handleClick = (e) => {
-        //console.log('click ', e);
-        this.setState({
-            current: e.key,
-        });
+        sessionStorage.setItem("currentMenu", e.key)
     }
     componentWillMount() {
         // 保存获取消息的开关
         window.changerNotice = () => {
             this.setState({ changerNotice: true })
         };
+        let menu = sessionStorage.getItem("currentMenu") || 'index';
+        this.setState({ current: menu });
     }
     render() {
         return (
@@ -39,7 +38,7 @@ export default class ContentComponent extends React.Component {
                 </Header>
                 <Menu
                     onClick={this.handleClick}
-                    selectedKeys={[this.state.current]}
+                    selectedKeys={this.state.current}
                     mode="horizontal"
                     className='menuNav'
                 >

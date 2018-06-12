@@ -13,7 +13,6 @@ import CaseMember from './DcaseMember';        //专案成员
 import ScoutLog from './DscoutLog';           //侦查日志
 import MindMap from './MindMap';              //思维导图
 import Dprogress from './DprogressList'        //进度列表
-
 import PublishInfor from './Modal/publishInfor';
 import CreateRequest from './Modal/seedRequest';
 import '../../../styles/scoutPlat.less';

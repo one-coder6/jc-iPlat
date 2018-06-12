@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, Select, Radio, Popconfirm, List, Avatar, Upload, Badge, Button, Icon, Popover, Modal, DatePicker, message, TreeSelect, notification, Switch, Spin } from 'antd';
+import { Form, Input, Select, Radio, Table, Popconfirm, List, Avatar, Upload, Badge, Button, Icon, Popover, Modal, DatePicker, message, TreeSelect, notification, Switch, Spin } from 'antd';
 import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
 import LeftRightDoor from '../../../Common/LeftRightDoor/leftrightdoor'
@@ -80,6 +80,7 @@ class CreateRequest extends React.Component {
         const { caseRecord } = this.props;
         this.props.form.validateFields((err, value) => {
             if (!err) {
+                const beginCreateTime = moment(value.qqsj).format("YYYY-MM-DD HH:mm:ss");
                 let formData = new FormData();
                 const params = { ...value };
                 Object.keys(params).forEach((item, index) => {
@@ -104,6 +105,7 @@ class CreateRequest extends React.Component {
                 // 传递 caseRecord 过来的为null？
                 let ajbh = caseRecord ? caseRecord.ajbh : sessionStorage.getItem('ajbh');
                 formData.append("ajbh", ajbh);
+                formData.append("qqsj", beginCreateTime);
                 if (fileList && fileList.length) {
                     fileList.map((item, index) => {
                         formData.append("files", item);
@@ -112,12 +114,12 @@ class CreateRequest extends React.Component {
                 let temp = this.state.tempRequestData || [],
                     timekey = new Date().valueOf();
                 temp.push({ timekey: timekey, title: value.xqmc, cont: value.xqnr, fd: formData });
-                this.ajaxLoad(formData)
-                /*   this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
-                      setTimeout(() => {
-                          this.setState({ tempListLoading: false })
-                      }, 500)
-                  }) */
+                // this.ajaxLoad(formData)
+                this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
+                    setTimeout(() => {
+                        this.setState({ tempListLoading: false })
+                    }, 500)
+                })
 
             }
         })
@@ -191,6 +193,7 @@ class CreateRequest extends React.Component {
             };
         });
     }
+
     render() {
         const { demandType, treeSelectKeys, requestTypeCn, requestContent,
             treeDefaultValue, treeData, fileList } = this.state;
@@ -221,12 +224,20 @@ class CreateRequest extends React.Component {
             },
         };
 
+        // 删除和修改图标的显示状态
         let toggleDelBtn = (e, t) => {
             // e.nativeEvent.stopImmediatePropagation()
-            let dom = document.getElementById(e);
+            let dom = document.getElementsByClassName(e);
+            for (let i = 0, count = dom.length; i < count; i++) {
+                dom[i].style.display = t == 'hide' ? 'none' : 'inline-block'
+            }
             //  let dom = e.target.nextElementSibling; // 下一个节点
-            dom.style.display = t == 'hide' ? 'none' : 'inline-block'
         }
+        // 修改一条临时需求
+        let updateBytemp = () => {
+
+        }
+        // 删除一条临时需求
         let delAloneList = (index) => {
             if (window.confirm("确定移除吗？")) {
                 this.setState({ tempListLoading: true })
@@ -237,6 +248,40 @@ class CreateRequest extends React.Component {
                 });
             }
         }
+        const dataSource = [{
+            key: '1',
+            name: '胡彦斌',
+            age: 32,
+            address: '西湖区湖底公园1号'
+
+        }, {
+            key: '2',
+            name: '胡彦祖',
+            age: 42,
+            address: '西湖区湖底公园1号'
+        }];
+
+        const columns = [{
+            title: '需求名称',
+            dataIndex: 'name',
+            key: 'name',
+        }, {
+            title: '合成作战单位',
+            dataIndex: 'age',
+            key: 'age',
+        }, {
+            title: '反馈天数',
+            dataIndex: 'address',
+            key: 'address',
+        }, {
+            title: '操作',
+            dataIndex: 'address',
+            key: 'address',
+            render: () => {
+                return <span><a href='#'><Icon type="form" /></a> <a href='#'><Icon type="close-square-o" /></a></span>
+            }
+        }];
+
 
         return (
             <div>
@@ -280,8 +325,9 @@ class CreateRequest extends React.Component {
                                 <List.Item style={{ borderBottom: "1px dashed #e8e8e8" }} key={index}>
                                     <List.Item.Meta onMouseMove={() => { toggleDelBtn('tempLi' + item.timekey, 'show') }} onMouseLeave={() => { toggleDelBtn('tempLi' + item.timekey, 'hide') }}
                                         title={<span>
-                                            <span title={item.title} style={{ display: 'inline-block', width: 290, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{index + 1}.{item.title}</span>
-                                            <a id={'tempLi' + item.timekey} style={{ display: 'none', float: 'right' }} href="javascript:"><Icon type="delete" title="移除" onClick={() => { delAloneList(index) }} /></a>
+                                            <span title={item.title} style={{ display: 'inline-block', width: 250, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{index + 1}.{item.title}</span>
+                                            <a className={'tempLi' + item.timekey} style={{ display: 'none', float: 'right', marginLeft: 5 }} href="javascript:"><Icon type="delete" title="移除" onClick={() => { delAloneList(index) }} /></a>
+                                            <a className={'tempLi' + item.timekey} style={{ display: 'none', float: 'right', marginLeft: 5 }} href="javascript:"><Icon type="edit" title="修改" onClick={() => { delAloneList(index) }} /></a>
                                         </span>}
                                         description={<span>{item.cont}</span>}
                                     />
@@ -293,28 +339,13 @@ class CreateRequest extends React.Component {
                     </div>
                 </div>
                 {/* 数量提示 */}
-                <div style={{ zIndex: 2, position: 'absolute', top: 55, right: 17, display:/*  !this.state.tempListShow && this.state.tempRequestData && this.state.tempRequestData.length ? 'block' :  */'none' }}>
+                <div style={{ zIndex: 2, position: 'absolute', top: 55, right: 17, display: !this.state.tempListShow && this.state.tempRequestData && this.state.tempRequestData.length ? 'block' : 'none' }}>
                     <div style={{ height: 30, width: 1, background: '#52c41a', margin: '0 auto', marginBottom: -5 }}></div>
                     <div style={{ cursor: 'pointer' }} onClick={() => { this.setState({ tempListShow: true }) }}><Badge count={this.state.tempRequestData.length} style={{ backgroundColor: '#52c41a' }} /></div>
                 </div>
                 {/* 表单 */}
                 <Form onSubmit={this.handleSubmit} method="post">
-                    <FormItem {...formItemLayout} label="融合作战单位" className='fightTeamForm'>
-                        {getFieldDecorator('jsdwbh', {
-                            initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code,
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                        })(
-                            <TreeSelect
-                                loadData={this.loadTreeData}
-                                dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
-                                onSelect={this.treeSelectKeys}
-                                searchPlaceholder='融合作战单位'
-                                treeDefaultExpandAll
-                            >
-                                {this.renderTreeNodes(treeData)}
-                            </TreeSelect>
-                        )}
-                    </FormItem>
+
                     <FormItem {...formItemLayout} label="需求类型">
                         {getFieldDecorator('xqlx', {
                             rules: [{ required: true, message: '请选择需求类型' },],
@@ -331,11 +362,35 @@ class CreateRequest extends React.Component {
                             <Input placeholder='请输入需求内容' onChange={this.changeXqnr} />
                         )}
                     </FormItem>
+                    <FormItem {...formItemLayout} label="需求名称">
+                        {getFieldDecorator('xqmc', {
+                            initialValue: `${requestTypeCn}${requestContent}`,
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <Input placeholder='请输入需求名称' />
+                        )}
+                    </FormItem>
                     <FormItem {...formItemLayout} label="需求说明">
                         {getFieldDecorator('smbz', {
                             //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
                         })(
                             <TextArea placeholder='请输入需求说明' />
+                        )}
+                    </FormItem>
+                    <FormItem {...formItemLayout} label="融合作战单位">
+                        {getFieldDecorator('jsdwbh', {
+                            initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code,
+                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                        })(
+                            <TreeSelect
+                                loadData={this.loadTreeData}
+                                dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+                                onSelect={this.treeSelectKeys}
+                                searchPlaceholder='融合作战单位'
+                                treeDefaultExpandAll
+                            >
+                                {this.renderTreeNodes(treeData)}
+                            </TreeSelect>
                         )}
                     </FormItem>
                     <FormItem {...formItemLayout} label="反馈天数">
@@ -347,15 +402,6 @@ class CreateRequest extends React.Component {
                                 <Radio value="（请在 3 天内反馈）">3天</Radio>
                                 <Radio value="（请在 5 天内反馈）">5天</Radio>
                             </RadioGroup>
-                        )}
-                    </FormItem>
-
-                    <FormItem {...formItemLayout} label="需求名称">
-                        {getFieldDecorator('xqmc', {
-                            initialValue: `${requestTypeCn}${requestContent}`,
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                        })(
-                            <Input placeholder='请输入需求名称' />
                         )}
                     </FormItem>
                     <FormItem {...formItemLayout} label="创建时间">
@@ -407,13 +453,17 @@ class CreateRequest extends React.Component {
 				      <Option value="2">否</Option>
 				    </Select>
 				  )}
-				</FormItem>*/}
+                </FormItem>*/}
+
+                    <Table dataSource={dataSource} columns={columns} />
+
                     <div style={{ textAlign: 'center' }}>
-                        {/*      <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button> */}
-                        <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button>
+                        <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button>
+                        {/*     <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button> */}
                         <Button onClick={this.props.handleCancel}>取消</Button>
                     </div>
                 </Form>
+
             </div>
         )
     }

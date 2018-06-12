@@ -77,7 +77,7 @@ class FightItem extends React.Component {
                     <Col span={18}>
                         <Row>
                             <Col xl={8} lg={8} md={8} sm={14} xs={14}>
-                                【<span style={{ color: 'red' }}>需求{record.qsztCn?':'+record.qsztCn:''}</span>】<Link to={{ pathname: '/caseDetail', query: { ajbh: record.ajbh } }} onClick={() => sessionStorage.setItem("ajbh", record.ajbh)}>{record.xqmc}</Link>
+                                【<span style={{ color: 'red' }}>需求{record.qsztCn?'（'+record.qsztCn+'）':''}</span>】<Link to={{ pathname: '/caseDetail', query: { ajbh: record.ajbh } }} onClick={() => sessionStorage.setItem("ajbh", record.ajbh)}>{record.xqmc}</Link>
                             </Col>
                             {
                                 record.operationStatus === 'INIT' ? <Col xl={1} lg={1} md={1} sm={2} xs={2}>
@@ -105,10 +105,10 @@ class FightItem extends React.Component {
                     </Col>
                     <Col span={6} style={{textAlign:'right'}}>
                     {record.lsDemandFlowHisVO&&record.lsDemandFlowHisVO.map((item)=>{
-                        return  <Tag color="purple">{ item.qsztCn+'：'+item.jsrymc  }</Tag> 
+                        return  <Tag style={{borderRadius:0}}  color="purple">{ item.qsztCn+'：'+item.jsrymc  }</Tag> 
                          })
                     }
-                   {/*  待签收：张三、李四、张三、李四、张三 已退回：王五 已反馈：赵柳 */}
+                   {/*   已退回：王五 已反馈：赵柳 */}
                     </Col>
                 </Row>
                 <Row style={{ margin: '10px 0' }} gutter={16}>

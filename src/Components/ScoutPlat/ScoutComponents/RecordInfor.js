@@ -32,7 +32,6 @@ class RecordInfor extends React.Component {
         // 嫌疑人和受害人作为查询条件
         let { xyr, shr } = this.props,
             params = [];
-        debugger;
         if (xyr && xyr.length) {
             xyr.forEach((item) => {
                 params.push(item)

@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import { Row, Col, Collapse, Input, Button, Rate, List, Divider, Tag, Modal, Spin, Icon } from 'antd';
 import { httpAjax, addressUrl, DemandFeedbackWSUrl } from '../../../Util/httpAjax';
 import ReplyClue from './relayRequest'; // 回复评论
-import FeedbackClue from '../feedbackClue'; //反馈线索
-import RateCom from './rate'; //评价
+import FeedbackClue from '../feedbackClue'; // 反馈线索
+import RateCom from './rate'; // 评价
 import { ScoketHandler } from '../websocket/socket.js';
 import { thirdLayout } from '../../../Util/Flexout';
 import { EALREADY } from 'constants';
@@ -48,6 +48,7 @@ export default class RequestList extends React.Component {
 		setTimeout(() => {
 			let sessionanchor = sessionStorage.getItem("notic-anchor");
 			if (sessionanchor) {
+				sessionStorage.setItem("currentMenu", 'scoutPlat')
 				this.fromNotieOrCaseProgress(sessionanchor);
 			}
 		}, 500);
@@ -270,7 +271,7 @@ export default class RequestList extends React.Component {
 								<div>
 									<span >{ele.fromUserName || '-'} &nbsp;</span>
 									<span >{ele.date || '-'}  &nbsp;</span>
-									<span style={{ color: 'orange' }}>1231 {this.mapReplyType(ele.type)}</span>
+									<span style={{ color: 'orange' }}> {this.mapReplyType(ele.type)}</span>
 								</div>
 							}
 							description={<div>
@@ -315,8 +316,8 @@ export default class RequestList extends React.Component {
 										<div>主要描述：{item.xqnr}</div>
 										<div>
 											{item.attacments ? '附件：' : ''}
-											{item.attacments && item.attacments.map((jtem) => {
-												return <a title='点击下载' href={'/attachment/download?id=' + jtem.fileId}><Icon type="paper-clip" />{jtem.fileName}；</a>
+											{item.attacments && item.attacments.map((jtem, jndex) => {
+												return <a title='点击下载' href={'/attachment/download?id=' + jtem.fileId} key={jndex}><Icon type="paper-clip" />{jtem.fileName}；</a>
 											})}
 										</div>
 									</div>} key={index}>
