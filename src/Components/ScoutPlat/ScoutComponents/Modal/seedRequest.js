@@ -139,7 +139,6 @@ class CreateRequest extends React.Component {
                       fd: formData
                   }); */
                 // this.ajaxLoad(formData)
-                debugger;
                 this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
                     setTimeout(() => {
                         this.setState({ tempListLoading: false })
@@ -213,7 +212,6 @@ class CreateRequest extends React.Component {
 
     // 上传文件之前，选择文件之后
     beforeUpload = (file) => {
-        debugger;
         // 赋值文件
         this.setState(({ fileList }) => ({
             fileList: [...fileList, file],
@@ -253,7 +251,6 @@ class CreateRequest extends React.Component {
     
     onPreview = (e) => {
         console.log(e)
-        debugger;
     }
     render() {
         const { demandType, treeSelectKeys, requestTypeCn, requestContent,
@@ -294,7 +291,6 @@ class CreateRequest extends React.Component {
         }
         // 修改一条临时需求
         let updateBytemp = (record) => {
-            debugger;
             let temp = this.state.tempRequestData,
                 cur = temp[record.index - 1],
                 target = {
@@ -312,7 +308,6 @@ class CreateRequest extends React.Component {
                     }
                 }
             })
-            debugger;
             // setFieldsValue
             this.props.form.setFieldsValue(target)
         }

@@ -45,7 +45,6 @@ class Search extends React.Component {
         })
         const user = JSON.parse(sessionStorage.getItem("user"));
         let department = user.department;
-        debugger;
         this.setState({ department: department })
     }
 
@@ -80,10 +79,8 @@ class Search extends React.Component {
                         params[item] = val
                     }
                 })
-                debugger;
                 const reqUrl = addressUrl + '/cases/insert';
                 httpAjax("post", reqUrl, { ...params }).then(res => {
-                    debugger;
                     if (res.code == 200) {
                         message.success('创建成功。', 10)
                         handelInsertCase()
@@ -198,8 +195,8 @@ class Search extends React.Component {
                         </Col>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="受理单位" >
-                                {getFieldDecorator('sljsdw', { initialValue: this.state.department })(
-                                    <ZBDW defaultValue={this.state.department} placeholder="请输入受理单位" />
+                                {getFieldDecorator('sljsdw', { initialValue: this.state.department.code })(
+                                    <ZBDW placeholder="请输入受理单位" />
                                 )}
                             </FormItem>
                         </Col>
