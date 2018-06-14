@@ -15,6 +15,7 @@ class PublishInfor extends React.Component {
             treeData: [],
             treeSelectKeys: [],
             treeDefaultValue: [],
+            fileTypes: [],// 文件类型
             fileList: []
         }
     }
@@ -86,7 +87,9 @@ class PublishInfor extends React.Component {
                     }
                 })
                 fileList && fileList.map((item, index) => {
-                    formData.append("files", item);
+                    let fileType = this.state.fileTypes[item.uid];
+                    formData.append("files[" + index + "].fileType", fileType);
+                    formData.append("files[" + index + "].file", item);
                 })
                 let ajbh = caseRecord ? caseRecord.ajbh : sessionStorage.getItem('ajbh');
                 formData.append("ajbh", ajbh);
@@ -114,7 +117,8 @@ class PublishInfor extends React.Component {
             fileList: [...fileList, file],
         }));
         return false;
-
+        // 默认设置审批文书附件类型
+        this.updateFileType(file.uid);
     }
     //删除上传文件
     removeFileList = (file) => {
@@ -126,6 +130,22 @@ class PublishInfor extends React.Component {
                 fileList: newFileList,
             };
         });
+        // 删除对应的附件类型
+        this.delFileType(file.uid)
+    }
+    // 修改对应附件类型
+    updateFileType = (key, val) => {
+        let temp = this.state.fileTypes || {}
+        temp[key] = val || '1';
+        this.setState({ fileTypes: temp });
+        console.log(this.state.fileTypes)
+    }
+    // 删除对应附件类型
+    delFileType = (key) => {
+        let temp = this.state.fileTypes || {}
+        delete temp[key]
+        this.setState({ fileTypes: temp });
+        console.log(this.state.fileTypes)
     }
     render() {
         const { treeData, treeDefaultValue, fileList } = this.state;
@@ -134,8 +154,10 @@ class PublishInfor extends React.Component {
             action: `${addressUrl}/demand/insert`,
             onRemove: this.removeFileList,
             beforeUpload: this.beforeUpload,
+            showUploadList: false,
             name: 'files'
             //fileList: this.state.fileList,
+
         };
         const formItemLayout = {
             labelCol: {
@@ -226,6 +248,22 @@ class PublishInfor extends React.Component {
 		                     </Button>
                         </Upload>
                     )}
+                    <div className="fileTypeSet" style={{
+                        display: this.state.fileList && this.state.fileList.length ? 'block' : "none"
+                    }}>
+                        {this.state.fileList && this.state.fileList.map((item) => {
+                            return <p>
+                                <select onChange={(e) => { this.updateFileType(item.uid, e.target.value) }}>
+                                    <option value='1'>审批文书</option>
+                                    <option value='2'>法律文书</option>
+                                    <option value='3'>证据材料</option>
+                                    <option value='4'>其他</option>
+                                </select>
+                                <span title={item.name}> {item.name}</span>
+                                <Icon title='删除' onClick={(e) => { this.removeFileList(item) }} type="close" />
+                            </p>
+                        })}
+                    </div>
                 </FormItem>
                 <FormItem {...formItemLayout} label="附件说明">
                     {getFieldDecorator('fileComment', {

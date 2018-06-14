@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Row, Col, Input, Select, Radio, List, Table, Upload, Badge, Button, Icon, Modal, DatePicker, message, TreeSelect, Switch, Spin } from 'antd';
+import { Form, Row, Col, Input, Select, Radio, List, Table, Upload, Badge, Button, Icon, Modal, DatePicker, message, TreeSelect, Switch, Spin, Alert } from 'antd';
 import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
 import { debug } from 'util';
@@ -30,6 +30,7 @@ class CreateRequest extends React.Component {
             tempRequestData: [], // 保存多个需求
             tempListLoading: false, // 列表的loading
             tempListShow: false, // 多个需求组件的显示状态
+            fileTypes: [],// 文件类型
             pagination: {
                 pageSize: 100,
                 hideOnSinglePage: true,
@@ -120,7 +121,9 @@ class CreateRequest extends React.Component {
                 formData.append("ajbh", ajbh);
                 if (fileList && fileList.length) {
                     fileList.map((item, index) => {
-                        formData.append("files", item);
+                        let fileType = this.state.fileTypes[item.uid];
+                        formData.append("files[" + index + "].fileType", fileType);
+                        formData.append("files[" + index + "].file", item);
                     })
                 }
                 let temp = this.state.tempRequestData || [];
@@ -136,6 +139,7 @@ class CreateRequest extends React.Component {
                       fd: formData
                   }); */
                 // this.ajaxLoad(formData)
+                debugger;
                 this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
                     setTimeout(() => {
                         this.setState({ tempListLoading: false })
@@ -164,6 +168,18 @@ class CreateRequest extends React.Component {
         })
     }
 
+    // 多个需求循环发送
+    multipleForm = () => {
+        let params = this.state.tempRequestData;
+        if (params && params.length) {
+            params.forEach((item) => {
+                this.ajaxLoad(item.fd)
+            })
+        } else {
+            message.info("请先添加需求。")
+        }
+    }
+
     //异步加载子节点
     loadTreeData = (treeNode) => {
         const reqUrl = UC_URL + "getDepartmentByAny";
@@ -183,7 +199,6 @@ class CreateRequest extends React.Component {
     }
     //渲染树子节点
     renderTreeNodes = (data) => {
-        debugger;
         return data.map((item) => {
             if (item.children) {
                 return (
@@ -196,16 +211,20 @@ class CreateRequest extends React.Component {
         });
     }
 
+    // 上传文件之前，选择文件之后
     beforeUpload = (file) => {
         debugger;
+        // 赋值文件
         this.setState(({ fileList }) => ({
             fileList: [...fileList, file],
         }));
+        // 默认设置审批文书附件类型
+        this.updateFileType(file.uid);
         return false;
-
     }
     //删除上传文件
     removeFileList = (file) => {
+        // 删除文件
         this.setState(({ fileList }) => {
             const index = fileList.indexOf(file);
             const newFileList = fileList.slice();
@@ -214,7 +233,24 @@ class CreateRequest extends React.Component {
                 fileList: newFileList,
             };
         });
+        // 删除对应的附件类型
+        this.delFileType(file.uid)
     }
+    // 修改对应附件类型
+    updateFileType = (key, val) => {
+        let temp = this.state.fileTypes || {}
+        temp[key] = val || '1';
+        this.setState({ fileTypes: temp });
+        console.log(this.state.fileTypes)
+    }
+    // 删除对应附件类型
+    delFileType = (key) => {
+        let temp = this.state.fileTypes || {}
+        delete temp[key]
+        this.setState({ fileTypes: temp });
+        console.log(this.state.fileTypes)
+    }
+    
     onPreview = (e) => {
         console.log(e)
         debugger;
@@ -228,12 +264,8 @@ class CreateRequest extends React.Component {
             onRemove: this.removeFileList,
             beforeUpload: this.beforeUpload,
             name: 'files',
-            showUploadList: (e) => {
-                debugger;
-                console.log(e);
-            },
             onPreview: this.onPreview,
-            //fileList: this.state.fileList,
+            showUploadList: false,
         };
         const formItemLayout = {
             labelCol: {
@@ -266,15 +298,16 @@ class CreateRequest extends React.Component {
             let temp = this.state.tempRequestData,
                 cur = temp[record.index - 1],
                 target = {
-                    xqmc: '张三'
+                    xqmc: record.xqmc,
+                    xqnr: record.xqnr,
+                    smbz: record.smbz,
+                    sendMessage: record.sendMessage,
+                    //  qqsj: moment(record.qqsj).format('YYYY-MM-dd HH:mm:ss')
                 }
             // 赋值
             cur.fd.forEach((i, j) => {
                 if (i && j) {
-                    if (j == 'jsdwbh') { }
-                    else if (j == 'qqsj') { }
-                    else if (j == 'xqlx') { }
-                    else {
+                    if (j == 'fkts') {
                         target[j] = i;
                     }
                 }
@@ -303,7 +336,7 @@ class CreateRequest extends React.Component {
             dataIndex: 'xqmc',
             key: 'xqmc',
         }, {
-            title: '合成作战单位',
+            title: '融合作战单位',
             dataIndex: 'jsdwbh',
             key: 'jsdwbh',
             render: (text, record, index) => {
@@ -318,11 +351,12 @@ class CreateRequest extends React.Component {
                 return text ? (text.toString().split('').map((i) => { if (!isNaN(parseInt(i))) { return i; } })).join('') : '-'
             }
         }, {
-            title: '操作',
+            title: '删除',
+            align: 'center',
             dataIndex: 'address',
             key: 'address',
             render: (text, record, index) => {
-                return <span><a href='javascript:' title='修改' onClick={() => { updateBytemp(record) }} style={{ marginRight: 10 }}><Icon type="form" /></a>
+                return <span><a href='javascript:' title='修改' onClick={() => { updateBytemp(record) }} style={{ marginRight: 10, display: 'none' }}><Icon type="form" /></a>
                     <a href='javascript:' title='删除' onClick={() => { delAloneList(record.index) }} ><Icon type="close-square-o" /></a></span>
             }
         }];
@@ -496,11 +530,21 @@ class CreateRequest extends React.Component {
 		                                </Button>
                                     </Upload>
                                 )}
-                                <div style={{ width: 100, height: 100, border: '1px solid red', display: 'none' }}>
-                                    <select>
-                                        <option>审批文书</option>
-                                        <option>法律文书</option>
-                                    </select>
+                                <div className="fileTypeSet" style={{
+                                    display: this.state.fileList && this.state.fileList.length ? 'block' : "none"
+                                }}>
+                                    {this.state.fileList && this.state.fileList.map((item) => {
+                                        return <p>
+                                            <select onChange={(e) => { this.updateFileType(item.uid, e.target.value) }}>
+                                                <option value='1'>审批文书</option>
+                                                <option value='2'>法律文书</option>
+                                                <option value='3'>证据材料</option>
+                                                <option value='4'>其他</option>
+                                            </select>
+                                            <span title={item.name}> {item.name}</span>
+                                            <Icon title='删除' onClick={(e) => { this.removeFileList(item) }} type="close" />
+                                        </p>
+                                    })}
                                 </div>
                             </FormItem>
                         </Col>
@@ -525,7 +569,7 @@ class CreateRequest extends React.Component {
 				    </Select>
 				  )}
 				</FormItem>*/}
-                    <Table style={{ border: '0px solid red', maxHeight: 324, overflow: 'auto' }}
+                    <Table loading={this.state.tempListLoading} style={{ border: '0px solid red', maxHeight: 324, overflow: 'auto' }}
                         dataSource={this.state.tempRequestData}
                         pagination={pagination}
                         columns={columns}
@@ -533,8 +577,8 @@ class CreateRequest extends React.Component {
                     />
                     <div style={{ textAlign: 'center', marginTop: 20 }}>
                         <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>添加</Button>
-                        <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button>
-                        <Button onClick={this.props.handleCancel}>取消</Button>
+                        <Button type='primary' onClick={this.multipleForm} style={{ marginRight: '10px' }}>提交</Button>
+                        <Button onClick={() => { this.props.form.resetFields() }}>清空</Button>
                     </div>
                 </Form>
             </div>

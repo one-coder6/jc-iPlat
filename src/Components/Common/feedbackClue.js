@@ -12,7 +12,8 @@ class FeedfackClue extends React.Component {
 			tagColor: '#108ee9',
 			tagBack: '#fff',
 			requestModal: false,
-			fileList: []
+			fileList: [],
+			fileTypes: [],// 文件类型
 		}
 	}
 	handleSubmit = (e) => {
@@ -32,7 +33,9 @@ class FeedfackClue extends React.Component {
 				formData.append("fileComment", value.fileComment);
 				if (fileList && fileList.length) {
 					fileList.map((item, index) => {
-						formData.append("files", item);
+						let fileType = this.state.fileTypes[item.uid];
+						formData.append("files[" + index + "].fileType", fileType);
+						formData.append("files[" + index + "].file", item);
 					})
 				}
 				let config = {
@@ -57,6 +60,8 @@ class FeedfackClue extends React.Component {
 		this.setState(({ fileList }) => ({
 			fileList: [...fileList, file],
 		}));
+		// 默认设置审批文书附件类型
+		this.updateFileType(file.uid);
 		return false;
 
 	}
@@ -70,7 +75,24 @@ class FeedfackClue extends React.Component {
 				fileList: newFileList,
 			};
 		});
+		// 删除对应的附件类型
+		this.delFileType(file.uid)
 	}
+	// 修改对应附件类型
+	updateFileType = (key, val) => {
+		let temp = this.state.fileTypes || {}
+		temp[key] = val || '1';
+		this.setState({ fileTypes: temp });
+		console.log(this.state.fileTypes)
+	}
+	// 删除对应附件类型
+	delFileType = (key) => {
+		let temp = this.state.fileTypes || {}
+		delete temp[key]
+		this.setState({ fileTypes: temp });
+		console.log(this.state.fileTypes)
+	}
+
 	render() {
 		const { fileList } = this.state;
 		const { getFieldDecorator } = this.props.form;
@@ -78,8 +100,9 @@ class FeedfackClue extends React.Component {
 			action: `${addressUrl}/demand/insert`,
 			onRemove: this.removeFileList,
 			beforeUpload: this.beforeUpload,
-			name: 'files'
+			name: 'files',
 			//fileList: this.state.fileList,
+            showUploadList: false
 		};
 		const formItemLayout = {
 			labelCol: {
@@ -124,6 +147,22 @@ class FeedfackClue extends React.Component {
 		                     </Button>
 						</Upload>
 					)}
+					<div className="fileTypeSet" style={{
+						display: this.state.fileList && this.state.fileList.length ? 'block' : "none"
+					}}>
+						{this.state.fileList && this.state.fileList.map((item) => {
+							return <p>
+								<select onChange={(e) => { this.updateFileType(item.uid, e.target.value) }}>
+									<option value='1'>审批文书</option>
+									<option value='2'>法律文书</option>
+									<option value='3'>证据材料</option>
+									<option value='4'>其他</option>
+								</select>
+								<span title={item.name}> {item.name}</span>
+								<Icon title='删除' onClick={(e) => { this.removeFileList(item) }} type="close" />
+							</p>
+						})}
+					</div>
 				</FormItem>
 				<FormItem {...formItemLayout} label="附件说明">
 					{getFieldDecorator('fileComment', {

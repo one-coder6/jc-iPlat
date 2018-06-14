@@ -277,8 +277,8 @@ export default class RequestList extends React.Component {
 							description={<div>
 								<span>{(ele.toUserName) ? (`${ele.fromUserName}  回复 ${ele.toUserName}：${ele.content}`) : ele.content}</span>
 								<div>
-									{ele.attacments ? '附件：' : ''}
-									{ele.attacments && ele.attacments.map((jtem) => {
+									{ele.attachment ? '附件：' : ''}
+									{ele.attachment && ele.attachment.map((jtem) => {
 										return <a title='点击下载' href={'/attachment/download?id=' + jtem.fileId}><Icon type="paper-clip" />{jtem.fileName}；</a>
 									})}
 								</div>
