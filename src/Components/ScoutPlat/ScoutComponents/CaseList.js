@@ -247,7 +247,7 @@ class CaseList extends React.Component {
           loading={loading}
         />
         {/* 创建需求弹框 */}
-        <Modal swidth='800px' visible={createRequest} title='创建需求' onCancel={this.handleCancel} footer={null} >
+        <Modal width='1000px' visible={createRequest} title='创建需求' onCancel={this.handleCancel} footer={null} >
           <CreateRequest caseRecord={caseRecord} handleCancel={this.handleCancel} />
         </Modal>
         {/* 发布信息弹框 */}

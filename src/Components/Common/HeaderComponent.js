@@ -51,6 +51,7 @@ class Header extends React.Component {
         const reqUrl = addressUrl + '/user/logout';
         httpAjax("get", reqUrl).then(res => {
             if (res.code === '200') {
+                sessionStorage.removeItem("currentMenu");
                 this.props.history.push('/')
             }
         })

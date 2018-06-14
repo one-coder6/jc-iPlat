@@ -454,9 +454,7 @@ class CreateRequest extends React.Component {
 				    </Select>
 				  )}
                 </FormItem>*/}
-
                     <Table dataSource={dataSource} columns={columns} />
-
                     <div style={{ textAlign: 'center' }}>
                         <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button>
                         {/*     <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button> */}

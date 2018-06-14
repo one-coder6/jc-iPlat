@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, Input, Select, Radio, Popconfirm, List, Avatar, Upload, Badge, Button, Icon, Popover, Modal, DatePicker, message, TreeSelect, notification, Switch, Spin } from 'antd';
+import { Form, Row, Col, Input, Select, Radio, List, Table, Upload, Badge, Button, Icon, Modal, DatePicker, message, TreeSelect, Switch, Spin } from 'antd';
 import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
-import LeftRightDoor from '../../../Common/LeftRightDoor/leftrightdoor'
 import { debug } from 'util';
 import QueueAnim from 'rc-queue-anim';
 import Animate from 'rc-animate';
@@ -31,6 +30,13 @@ class CreateRequest extends React.Component {
             tempRequestData: [], // 保存多个需求
             tempListLoading: false, // 列表的loading
             tempListShow: false, // 多个需求组件的显示状态
+            pagination: {
+                pageSize: 100,
+                hideOnSinglePage: true,
+                showTotal: () => {
+                    return `共 ${this.state.tempRequestData.length} 条`
+                }
+            }
         }
     }
     componentWillMount() {
@@ -40,7 +46,7 @@ class CreateRequest extends React.Component {
             this.setState({ treeDefaultValue: res })
             const treeDataSource = res && res.map((item, index) => ({
                 title: item.fullname,
-                value: item.code,
+                value: item.code + '|' + item.fullname,
                 key: item.code,
             }))
             this.setState({ treeData: treeDataSource })
@@ -82,21 +88,29 @@ class CreateRequest extends React.Component {
             if (!err) {
                 let formData = new FormData();
                 const params = { ...value };
+                let tempPush = {}
                 Object.keys(params).forEach((item, index) => {
                     // 文件过滤掉
                     if (item !== 'files') {
                         let val = params[item];
-                        // 需求类型加工
+                        // 加工需求类型
                         if (item == 'xqlx' && val) {
                             val = val.split("&")[0];
                         }
+                        // 加工接收单位
+                        if (item == 'jsdwbh' && val) {
+                            val = val.split("|")[0];
+                        }
                         // 加工需求说明
                         if (item == 'smbz') {
-
                             val = (val || '') + (params.fkts || '');
                         }
                         if (val) {
                             formData.append(item, val);
+
+                        }
+                        if (params[item]) {
+                            tempPush[item] = params[item];
                         }
                     }
                 })
@@ -109,16 +123,24 @@ class CreateRequest extends React.Component {
                         formData.append("files", item);
                     })
                 }
-                let temp = this.state.tempRequestData || [],
-                    timekey = new Date().valueOf();
-                temp.push({ timekey: timekey, title: value.xqmc, cont: value.xqnr, fd: formData });
-                this.ajaxLoad(formData)
-                /*   this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
-                      setTimeout(() => {
-                          this.setState({ tempListLoading: false })
-                      }, 500)
-                  }) */
-
+                let temp = this.state.tempRequestData || [];
+                tempPush.timekey = new Date().valueOf();
+                tempPush.index = temp.length + 1;
+                tempPush.fd = formData;
+                temp.push(tempPush)
+                /*   temp.push({
+                      timekey: timekey,
+                      index: temp.length + 1,
+                      jsdwbh: value.jsdwbh.split('|')[1],
+                      fkts: (value.fkts.toString().split('').map((i) => { if (!isNaN(parseInt(i))) { return i; } })).join(''),
+                      fd: formData
+                  }); */
+                // this.ajaxLoad(formData)
+                this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
+                    setTimeout(() => {
+                        this.setState({ tempListLoading: false })
+                    }, 500)
+                })
             }
         })
     }
@@ -148,7 +170,7 @@ class CreateRequest extends React.Component {
         return httpAjax("post", reqUrl, { pcode: treeNode.props.eventKey }).then(res => {
             const treeDataSource = res && res.map((item, index) => ({
                 title: item.fullname,
-                value: item.code,
+                value: item.code + '|' + item.fullname,
                 key: item.code,
             }))
             treeNode.props.dataRef.children = treeDataSource;
@@ -161,6 +183,7 @@ class CreateRequest extends React.Component {
     }
     //渲染树子节点
     renderTreeNodes = (data) => {
+        debugger;
         return data.map((item) => {
             if (item.children) {
                 return (
@@ -174,6 +197,7 @@ class CreateRequest extends React.Component {
     }
 
     beforeUpload = (file) => {
+        debugger;
         this.setState(({ fileList }) => ({
             fileList: [...fileList, file],
         }));
@@ -191,15 +215,24 @@ class CreateRequest extends React.Component {
             };
         });
     }
+    onPreview = (e) => {
+        console.log(e)
+        debugger;
+    }
     render() {
         const { demandType, treeSelectKeys, requestTypeCn, requestContent,
-            treeDefaultValue, treeData, fileList } = this.state;
+            treeDefaultValue, treeData, fileList, pagination } = this.state;
         const { getFieldDecorator } = this.props.form;
         const props = {
             action: `${addressUrl}/demand/insert`,
             onRemove: this.removeFileList,
             beforeUpload: this.beforeUpload,
-            name: 'files'
+            name: 'files',
+            showUploadList: (e) => {
+                debugger;
+                console.log(e);
+            },
+            onPreview: this.onPreview,
             //fileList: this.state.fileList,
         };
         const formItemLayout = {
@@ -227,6 +260,29 @@ class CreateRequest extends React.Component {
             //  let dom = e.target.nextElementSibling; // 下一个节点
             dom.style.display = t == 'hide' ? 'none' : 'inline-block'
         }
+        // 修改一条临时需求
+        let updateBytemp = (record) => {
+            debugger;
+            let temp = this.state.tempRequestData,
+                cur = temp[record.index - 1],
+                target = {
+                    xqmc: '张三'
+                }
+            // 赋值
+            cur.fd.forEach((i, j) => {
+                if (i && j) {
+                    if (j == 'jsdwbh') { }
+                    else if (j == 'qqsj') { }
+                    else if (j == 'xqlx') { }
+                    else {
+                        target[j] = i;
+                    }
+                }
+            })
+            debugger;
+            // setFieldsValue
+            this.props.form.setFieldsValue(target)
+        }
         let delAloneList = (index) => {
             if (window.confirm("确定移除吗？")) {
                 this.setState({ tempListLoading: true })
@@ -237,6 +293,39 @@ class CreateRequest extends React.Component {
                 });
             }
         }
+        const columns = [{
+            title: '序号',
+            align: 'center',
+            dataIndex: 'index',
+            key: 'index'
+        }, {
+            title: '需求名称',
+            dataIndex: 'xqmc',
+            key: 'xqmc',
+        }, {
+            title: '合成作战单位',
+            dataIndex: 'jsdwbh',
+            key: 'jsdwbh',
+            render: (text, record, index) => {
+                return text ? text.toString().split('|')[1] : '-';
+            }
+        }, {
+            title: '反馈天数',
+            align: 'center',
+            dataIndex: 'fkts',
+            key: 'fkts',
+            render: (text, record, index) => {
+                return text ? (text.toString().split('').map((i) => { if (!isNaN(parseInt(i))) { return i; } })).join('') : '-'
+            }
+        }, {
+            title: '操作',
+            dataIndex: 'address',
+            key: 'address',
+            render: (text, record, index) => {
+                return <span><a href='javascript:' title='修改' onClick={() => { updateBytemp(record) }} style={{ marginRight: 10 }}><Icon type="form" /></a>
+                    <a href='javascript:' title='删除' onClick={() => { delAloneList(record.index) }} ><Icon type="close-square-o" /></a></span>
+            }
+        }];
 
         return (
             <div>
@@ -246,7 +335,7 @@ class CreateRequest extends React.Component {
                 {/* 弹出层 */}
                 <div style={{
                     width: 363,
-                    opacity: this.state.tempListShow ? 1 : 0,
+                    opacity:/*  this.state.tempListShow ? 1 : */ 0,
                     height: 792,
                     //  height: this.state.tempListShow ? 792 : 0,
                     top: 0,
@@ -299,105 +388,133 @@ class CreateRequest extends React.Component {
                 </div>
                 {/* 表单 */}
                 <Form onSubmit={this.handleSubmit} method="post">
-                    <FormItem {...formItemLayout} label="融合作战单位" className='fightTeamForm'>
-                        {getFieldDecorator('jsdwbh', {
-                            initialValue: treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code,
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                        })(
-                            <TreeSelect
-                                loadData={this.loadTreeData}
-                                dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
-                                onSelect={this.treeSelectKeys}
-                                searchPlaceholder='融合作战单位'
-                                treeDefaultExpandAll
-                            >
-                                {this.renderTreeNodes(treeData)}
-                            </TreeSelect>
-                        )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="需求类型">
-                        {getFieldDecorator('xqlx', {
-                            rules: [{ required: true, message: '请选择需求类型' },],
-                        })(
-                            <Select placeholder='请选择需求类型' onChange={this.selectType}>
-                                {this.renderOption(demandType)}
-                            </Select>
-                        )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="需求内容">
-                        {getFieldDecorator('xqnr', {
-                            rules: [{ required: true, message: '请输入需求内容.' },],
-                        })(
-                            <Input placeholder='请输入需求内容' onChange={this.changeXqnr} />
-                        )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="需求说明">
-                        {getFieldDecorator('smbz', {
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                        })(
-                            <TextArea placeholder='请输入需求说明' />
-                        )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="反馈天数">
-                        {getFieldDecorator('fkts', {
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                        })(
-                            <RadioGroup >
-                                <Radio value="（请在 1 天内反馈）">1天</Radio>
-                                <Radio value="（请在 3 天内反馈）">3天</Radio>
-                                <Radio value="（请在 5 天内反馈）">5天</Radio>
-                            </RadioGroup>
-                        )}
-                    </FormItem>
+                    <Row gutter={24}>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="需求类型">
+                                {getFieldDecorator('xqlx', {
+                                    rules: [{ required: true, message: '请选择需求类型' },],
+                                })(
+                                    <Select placeholder='请选择需求类型' onChange={this.selectType}>
+                                        {this.renderOption(demandType)}
+                                    </Select>
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="需求内容">
+                                {getFieldDecorator('xqnr', {
+                                    rules: [{ required: true, message: '请输入需求内容.' },],
+                                })(
+                                    <Input placeholder='请输入需求内容' onChange={this.changeXqnr} />
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="需求名称">
+                                {getFieldDecorator('xqmc', {
+                                    initialValue: `${requestTypeCn}${requestContent}`,
+                                    //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                                })(
+                                    <Input placeholder='请输入需求名称' />
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="需求说明">
+                                {getFieldDecorator('smbz', {
+                                    //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                                })(
+                                    <TextArea placeholder='请输入需求说明' />
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="融合作战单位" >
+                                {getFieldDecorator('jsdwbh', {
+                                    initialValue: '' /* treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code */,
+                                    rules: [{ required: true, message: '请选择融合作战单位' },],
+                                })(
+                                    <TreeSelect
+                                        loadData={this.loadTreeData}
+                                        dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+                                        onSelect={this.treeSelectKeys}
+                                        searchPlaceholder='融合作战单位'
+                                        treeDefaultExpandAll
+                                    >
+                                        {this.renderTreeNodes(treeData)}
+                                    </TreeSelect>
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="反馈天数">
+                                {getFieldDecorator('fkts', {
+                                    rules: [{ required: true, message: '请选择反馈天数' },],
+                                })(
+                                    <RadioGroup >
+                                        <Radio value="（请在 1 天内反馈）">1天</Radio>
+                                        <Radio value="（请在 3 天内反馈）">3天</Radio>
+                                        <Radio value="（请在 5 天内反馈）">5天</Radio>
+                                    </RadioGroup>
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="创建时间">
+                                {getFieldDecorator('qqsj', {
+                                    initialValue: moment(new Date()),
+                                    //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                                })(
+                                    <DatePicker
+                                        showTime
+                                        format="YYYY-MM-DD HH:mm:ss"
+                                        placeholder="请选择创建时间"
+                                        onChange={this.onChange}
+                                        onOk={this.onOk}
+                                        allowClear={false}
+                                    />
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="短信通知">
+                                {getFieldDecorator('sendMessage', { valuePropName: 'checked', initialValue: false, })(
+                                    <Switch />
+                                )}
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem  {...formItemLayout} label="附件">
+                                {getFieldDecorator('files', {
+                                    // valuePropName: 'fileList',
+                                    // getValueFromEvent: this.normFile,
+                                    initialValue: fileList
+                                })(
+                                    <Upload {...props} multiple >
+                                        <Button>
+                                            <Icon type="upload" /> 添加附件
+		                                </Button>
+                                    </Upload>
+                                )}
+                                <div style={{ width: 100, height: 100, border: '1px solid red', display: 'none' }}>
+                                    <select>
+                                        <option>审批文书</option>
+                                        <option>法律文书</option>
+                                    </select>
+                                </div>
+                            </FormItem>
+                        </Col>
+                        <Col span={12}>
+                            <FormItem {...formItemLayout} label="附件说明">
+                                {getFieldDecorator('fileComment', {
+                                    //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
+                                })(
+                                    <TextArea placeholder='请输入附件说明' />
+                                )}
+                            </FormItem>
+                        </Col>
 
-                    <FormItem {...formItemLayout} label="需求名称">
-                        {getFieldDecorator('xqmc', {
-                            initialValue: `${requestTypeCn}${requestContent}`,
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                        })(
-                            <Input placeholder='请输入需求名称' />
-                        )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="创建时间">
-                        {getFieldDecorator('qqsj', {
-                            initialValue: moment(new Date()),
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                        })(
-                            <DatePicker
-                                showTime
-                                format="YYYY-MM-DD HH:mm:ss"
-                                placeholder="请选择创建时间"
-                                onChange={this.onChange}
-                                onOk={this.onOk}
-                                allowClear={false}
-                            />
-                        )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="短信通知">
-                        {getFieldDecorator('sendMessage', { valuePropName: 'checked', initialValue: false, })(
-                            <Switch />
-                        )}
-                    </FormItem>
-                    <FormItem  {...formItemLayout} label="附件">
-                        {getFieldDecorator('files', {
-                            // valuePropName: 'fileList',
-                            // getValueFromEvent: this.normFile,
-                            initialValue: fileList
-                        })(
-                            <Upload {...props} multiple >
-                                <Button>
-                                    <Icon type="upload" /> 添加附件
-		                     </Button>
-                            </Upload>
-                        )}
-                    </FormItem>
-                    <FormItem {...formItemLayout} label="附件说明">
-                        {getFieldDecorator('fileComment', {
-                            //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
-                        })(
-                            <TextArea placeholder='请输入附件说明' />
-                        )}
-                    </FormItem>
+                    </Row>
                     {/*<FormItem {...formItemLayout} label="审批文书">
 				  {getFieldDecorator('isApprove', {
 				    //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
@@ -408,8 +525,14 @@ class CreateRequest extends React.Component {
 				    </Select>
 				  )}
 				</FormItem>*/}
-                    <div style={{ textAlign: 'center' }}>
-                        {/*      <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}  >添加</Button> */}
+                    <Table style={{ border: '0px solid red', maxHeight: 324, overflow: 'auto' }}
+                        dataSource={this.state.tempRequestData}
+                        pagination={pagination}
+                        columns={columns}
+                    /*     title={() => '已添加的需求'} */
+                    />
+                    <div style={{ textAlign: 'center', marginTop: 20 }}>
+                        <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>添加</Button>
                         <Button type='primary' htmlType="submit" style={{ marginRight: '10px' }}>提交</Button>
                         <Button onClick={this.props.handleCancel}>取消</Button>
                     </div>

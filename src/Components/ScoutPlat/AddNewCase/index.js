@@ -13,36 +13,16 @@ export default class ExtractCase extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchValue: null,
-            countGroup: '',
-            searchLoading: false
         }
     }
     componentWillMount() {
-        const reqUrl = addressUrl + '/cases/countGroup';
-        // httpAjax("get", reqUrl).then(res => {
-        // 	if (res.code == 200) {
-        // 		this.setState({
-        // 			countGroup: res.data
-        // 		})
-        // 	}
-        // })
-    }
-    handleSearch = (value) => {
-        this.setState({ searchValue: value, searchLoading: true });
     }
 
     render() {
         const { countGroup } = this.state;
         return (
             <div>
-                <Search Search={this.handleSearch} />
-                {/*      <ExtractList searchValue={this.state.searchValue} showType={this.props.showType} searchLoading={this.state.searchLoading} 
-                 reloadFn={this.props.reloadFn} handelExtra={this.props.handelExtra} /> */}
-                {/* <CommonLayout>
-                    <Search Search={this.handleSearch} />
-                    <ExtractList searchValue={this.state.searchValue} />
-                </CommonLayout> */}
+                <Search handelInsertCase={this.props.handelInsertCase} />
             </div>
 
         )

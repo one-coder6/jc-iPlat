@@ -53,15 +53,18 @@ export default class ScoutPlat extends React.Component {
 	handelExtra = () => {
 		this.setState({ extractCase: false })
 	}
-	// 新增案件
-	handelInsertCase = () => {
+	// 新增案件-提交
+	handelInsertCase = (e) => {
 		this.setState({ viewInsertCase: false })
-
+		this.setState({ reload: true })
 	}
-	// 新增案件
-	InsertCase = () => {
+	// 新增案件-显示
+	InsertCaseShow = () => {
 		this.setState({ viewInsertCase: true })
-
+	}
+	// 新增案件-关闭
+	InsertCaseHide = () => {
+		this.setState({ viewInsertCase: false })
 	}
 	render() {
 		const { countGroup, extractCase, viewInsertCase } = this.state;
@@ -89,7 +92,7 @@ export default class ScoutPlat extends React.Component {
 						{/* <Link to='/extractCase' >
                             <Button type='primary' size='small' style={{ margin: '0 10px' }}>提取案件</Button>
                         </Link> */}
-				{/* 		<Button type='primary' size='small' style={{ marginRight: '5px' }} onClick={this.InsertCase}>新增案件</Button> */}
+						<Button type='primary' size='small' style={{ marginRight: '5px' }} onClick={this.InsertCaseShow}>新增案件</Button>
 						<Button type='primary' size='small' style={{ marginRight: '5px' }} onClick={this.extractCase}>提取案件</Button>
 						<Link to='/ajbz' >
 							<Button type="primary" size='small'>比中信息</Button>
@@ -97,7 +100,7 @@ export default class ScoutPlat extends React.Component {
 					</Col>
 				</Row>
 				<CaseList searchValue={this.state.searchValue} reload={this.state.reload} />
-				<Modal style={{ top: 5, width: '100%' }} visible={viewInsertCase} title='新增案件' onCancel={this.handelInsertCase} className='extractCaseM' footer={false}>
+				<Modal style={{ top: 5, width: '100%' }} visible={viewInsertCase} title='新增案件' onCancel={this.InsertCaseHide} className='extractCaseM' footer={false}>
 					<InsertCase reloadFn={this.reloadFn} handelInsertCase={this.handelInsertCase} />
 				</Modal>
 				<Modal visible={extractCase} title='提取案件' onCancel={this.handelExtra} className='extractCaseM' footer={false}>

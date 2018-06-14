@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Layout, Menu, Icon, Row, Col } from 'antd';
+import { Layout, Menu, Icon } from 'antd';
 import { Link, NavLink, } from 'react-router-dom';
 
 //引入自定义组件
@@ -27,7 +27,7 @@ export default class ContentComponent extends React.Component {
         window.changerNotice = () => {
             this.setState({ changerNotice: true })
         };
-        let menu = sessionStorage.getItem("currentMenu") || 'index';
+        let menu = sessionStorage.getItem("currentMenu") || '';
         this.setState({ current: menu });
     }
     render() {

@@ -16,6 +16,9 @@ class LoginForm extends React.Component {
     constructor(props) {
         super(props);
     }
+    componentWillMount() {
+        sessionStorage.removeItem("currentMenu");
+    }
     handleSubmit = (e) => {
         e.preventDefault();
         const {
