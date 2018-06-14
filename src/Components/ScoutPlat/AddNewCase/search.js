@@ -3,6 +3,7 @@ import { Row, Col, Button, Form, DatePicker, Tag, Checkbox, Input, Select, Icon,
 //引入自适应文件
 import { thirdLayout } from '../../../Util/Flexout.js';
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
+import ZBDW from '../../../Components/Common/organization/zbdw';
 import moment from 'moment'
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -19,7 +20,8 @@ class Search extends React.Component {
             }, {
                 label: '我协办',
                 value: 'Pear'
-            }]
+            }],
+            department: {}
         }
     }
     componentWillMount() {
@@ -41,6 +43,10 @@ class Search extends React.Component {
         arr.forEach((item) => {
             this.ajaxLoadOther(item)
         })
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        let department = user.department;
+        debugger;
+        this.setState({ department: department })
     }
 
     // 加载其它字段
@@ -110,7 +116,7 @@ class Search extends React.Component {
                                 {getFieldDecorator('ajmc', {
                                     rules: [
                                         { required: true, message: '请输入案件名称' },
-                                    ], initialValue: ''
+                                    ],
                                 })(
                                     <Input placeholder='请输入案件名称' />
                                 )}
@@ -121,7 +127,7 @@ class Search extends React.Component {
                                 {getFieldDecorator('zyaq', {
                                     rules: [
                                         { required: true, message: '请输入主要案情' },
-                                    ], initialValue: ''
+                                    ],
                                 })(
                                     <Input placeholder='请输入主要案情' />
                                 )}
@@ -148,7 +154,7 @@ class Search extends React.Component {
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="案发地点" >
                                 {getFieldDecorator('fadd', {
-                                    initialValue: ''
+
                                 })(
                                     <Input placeholder='请输入案发地点' />
                                 )}
@@ -162,7 +168,6 @@ class Search extends React.Component {
                                     rules: [
                                         { required: false, message: '请输入发案地域' },
                                     ],
-                                    initialValue: ''
                                 })(
                                     <Select
                                         showSearch
@@ -180,16 +185,21 @@ class Search extends React.Component {
                                 {getFieldDecorator('bdajstate', {
                                     // initialValue: "1"
                                 })(
-                                    <Input />
+                                    <Select
+                                        showSearch
+                                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                        placeholder="请输入案件状态">
+                                        {this.state.ajstate && this.state.ajstate.map((item, i) => {
+                                            return <Option value={item.zdj} key={i}>{item.zdz}</Option>
+                                        })}
+                                    </Select>
                                 )}
                             </FormItem>
                         </Col>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="受理单位" >
-                                {getFieldDecorator('sljsdw', {
-                                    initialValue: ''
-                                })(
-                                    <Input />
+                                {getFieldDecorator('sljsdw', { initialValue: this.state.department })(
+                                    <ZBDW defaultValue={this.state.department} placeholder="请输入受理单位" />
                                 )}
                             </FormItem>
                         </Col>
@@ -203,18 +213,8 @@ class Search extends React.Component {
                             </FormItem>
                         </Col>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                            <FormItem   {...thirdLayout} label="接处警编号">
-                                {getFieldDecorator('sljsdw', {
-                                    // initialValue: "1"
-                                })(
-                                    <Input />
-                                )}
-                            </FormItem>
-                        </Col>
-                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="报警方式" >
                                 {getFieldDecorator('slJjfs', {
-                                    initialValue: ''
                                 })(
                                     <Select
                                         showSearch
@@ -227,17 +227,17 @@ class Search extends React.Component {
                                 )}
                             </FormItem>
                         </Col>
-                    </Row>
-                    <Row>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="主办单位" >
                                 {getFieldDecorator('zbdw', {
-                                    initialValue: ''
+
                                 })(
-                                    <Input />
+                                    <ZBDW placeholder="请输入主办单位" />
                                 )}
                             </FormItem>
                         </Col>
+                    </Row>
+                    <Row>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem   {...thirdLayout} label="案别">
                                 {getFieldDecorator('ab', {
@@ -257,7 +257,7 @@ class Search extends React.Component {
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="专案标识" >
                                 {getFieldDecorator('zabz', {
-                                    initialValue: ''
+
                                 })(
                                     <Select
                                         showSearch
@@ -270,43 +270,17 @@ class Search extends React.Component {
                                 )}
                             </FormItem>
                         </Col>
-                    </Row>
-                    <Row>
-                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                            <FormItem {...thirdLayout} label="案件来源" >
-                                {getFieldDecorator('ajFrom', )(
-                                    <Input />
-                                )}
-                            </FormItem>
-                        </Col>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem   {...thirdLayout} label="立案人员">
                                 {getFieldDecorator('ajlary', {
                                     // initialValue: "1"
                                 })(
-                                    <Input />
-                                )}
-                            </FormItem>
-                        </Col>
-                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                            <FormItem {...thirdLayout} label="案件危害程度" >
-                                {getFieldDecorator('ajwhcd', {
-                                    rules: [
-                                        { required: false, message: '请输入案件危害程度' },
-                                    ], initialValue: ''
-                                })(
-                                    <Select
-                                        showSearch
-                                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                        placeholder="请输入案件危害程度">
-                                        {this.state.ajwhcd && this.state.ajwhcd.map((item, i) => {
-                                            return <Option value={item.zdj} key={i}>{item.zdz}</Option>
-                                        })}
-                                    </Select>
+                                    <Input placeholder="请输入立案人员" />
                                 )}
                             </FormItem>
                         </Col>
                     </Row>
+
                     <Row>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="案件所属警区" >
@@ -346,7 +320,7 @@ class Search extends React.Component {
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="选择部位" >
                                 {getFieldDecorator('xzbw', {
-                                    initialValue: ''
+
                                 })(
                                     <Select
                                         showSearch
@@ -394,7 +368,7 @@ class Search extends React.Component {
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="选择时机" >
                                 {getFieldDecorator('xzsj', {
-                                    initialValue: ''
+
                                 })(
                                     <Select
                                         showSearch
@@ -458,7 +432,7 @@ class Search extends React.Component {
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="作案人数" >
                                 {getFieldDecorator('zars', )(
-                                    <Input />
+                                    <Input placeholder="请输入作案人数" />
                                 )}
                             </FormItem>
                         </Col>
@@ -467,7 +441,7 @@ class Search extends React.Component {
                                 {getFieldDecorator('fxxs', {
                                     rules: [
                                         { required: false, message: '请输入发现形式' },
-                                    ], initialValue: ''
+                                    ],
                                 })(
                                     <Select
                                         showSearch
@@ -483,9 +457,9 @@ class Search extends React.Component {
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="发案地点区县" >
                                 {getFieldDecorator('faddQx', {
-                                    initialValue: ''
+
                                 })(
-                                    <Input />
+                                    <Input placeholder="请输入发案地点区县" />
                                 )}
                             </FormItem>
                         </Col>
@@ -494,7 +468,7 @@ class Search extends React.Component {
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="发案地点街道" >
                                 {getFieldDecorator('faddJd', )(
-                                    <Input />
+                                    <Input placeholder="请输入发案地点街道" />
                                 )}
                             </FormItem>
                         </Col>
@@ -502,7 +476,7 @@ class Search extends React.Component {
                             <FormItem   {...thirdLayout} label="督办级别">
                                 {getFieldDecorator('dbjb', {
                                     rules: [
-                                        { required: false, message: '请输入案件所属警区!' },
+                                        { required: false, message: '请输入督办级别!' },
                                     ],
                                 })(
                                     <Select
@@ -519,12 +493,9 @@ class Search extends React.Component {
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="是否涉外" >
                                 {getFieldDecorator('sfsw', {
-                                    initialValue: ''
+
                                 })(
-                                    /*  <RadioGroup>
-                                         <Radio value="YES" key='1'>是 </Radio>
-                                         <Radio value="NO" key='0'>否</Radio>
-                                     </RadioGroup> */
+
                                     <Select
                                         showSearch
                                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -544,7 +515,7 @@ class Search extends React.Component {
                                 {getFieldDecorator('sdtd', {
                                     rules: [
                                         { required: false, message: '请输入手段特点' },
-                                    ], initialValue: ''
+                                    ],
                                 })(
                                     <Select
                                         showSearch
@@ -562,14 +533,35 @@ class Search extends React.Component {
                                 {getFieldDecorator('swrs', {
                                     // initialValue: "1"
                                 })(
-                                    <Input />
+                                    <Input placeholder="请输入死亡人数" />
                                 )}
                             </FormItem>
                         </Col>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="犯罪主体类型" >
                                 {getFieldDecorator('fzztlx', {
-                                    initialValue: ''
+
+                                })(
+                                    <Select
+                                        showSearch
+                                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                        placeholder="请输入犯罪主体类型">
+                                        {this.state.ajwhcd && this.state.ajwhcd.map((item, i) => {
+                                            return <Option value={item.zdj} key={i}>{item.zdz}</Option>
+                                        })}
+                                    </Select>
+
+                                )}
+                            </FormItem>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                            <FormItem {...thirdLayout} label="案件危害程度" >
+                                {getFieldDecorator('ajwhcd', {
+                                    rules: [
+                                        { required: false, message: '请输入案件危害程度' },
+                                    ],
                                 })(
                                     <Select
                                         showSearch
@@ -579,9 +571,14 @@ class Search extends React.Component {
                                             return <Option value={item.zdj} key={i}>{item.zdz}</Option>
                                         })}
                                     </Select>
-
                                 )}
                             </FormItem>
+                        </Col>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+
+                        </Col>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+
                         </Col>
                     </Row>
                     <Row>

@@ -457,8 +457,8 @@ export default class DbaseInfor extends React.Component {
 					<Card.Grid >{casesVO.sljsdwCn ? casesVO.sljsdwCn : '无'}</Card.Grid>
 					<Card.Grid >报警时间</Card.Grid>
 					<Card.Grid >{casesVO.sljjsj ? casesVO.sljjsj : '无 '}</Card.Grid>
-					<Card.Grid >接处警编号</Card.Grid>
-					<Card.Grid >{casesVO.sljsdw ? casesVO.sljsdw : '无'}</Card.Grid>
+					<Card.Grid >接收单位</Card.Grid>
+					<Card.Grid >{casesVO.sljsdwCn ? casesVO.sljsdwCn : '无'}</Card.Grid>
 					<Card.Grid >报警方式</Card.Grid>
 					<Card.Grid >{casesVO.slJjfsCn ? casesVO.slJjfsCn : '无'}</Card.Grid>
 					<Card.Grid >作案状态</Card.Grid>

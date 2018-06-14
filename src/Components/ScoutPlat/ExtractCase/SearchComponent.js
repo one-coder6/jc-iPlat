@@ -70,7 +70,6 @@ class Search extends React.Component {
 		};
 		// 开始时间
 		const startTime = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
-		const zbdwDecorator = getFieldDecorator('zbdw');
 		return (
 			<div style={{ padding: '20px', background: '#fff' }}>
 				<Form onSubmit={this.handleSearch}>

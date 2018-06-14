@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 // 引入antd组件
-import { Row, Col, Tag, Button, Modal } from 'antd';
+import { Row, Col, Icon, Tag, Button, Modal } from 'antd';
 // 引入自定义组件    公共部分
 import CommonLayout from '../Content/Index';
 import { httpAjax, addressUrl } from '../../Util/httpAjax';
@@ -100,10 +100,10 @@ export default class ScoutPlat extends React.Component {
 					</Col>
 				</Row>
 				<CaseList searchValue={this.state.searchValue} reload={this.state.reload} />
-				<Modal style={{ top: 5, width: '100%' }} visible={viewInsertCase} title='新增案件' onCancel={this.InsertCaseHide} className='extractCaseM' footer={false}>
+				<Modal style={{ top: 5, width: '100%' }} visible={viewInsertCase} title={<span><Icon type="file-add" /> 新增案件</span>} onCancel={this.InsertCaseHide} className='extractCaseM' footer={false}>
 					<InsertCase reloadFn={this.reloadFn} handelInsertCase={this.handelInsertCase} />
-				</Modal>
-				<Modal visible={extractCase} title='提取案件' onCancel={this.handelExtra} className='extractCaseM' footer={false}>
+				</Modal> <Icon type="share-alt" />
+				<Modal visible={extractCase} title={<span><Icon type="share-alt" /> 提取案件</span>} onCancel={this.handelExtra} className='extractCaseM' footer={false}>
 					<ExtractList reloadFn={this.reloadFn} handelExtra={this.handelExtra} showType='extractCase' />
 				</Modal>
 			</CommonLayout>

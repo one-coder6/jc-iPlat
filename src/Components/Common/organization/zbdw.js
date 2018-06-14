@@ -64,10 +64,11 @@ class ZBDW extends React.Component {
     render() {
         const { treeData } = this.state;
         return <TreeSelect
+            //  defaultValue={this.props.defaultValue ? this.props.defaultValue : null}
             loadData={this.loadTreeData}
             dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
             onSelect={this.treeSelectKeys}
-            searchPlaceholder='受理单位'
+            placeholder={this.props.placeholder ? this.props.placeholder : '受理单位'}
             treeDefaultExpandAll
         >
             {this.renderTreeNodes(treeData)}
