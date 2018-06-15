@@ -5,6 +5,7 @@ import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
 import { debug } from 'util';
 import QueueAnim from 'rc-queue-anim';
+import ZBDW from '../../../../Components/Common/organization/zbdw';
 import Animate from 'rc-animate';
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -19,18 +20,16 @@ class CreateRequest extends React.Component {
             tagColor: '#108ee9',
             tagBack: '#fff',
             requestModal: false,
-            treeData: [],
             demandType: [],
-            treeSelectKeys: "",
             requestTypeCn: '', // 需求类型
             requestContent: '',// 需求内容
             remarkContent: '',// 说明内容
-            treeDefaultValue: [],
             fileList: [],
             tempRequestData: [], // 保存多个需求
             tempListLoading: false, // 列表的loading
             tempListShow: false, // 多个需求组件的显示状态
             fileTypes: [],// 文件类型
+            diyValue: "",// 融合作战单位 key
             pagination: {
                 pageSize: 100,
                 hideOnSinglePage: true,
@@ -41,18 +40,6 @@ class CreateRequest extends React.Component {
         }
     }
     componentWillMount() {
-        //获取作战单位首层
-        const reqUrl = UC_URL + "getTopDepartment";
-        httpAjax("post", reqUrl, {}).then(res => {
-            this.setState({ treeDefaultValue: res })
-            const treeDataSource = res && res.map((item, index) => ({
-                title: item.fullname,
-                value: item.code + '|' + item.fullname,
-                key: item.code,
-            }))
-            this.setState({ treeData: treeDataSource })
-        })
-
         //获取需求类型
         let damandUrl = addressUrl + '/dic/listByDemandType';
         httpAjax("get", damandUrl).then(result => {
@@ -61,7 +48,6 @@ class CreateRequest extends React.Component {
             }
         })
     }
-
     //渲染下拉框
     renderOption = (selectArr) => {
         const options = selectArr && selectArr.map((item, index) => {
@@ -70,23 +56,27 @@ class CreateRequest extends React.Component {
         })
         return options;
     }
+
     // 选择需求类型
     selectType = (value) => {
+        debugger;
         this.setState({ requestTypeCn: value.split("&")[1] })
     }
 
     //获取更新的需求内容
     changeXqnr = (e) => {
+        debugger;
         this.setState({ requestContent: e.target.value })
     }
-
+   
     //提交创建需求
-    handleSubmit = (e) => {
-        e.preventDefault();
-        const { treeSelectKeys, fileList } = this.state;
+    handleSubmit = (e, fn) => {
+        e && e.preventDefault();
+        const { fileList } = this.state;
         const { caseRecord } = this.props;
         this.props.form.validateFields((err, value) => {
             if (!err) {
+                debugger;
                 let formData = new FormData();
                 const params = { ...value };
                 let tempPush = {}
@@ -108,7 +98,6 @@ class CreateRequest extends React.Component {
                         }
                         if (val) {
                             formData.append(item, val);
-
                         }
                         if (params[item]) {
                             tempPush[item] = params[item];
@@ -126,26 +115,35 @@ class CreateRequest extends React.Component {
                         formData.append("files[" + index + "].file", item);
                     })
                 }
-                let temp = this.state.tempRequestData || [];
-                tempPush.timekey = new Date().valueOf();
-                tempPush.index = temp.length + 1;
-                tempPush.fd = formData;
-                temp.push(tempPush)
-                /*   temp.push({
-                      timekey: timekey,
-                      index: temp.length + 1,
-                      jsdwbh: value.jsdwbh.split('|')[1],
-                      fkts: (value.fkts.toString().split('').map((i) => { if (!isNaN(parseInt(i))) { return i; } })).join(''),
-                      fd: formData
-                  }); */
-                // this.ajaxLoad(formData)
-                this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
-                    setTimeout(() => {
-                        this.setState({ tempListLoading: false })
-                    }, 500)
-                })
+                if (!fn) {
+                    // 多个需求
+                    let temp = this.state.tempRequestData || [];
+                    tempPush.timekey = new Date().valueOf();
+                    tempPush.index = temp.length + 1;
+                    tempPush.fd = formData;
+                    temp.push(tempPush);
+                    /*   temp.push({
+                          timekey: timekey,
+                          index: temp.length + 1,
+                          jsdwbh: value.jsdwbh.split('|')[1],
+                          fkts: (value.fkts.toString().split('').map((i) => { if (!isNaN(parseInt(i))) { return i; } })).join(''),
+                          fd: formData
+                      }); */
+                    // this.ajaxLoad(formData)
+                    this.setState({ tempRequestData: temp, tempListLoading: true, tempListShow: true }, () => {
+                        setTimeout(() => {
+                            this.setState({ tempListLoading: false })
+                        }, 500)
+                    })
+                } else {
+                    // 单个表单需求
+                    // this.ajaxLoad(formData);
+                }
             }
         })
+    }
+    getFromValue = () => {
+
     }
     // 请求接口获取数据
     ajaxLoad = (formData) => {
@@ -159,7 +157,12 @@ class CreateRequest extends React.Component {
             if (res.code === '200') {
                 message.success("创建需求成功");
                 this.props.form.resetFields();
+                this.props.form.setFieldsValue({
+                    xqmc: ''
+                });
+                this.setState({ tempRequestData: [] })
                 this.props.handleCancel();
+                this.multipleForm.state = true;
             } else {
                 message.error("创建需求失败")
                 this.props.handleCancel();
@@ -167,47 +170,31 @@ class CreateRequest extends React.Component {
         })
     }
 
-    // 多个需求循环发送
     multipleForm = () => {
         let params = this.state.tempRequestData;
         if (params && params.length) {
-            params.forEach((item) => {
-                this.ajaxLoad(item.fd)
-            })
+            // 如果是添加多个需求了则排队发送 
+            this.multipleForm.state = true; // 是否发生请求的开关
+            let index = 0,
+                timerSend = setInterval(() => {
+                    if (this.multipleForm.state && 0) {
+                        this.multipleForm.state = false;
+                        let fd = params[index].fd;
+                        this.ajaxLoad(fd);
+                        index++;
+                        if (index == params.length) {
+                            clearInterval(timerSend); // 清除定时器
+                        }
+                    }
+                }, 500)
         } else {
-            message.info("请先添加需求。")
+            /* 
+            如果是没有多个需求分2种情况
+            a:填了一个
+            b:啥也没填 */
+            this.handleSubmit(0, 1)
+            // message.info("请先添加需求。")
         }
-    }
-
-    //异步加载子节点
-    loadTreeData = (treeNode) => {
-        const reqUrl = UC_URL + "getDepartmentByAny";
-        return httpAjax("post", reqUrl, { pcode: treeNode.props.eventKey }).then(res => {
-            const treeDataSource = res && res.map((item, index) => ({
-                title: item.fullname,
-                value: item.code + '|' + item.fullname,
-                key: item.code,
-            }))
-            treeNode.props.dataRef.children = treeDataSource;
-            this.setState({ treeData: [...this.state.treeData] });
-        })
-    }
-    //获取树节点的Key
-    treeSelectKeys = (value) => {
-        this.setState({ treeSelectKeys: value })
-    }
-    //渲染树子节点
-    renderTreeNodes = (data) => {
-        return data.map((item) => {
-            if (item.children) {
-                return (
-                    <TreeNode title={item.title} key={item.key} value={item.value} dataRef={item}>
-                        {this.renderTreeNodes(item.children)}
-                    </TreeNode>
-                );
-            }
-            return <TreeNode {...item} dataRef={item} />
-        });
     }
 
     // 上传文件之前，选择文件之后
@@ -239,22 +226,18 @@ class CreateRequest extends React.Component {
         let temp = this.state.fileTypes || {}
         temp[key] = val || '1';
         this.setState({ fileTypes: temp });
-        console.log(this.state.fileTypes)
     }
     // 删除对应附件类型
     delFileType = (key) => {
         let temp = this.state.fileTypes || {}
         delete temp[key]
         this.setState({ fileTypes: temp });
-        console.log(this.state.fileTypes)
     }
-    
+
     onPreview = (e) => {
-        console.log(e)
     }
     render() {
-        const { demandType, treeSelectKeys, requestTypeCn, requestContent,
-            treeDefaultValue, treeData, fileList, pagination } = this.state;
+        const { demandType, fileList, pagination } = this.state;
         const { getFieldDecorator } = this.props.form;
         const props = {
             action: `${addressUrl}/demand/insert`,
@@ -291,6 +274,7 @@ class CreateRequest extends React.Component {
         }
         // 修改一条临时需求
         let updateBytemp = (record) => {
+            debugger;
             let temp = this.state.tempRequestData,
                 cur = temp[record.index - 1],
                 target = {
@@ -298,8 +282,10 @@ class CreateRequest extends React.Component {
                     xqnr: record.xqnr,
                     smbz: record.smbz,
                     sendMessage: record.sendMessage,
-                    //  qqsj: moment(record.qqsj).format('YYYY-MM-dd HH:mm:ss')
+                    qqsj: moment(record.qqsj, 'YYYY-MM-dd HH:mm:ss'), //.format('YYYY-MM-dd HH:mm:ss')
+                    xqlx: record.xqlx
                 }
+            this.setState({ diyValue: record.jsdwbh })
             // 赋值
             cur.fd.forEach((i, j) => {
                 if (i && j) {
@@ -324,21 +310,25 @@ class CreateRequest extends React.Component {
         const columns = [{
             title: '序号',
             align: 'center',
+            width: 90,
             dataIndex: 'index',
             key: 'index'
         }, {
             title: '需求名称',
+            width: 150,
             dataIndex: 'xqmc',
             key: 'xqmc',
         }, {
             title: '融合作战单位',
+            width: 100,
             dataIndex: 'jsdwbh',
             key: 'jsdwbh',
             render: (text, record, index) => {
-                return text ? text.toString().split('|')[1] : '-';
+                return text ? text.toString().split('&')[1] : '-';
             }
         }, {
             title: '反馈天数',
+            width: 90,
             align: 'center',
             dataIndex: 'fkts',
             key: 'fkts',
@@ -347,20 +337,18 @@ class CreateRequest extends React.Component {
             }
         }, {
             title: '删除',
+            width: 90,
             align: 'center',
             dataIndex: 'address',
             key: 'address',
             render: (text, record, index) => {
-                return <span><a href='javascript:' title='修改' onClick={() => { updateBytemp(record) }} style={{ marginRight: 10, display: 'none' }}><Icon type="form" /></a>
+                return <span><a href='javascript:' title='修改' onClick={() => { updateBytemp(record) }} style={{ marginRight: 10 }}><Icon type="form" /></a>
                     <a href='javascript:' title='删除' onClick={() => { delAloneList(record.index) }} ><Icon type="close-square-o" /></a></span>
             }
         }];
 
         return (
             <div>
-                {/*   <Animate showProp="visible" transitionAppear='true' transitionName="fade">
-                    {this.state.show ? <div visible key="1">示例</div> : null}
-                </Animate> */}
                 {/* 弹出层 */}
                 <div style={{
                     width: 363,
@@ -441,7 +429,7 @@ class CreateRequest extends React.Component {
                         <Col span={12}>
                             <FormItem {...formItemLayout} label="需求名称">
                                 {getFieldDecorator('xqmc', {
-                                    initialValue: `${requestTypeCn}${requestContent}`,
+                                    initialValue: this.state.requestTypeCn + this.state.requestContent,
                                     //rules: [{ required: true, message: 'Please select your favourite colors!', type: 'array' },],
                                 })(
                                     <Input placeholder='请输入需求名称' />
@@ -460,18 +448,10 @@ class CreateRequest extends React.Component {
                         <Col span={12}>
                             <FormItem {...formItemLayout} label="融合作战单位" >
                                 {getFieldDecorator('jsdwbh', {
-                                    initialValue: '' /* treeDefaultValue && treeDefaultValue[0] && treeDefaultValue[0].code */,
                                     rules: [{ required: true, message: '请选择融合作战单位' },],
+                                    initialValue: { val: "440303530000" }
                                 })(
-                                    <TreeSelect
-                                        loadData={this.loadTreeData}
-                                        dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
-                                        onSelect={this.treeSelectKeys}
-                                        searchPlaceholder='融合作战单位'
-                                        treeDefaultExpandAll
-                                    >
-                                        {this.renderTreeNodes(treeData)}
-                                    </TreeSelect>
+                                    <ZBDW multipleVlue='true' placeholder='请选择融合作战单位' />
                                 )}
                             </FormItem>
                         </Col>
@@ -564,16 +544,25 @@ class CreateRequest extends React.Component {
 				    </Select>
 				  )}
 				</FormItem>*/}
-                    <Table loading={this.state.tempListLoading} style={{ border: '0px solid red', maxHeight: 324, overflow: 'auto' }}
+                    <Table loading={this.state.tempListLoading}
+                        style={{
+                            border: '0px solid red', maxHeight: 324, overflow: 'auto',
+                            display: this.state.tempRequestData && this.state.tempRequestData.length ? 'block' : 'none'
+                        }}
                         dataSource={this.state.tempRequestData}
                         pagination={pagination}
                         columns={columns}
+                        rowKey='timeKey'
+                        scroll={{ y: 240 }}
                     /*     title={() => '已添加的需求'} */
                     />
                     <div style={{ textAlign: 'center', marginTop: 20 }}>
-                        <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>添加</Button>
-                        <Button type='primary' onClick={this.multipleForm} style={{ marginRight: '10px' }}>提交</Button>
-                        <Button onClick={() => { this.props.form.resetFields() }}>清空</Button>
+                        <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}><Icon type="shopping-cart" />添加</Button>
+                        <Button type='primary' onClick={this.multipleForm} style={{ marginRight: '10px' }}><Icon type="check" />提交</Button>
+                        <Button onClick={() => {
+                            this.props.form.resetFields();
+                            this.setState({ requestTypeCn: '', requestContent: '' })
+                        }}><Icon type="rollback" />清空</Button>
                     </div>
                 </Form>
             </div>

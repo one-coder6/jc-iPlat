@@ -94,15 +94,13 @@ export default class ScoutPlat extends React.Component {
                         </Link> */}
 						<Button type='primary' size='small' style={{ marginRight: '5px' }} onClick={this.InsertCaseShow}>新增案件</Button>
 						<Button type='primary' size='small' style={{ marginRight: '5px' }} onClick={this.extractCase}>提取案件</Button>
-						<Link to='/ajbz' >
-							<Button type="primary" size='small'>比中信息</Button>
-						</Link>
+						<Link to='/ajbz'><Button type="primary" size='small'>比中信息</Button></Link>
 					</Col>
 				</Row>
 				<CaseList searchValue={this.state.searchValue} reload={this.state.reload} />
 				<Modal style={{ top: 5, width: '100%' }} visible={viewInsertCase} title={<span><Icon type="file-add" /> 新增案件</span>} onCancel={this.InsertCaseHide} className='extractCaseM' footer={false}>
 					<InsertCase reloadFn={this.reloadFn} handelInsertCase={this.handelInsertCase} />
-				</Modal> <Icon type="share-alt" />
+				</Modal>  
 				<Modal visible={extractCase} title={<span><Icon type="share-alt" /> 提取案件</span>} onCancel={this.handelExtra} className='extractCaseM' footer={false}>
 					<ExtractList reloadFn={this.reloadFn} handelExtra={this.handelExtra} showType='extractCase' />
 				</Modal>

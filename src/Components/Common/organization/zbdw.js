@@ -4,7 +4,7 @@ import { Icon, TreeSelect } from 'antd';
 import { httpAjax, addressUrl, UC_URL } from '../../../Util/httpAjax';
 
 const TreeNode = TreeSelect.TreeNode;
-
+/* multipleVlue 是否将code和fullname合并成value */
 class ZBDW extends React.Component {
     constructor(props, context) {
         super(props, context);
@@ -19,7 +19,7 @@ class ZBDW extends React.Component {
             this.setState({ treeDefaultValue: res })
             const treeDataSource = res && res.map((item, index) => ({
                 title: item.fullname,
-                value: item.code,
+                value: this.props.multipleVlue ? item.code + '&' + item.fullname : item.code,
                 key: item.code,
             }))
             this.setState({ treeData: treeDataSource })
@@ -32,7 +32,7 @@ class ZBDW extends React.Component {
         return httpAjax("post", reqUrl, { pcode: treeNode.props.eventKey }).then(res => {
             const treeDataSource = res && res.map((item, index) => ({
                 title: item.fullname,
-                value: item.code,
+                value: this.props.multipleVlue ? item.code + '&' + item.fullname : item.code,
                 key: item.code,
             }))
 

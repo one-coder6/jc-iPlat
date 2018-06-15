@@ -87,7 +87,7 @@ class ScoutLog extends React.Component {
                     <Menu>
                         {record.lsAttachment && record.lsAttachment.map((item) => {
                             return <Menu.Item>
-                               <a title='点击下载' href={'/attachment/download?id=' + item.fileId}><Icon type="paper-clip" />{item.fileName}</a>
+                                <a title='点击下载' href={'/attachment/download?id=' + item.fileId}><Icon type="paper-clip" />{item.fileName}</a>
                             </Menu.Item>
                         })
                         }
@@ -95,7 +95,7 @@ class ScoutLog extends React.Component {
                 );
 
                 return record.lsAttachment ? <Dropdown overlay={menu}>
-                    <a className="ant-dropdown-link" href="#">
+                    <a className="ant-dropdown-link" href="javascript:">
                         查看 <Icon type="down" />
                     </a>
                 </Dropdown> : '-'

@@ -9,7 +9,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
 const RadioGroup = Radio.RadioGroup;
-
+const { TextArea } = Input;
 class Search extends React.Component {
     constructor(props) {
         super(props);
@@ -30,7 +30,6 @@ class Search extends React.Component {
             if (res.code == 200) {
                 sessionStorage.setItem('jcdata', JSON.stringify(res.data))
                 this.setState({ ...res.data })
-                // console.log(res.data)
             }
         })
         // 单独取这3个字段
@@ -120,18 +119,27 @@ class Search extends React.Component {
                             </FormItem>
                         </Col>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
+                            <FormItem {...thirdLayout} label="案发地点" >
+                                {getFieldDecorator('fadd', {
+
+                                })(
+                                    <Input placeholder='请输入案发地点' />
+                                )}
+                            </FormItem>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="主要案情" >
                                 {getFieldDecorator('zyaq', {
                                     rules: [
                                         { required: true, message: '请输入主要案情' },
                                     ],
                                 })(
-                                    <Input placeholder='请输入主要案情' />
+                                    <TextArea rows={3} />
                                 )}
                             </FormItem>
                         </Col>
-                    </Row>
-                    <Row>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
                             <FormItem {...thirdLayout} label="案发开始时间" >
                                 {getFieldDecorator('fasjcz', )(
@@ -148,15 +156,7 @@ class Search extends React.Component {
                                 )}
                             </FormItem>
                         </Col>
-                        <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                            <FormItem {...thirdLayout} label="案发地点" >
-                                {getFieldDecorator('fadd', {
 
-                                })(
-                                    <Input placeholder='请输入案发地点' />
-                                )}
-                            </FormItem>
-                        </Col>
                     </Row>
                     <Row>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
