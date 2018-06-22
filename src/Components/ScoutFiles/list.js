@@ -15,7 +15,13 @@ class CaseList extends React.Component {
                 pageSize: 10,
                 pageNum: 1,
                 showQuickJumper: true,
-                showSizeChanger: true
+                showSizeChanger: true,
+                onShowSizeChange: (current, pageSize) => {
+                    // 切换每页数目量
+                    let showSizeChanger = this.state.pagination;
+                    showSizeChanger["pageSize"] = pageSize;
+                    this.setState({ pagination: showSizeChanger, itemPageNum: pageSize });
+                }
             },
             dataSource: [],
             caseRecord: '',
@@ -47,7 +53,8 @@ class CaseList extends React.Component {
         const pager = {
             ...this.state.pagination
         };
-        httpAjax("get", addressUrl + '/cases/list', { params: { ...page } }).then(res => {
+
+        httpAjax("get", addressUrl + '/archives/caseList', { params: { ...page } }).then(res => {
             if (res.code == 200) {
                 const data = res.data;
                 pager.total = data.total,
@@ -59,6 +66,27 @@ class CaseList extends React.Component {
                 })
             }
         })
+
+        /*  const data = {
+                  total: 2,
+                  list: [
+                      {
+                          ajbh: '	A4403035900002018020025', ajmc: '2.20特大入室盗窃案', zyaq: '张三被盗窃案的主要案情', abCn: '被盗窃案',
+                          beginLasj: '2018-04-10', endLasj: '2018-04-11', ajzbryCn: '张三三', zbdwCn: '沙头派出所'
+                      },
+                      {
+                          ajbh: 'A4403035300002018050117', ajmc: '曾凡芬被诈骗案', zyaq: '张四被抢劫案的主要案情', abCn: '被抢劫案',
+                          beginLasj: '2018-03-10', endLasj: '2018-05-21', ajzbryCn: '张思思', zbdwCn: '宝钢派出所'
+                      }
+                  ]
+              };
+              pager.total = data.total,
+              this.setState({
+                  pagination: pager,
+                  loading: false,
+                  dataSource: data.list
+              }) 
+        */
     }
     paginationChange = (page) => {
         this.setState({ loading: true, itemPageNum: page.current })
@@ -69,10 +97,11 @@ class CaseList extends React.Component {
     }
 
     //跳转详情页
-    viewDetail = (ajbh) => {
+    viewDetail = (record) => {
         //console.log("viewDetail",ajbh,this.props.history)
         //this.props.history.push({pathname: '/caseDetail', state: { ajbh: text }});
-        sessionStorage.setItem("ajbh", ajbh)
+        sessionStorage.setItem("ajbh_dang", record.ajbh)
+        sessionStorage.setItem("ajmc_dang", record.ajmc)
     }
 
     render() {
@@ -90,38 +119,37 @@ class CaseList extends React.Component {
             key: 'ajbh',
             render: (text, record, index) => {
                 return <div>
-                    <Link to={{ pathname: '/archivesdetial', query: { ajbh: text } }} onClick={() => this.viewDetail(text)}>{text}</Link>
+                    <Link to={{ pathname: '/archivesdetial', query: { ajbh: text } }} onClick={() => this.viewDetail(record)}>{text}</Link>
                     {/* <Link  to='/caseDetail' params = {{userId:text}}>{text}</Link> */}
                     {/* <Button onClick = { () =>this.viewDetail(text)}>{text} </Button> */}
                 </div>
-
             }
         }, {
             title: '案件名称',
             dataIndex: 'ajmc',
         }, {
-            title: '简要案情',
+            title: '主要案情',
             dataIndex: 'zyaq',
             key: "zyaq",
             render: (text, record, index) => {
-                return <Tooltip placement="bottom" title={text}><span>{text.toString().length > 6 ? text.toString().substring(0, 26) + '...' : text}</span></Tooltip>
-                //return <span title={text}>{text.toString().length > 6 ? text.toString().substring(0, 26) + '...' : text}</span>
+                //return <Tooltip placement="bottom" title={text}><span>{text.toString().length > 6 ? text.toString().substring(0, 26) + '...' : text}</span></Tooltip>
+                return <span title={text}>{text.toString().length > 26 ? text.toString().substring(0, 26) + '...' : text}</span>
             }
         }, {
             title: '案件类别',
             dataIndex: 'abCn',
         }, {
-            title: '案发开始时间',
-            dataIndex: 'lasj',
+            title: '立案开始时间',
+            dataIndex: 'beginLasj',
         }, {
-            title: '案发结束时间',
-            dataIndex: 'jaJasj',
+            title: '立案结束时间',
+            dataIndex: 'endLasj',
         }, {
-            title: '主办民警',
+            title: '案件主办人员名称',
             dataIndex: 'ajzbryCn',
         }, {
             title: '主办单位',
-            dataIndex: 'zbdw',
+            dataIndex: 'zbdwCn',
         }]
         return (
             <div className='caseListContent blockDefaut'>

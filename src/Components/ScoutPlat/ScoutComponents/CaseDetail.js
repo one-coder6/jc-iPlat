@@ -98,7 +98,7 @@ class CaseDetail extends React.Component {
                             <Dprogress />
                         </TabPane>
                     </Tabs>
-                    <Modal width='1000px' title='创建需求' visible={createDemand} onCancel={this.handleCancel} footer={null}>
+                    <Modal width='1089px' title='创建需求' visible={createDemand} onCancel={this.handleCancel} footer={null}>
                         <CreateRequest handleCancel={this.handleCancel} />
                     </Modal>
                     <Modal title='发布信息' visible={publishInfor} onCancel={this.handleCancel} footer={null}>

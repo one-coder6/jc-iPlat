@@ -309,9 +309,9 @@ export default class RequestList extends React.Component {
 									<div id={item.ajbh + '_' + item.id + '_' + item.contentType}>
 										<div>
 											<Tag color="#87d068">{item.contentType == 'DEMAND' ? '需求 ' : '信息 '}{index + 1}</Tag>
-											<span style={{ color: 'red' }}>主题：{item.xqmc}；</span>
-											<span> 主办人：{item.lrrymc} ；</span>
-											<span> 创建时间 ：{item.lrsj}</span>
+											<span style={{ color: 'red' }}>主题：{item.xqmc || '-'}；</span>
+											<span> 主办人：{item.lrrymc || '-'} ；</span>
+											<span> 创建时间 ：{item.qqsj || '-'}</span>
 										</div>
 										<div>主要描述：{item.xqnr}</div>
 										<div>

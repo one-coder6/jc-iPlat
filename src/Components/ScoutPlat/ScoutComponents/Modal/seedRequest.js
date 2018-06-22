@@ -59,16 +59,14 @@ class CreateRequest extends React.Component {
 
     // 选择需求类型
     selectType = (value) => {
-        debugger;
         this.setState({ requestTypeCn: value.split("&")[1] })
     }
 
     //获取更新的需求内容
     changeXqnr = (e) => {
-        debugger;
         this.setState({ requestContent: e.target.value })
     }
-   
+
     //提交创建需求
     handleSubmit = (e, fn) => {
         e && e.preventDefault();
@@ -76,7 +74,6 @@ class CreateRequest extends React.Component {
         const { caseRecord } = this.props;
         this.props.form.validateFields((err, value) => {
             if (!err) {
-                debugger;
                 let formData = new FormData();
                 const params = { ...value };
                 let tempPush = {}
@@ -90,7 +87,7 @@ class CreateRequest extends React.Component {
                         }
                         // 加工接收单位
                         if (item == 'jsdwbh' && val) {
-                            val = val.split("|")[0];
+                            val = val.split("&")[0];
                         }
                         // 加工需求说明
                         if (item == 'smbz') {
@@ -137,7 +134,7 @@ class CreateRequest extends React.Component {
                     })
                 } else {
                     // 单个表单需求
-                    // this.ajaxLoad(formData);
+                    this.ajaxLoad(formData);
                 }
             }
         })
@@ -274,7 +271,6 @@ class CreateRequest extends React.Component {
         }
         // 修改一条临时需求
         let updateBytemp = (record) => {
-            debugger;
             let temp = this.state.tempRequestData,
                 cur = temp[record.index - 1],
                 target = {
@@ -342,8 +338,8 @@ class CreateRequest extends React.Component {
             dataIndex: 'address',
             key: 'address',
             render: (text, record, index) => {
-                return <span><a href='javascript:' title='修改' onClick={() => { updateBytemp(record) }} style={{ marginRight: 10 }}><Icon type="form" /></a>
-                    <a href='javascript:' title='删除' onClick={() => { delAloneList(record.index) }} ><Icon type="close-square-o" /></a></span>
+                return <span><a href='javascript:' title='修改' onClick={() => { updateBytemp(record) }} style={{ marginRight: 10, display: 'none' }}><Icon type="form" /></a>
+                    <a href='javascript:' title='删除' onClick={() => { delAloneList(record.index) }} >{/* <Icon type="close" /> */}<Icon type="close-square-o" /></a></span>
             }
         }];
 
@@ -449,7 +445,7 @@ class CreateRequest extends React.Component {
                             <FormItem {...formItemLayout} label="融合作战单位" >
                                 {getFieldDecorator('jsdwbh', {
                                     rules: [{ required: true, message: '请选择融合作战单位' },],
-                                    initialValue: { val: "440303530000" }
+                                    // initialValue: { val: "440303530000" }
                                 })(
                                     <ZBDW multipleVlue='true' placeholder='请选择融合作战单位' />
                                 )}
@@ -464,6 +460,7 @@ class CreateRequest extends React.Component {
                                         <Radio value="（请在 1 天内反馈）">1天</Radio>
                                         <Radio value="（请在 3 天内反馈）">3天</Radio>
                                         <Radio value="（请在 5 天内反馈）">5天</Radio>
+                                        <Radio value="（请在 10 天内反馈）">10天</Radio>
                                     </RadioGroup>
                                 )}
                             </FormItem>

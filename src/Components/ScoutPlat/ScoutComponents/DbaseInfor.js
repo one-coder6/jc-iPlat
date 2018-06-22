@@ -453,16 +453,12 @@ export default class DbaseInfor extends React.Component {
 					<Card.Grid >{casesVO.fadyCn ? casesVO.fadyCn : '无'}</Card.Grid>
 					<Card.Grid >案件状态</Card.Grid>
 					<Card.Grid >{casesVO.bdajstateCn ? casesVO.bdajstateCn : '无'}</Card.Grid>
-					<Card.Grid >受理单位</Card.Grid>
-					<Card.Grid >{casesVO.sljsdwCn ? casesVO.sljsdwCn : '无'}</Card.Grid>
 					<Card.Grid >报警时间</Card.Grid>
 					<Card.Grid >{casesVO.sljjsj ? casesVO.sljjsj : '无 '}</Card.Grid>
-					<Card.Grid >接收单位</Card.Grid>
+					<Card.Grid >受理接收单位</Card.Grid>
 					<Card.Grid >{casesVO.sljsdwCn ? casesVO.sljsdwCn : '无'}</Card.Grid>
 					<Card.Grid >报警方式</Card.Grid>
 					<Card.Grid >{casesVO.slJjfsCn ? casesVO.slJjfsCn : '无'}</Card.Grid>
-					<Card.Grid >作案状态</Card.Grid>
-					<Card.Grid >{casesVO.zaztCn ? casesVO.zaztCn : '无'}</Card.Grid>
 					<Card.Grid >案别</Card.Grid>
 					<Card.Grid >{casesVO.abCn ? casesVO.abCn : '无'}</Card.Grid>
 					<Card.Grid >专案标识</Card.Grid>
@@ -509,6 +505,10 @@ export default class DbaseInfor extends React.Component {
 					<Card.Grid >{casesVO.swrs ? casesVO.swrs : '无'}</Card.Grid>
 					<Card.Grid >犯罪主体类型</Card.Grid>
 					<Card.Grid >{casesVO.fzztlxCn ? casesVO.fzztlxCn : '无'}</Card.Grid>
+					<Card.Grid >　</Card.Grid>
+					<Card.Grid >　</Card.Grid>
+					<Card.Grid >　</Card.Grid>
+					<Card.Grid >　</Card.Grid>
 					<Card.Grid style={{ width: '16%',height:100 ,lineHeight:'100px'}}>主要案情</Card.Grid>
 					<Card.Grid style={{ width: '80%',height:100,textAlign:"left",overflow:'auto',whiteSpace:'inherit' }} title={casesVO.zyaq || ''}>
 					<span>{casesVO.zyaq ? casesVO.zyaq : '无'}</span>

@@ -1,6 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Row, Col, List, Spin } from 'antd';
+import { Link, HashRouter } from 'react-router-dom';
+import { Icon, List, Spin } from 'antd';
+import { httpAjax, addressUrl } from '../../../Util/httpAjax'; //引入自定义组件
 //引入公用部分
 import CommonLayout from '../../Content/Index'
 import $ from 'jquery'
@@ -17,12 +18,11 @@ export default class ScoutFile extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			showContent: false,
-			searchParam: null,
 			trunObj: null,
-			loading: true
+			loading: true,
+			ajbh_dang: '' // 档案案件编号
 		}
-		this.loadShowBook();
+
 	}
 	// 引入翻书组件
 	loadShowBook = () => {
@@ -57,26 +57,39 @@ export default class ScoutFile extends React.Component {
 			this.setState({ loading: b })
 		}, 1000)
 	}
-	componentDidMount = () => {
+	componentWillMount() {
+		let ajbh_dang = sessionStorage.getItem("ajbh_dang") || '-',
+			ajmc_dang = sessionStorage.getItem("ajmc_dang") || '-';
+		this.setState({ ajbh_dang: ajbh_dang, ajmc_dang: ajmc_dang })
+		this.loadShowBook();
+		// 获取勘查信息和案件基本信息
+		httpAjax("get", addressUrl + '/archives/surveyedSceneInfo', { params: { ajbh: ajbh_dang } }).then(res => {
+			if (res.code == 200) {
+				this.setState({ baseEnity: { ...res.data.casesVO } });
+			}
+		})
 	}
 
-	handleSearch = (value) => {
-		this.setState({ searchParam: value });
-	}
 	render() {
-		const { showContent } = this.state;
+		const { baseEnity } = this.state;
+		const baseInfos = baseEnity ? baseEnity.casesVO : {}; // 基本信息
+		const sceneVO = baseEnity ? baseEnity.sceneVO : []; // 勘查
+		const lsSceneBiologyPrintVO = baseEnity ? baseEnity.lsSceneBiologyPrintVO : []; // 手印类型
+		const lsSceneFingerPrintVO = baseEnity ? baseEnity.lsSceneFingerPrintVO : []; // 指纹
+		const lsSceneFootPrintVO = baseEnity ? baseEnity.lsSceneFootPrintVO : []; //足迹
+
 		// 配置页面
 		const catalogList = [
-			{ name: '案件基本信息', Comp: <BaseInfo /> },
+			{ name: '案件基本信息', Comp: <BaseInfo baseInfos={baseInfos} /> },
 			{ name: '线索信息', Comp: <ClueInfo /> },
-			{ name: '现场勘查信息', Comp: <Prospecting /> },
+			{ name: '现场勘查信息', Comp: <Prospecting sceneVO={sceneVO} lsSceneBiologyPrintVO={lsSceneBiologyPrintVO} lsSceneFingerPrintVO={lsSceneFingerPrintVO} lsSceneFootPrintVO={lsSceneFootPrintVO} /> },
 			{ name: '笔录信息', Comp: <Record /> },
-			{ name: '嫌疑人信息', Comp: <Suspect /> },
+			{ name: '涉案人员信息', Comp: <Suspect /> },
 			{ name: '涉案物品信息', Comp: <Goods loadingfn={this.loadingfn} /> }
 		];
 
 		const PageDom = catalogList && catalogList.map((item, index) => {
-			return <div className="archiivcont">
+			return <div className="archiivcont" key={index}>
 				<div className={index % 2 != 0 ? "cont-bookpage-even" : "cont-bookpage-odd"}>
 					<div>
 						<div className="bookpage-body">
@@ -91,6 +104,7 @@ export default class ScoutFile extends React.Component {
 		return (
 			<CommonLayout>
 				<div style={{ height: 800 }}>
+					<div className="backToScoutFilesBtn"><Link to={{ pathname: '/scoutFile' }} title="返回侦查档案"><Icon type="arrow-left" /> 返回侦查档案列表</Link></div>
 					<Spin spinning={this.state.loading}>
 						<div style={{ height: 700, display: this.state.loading ? 'none' : 'block' }} >
 							<div className="flipbook-viewport">
@@ -99,7 +113,8 @@ export default class ScoutFile extends React.Component {
 										<div className="archivcover" style={{ background: '#c18e68' }}>
 											<div style={{ padding: 40, textAlign: "center", fontFamily: "幼圆", fontWeight: 800 }}>
 												<h1>情报超市侦查档案</h1>
-												<h4>编号：A4403035200002007010003</h4>
+												<h4>案件名称：{this.state.ajmc_dang}</h4>
+												<h4>案件编号：{this.state.ajbh_dang}</h4>
 											</div>
 										</div>
 										<div className="archiivcont">

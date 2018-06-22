@@ -96,7 +96,7 @@ class ScoutLog extends React.Component {
 
                 return record.lsAttachment ? <Dropdown overlay={menu}>
                     <a className="ant-dropdown-link" href="javascript:">
-                        查看 <Icon type="down" />
+                        查看 <Icon type="download" />{/* <Icon type="down" /> */}
                     </a>
                 </Dropdown> : '-'
             }

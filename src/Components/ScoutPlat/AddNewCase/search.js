@@ -194,9 +194,9 @@ class Search extends React.Component {
                             </FormItem>
                         </Col>
                         <Col xl={8} lg={8} md={8} sm={24} xs={24}>
-                            <FormItem {...thirdLayout} label="受理单位" >
+                            <FormItem {...thirdLayout} label="受理接收单位" >
                                 {getFieldDecorator('sljsdw', { initialValue: this.state.department.code })(
-                                    <ZBDW placeholder="请输入受理单位" />
+                                    <ZBDW placeholder="请输入受理接收单位" />
                                 )}
                             </FormItem>
                         </Col>
