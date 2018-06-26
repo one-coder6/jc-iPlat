@@ -52,11 +52,9 @@ class CaseFinish extends React.Component {
         const reqUrl = addressUrl + operationType;
         this.props.form.validateFields((err, value) => {
             if (!err) {
-                httpAjax("get", reqUrl, {
-                    params: {
-                        ajbh: caseRecord.ajbh,
-                        bdajstatebz: value.bdajstatebz
-                    }
+                httpAjax("post", reqUrl, {
+                    ajbh: caseRecord.ajbh,
+                    bdajstatebz: value.bdajstatebz
                 }).then(res => {
                     if (res.code === '200') {
                         message.success("破案/侦结成功");

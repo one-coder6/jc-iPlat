@@ -57,7 +57,10 @@ import AddCase from '../Components/ScoutPlat/ScoutComponents/AddCase';      //�
 import ContentComponent from '../Components/Content/Index'; //中间主内容
 
 //----------jc start-----
-import ArchivesDetial from '../Components/ScoutFiles/archivesdetial/cover' //档案列表详情
+import ArchivesDetial from '../Components/ScoutFiles/archivesdetial/cover' // 档案列表详情
+import AchievementsCheck from '../Components/AchievementsCheck/index' // 绩效考核-积分规则
+import IntegralRule from '../Components/AchievementsCheck/integralrule' // 绩效考核-积分设置
+import TitleSeting from '../Components/AchievementsCheck/titleseting' // 绩效考核-头衔设置
 //----------jc end-----
 
 //--------------------------------------------
@@ -92,6 +95,9 @@ const routes = (App) => {
                         <Route path='/archivesdetial' component={ArchivesDetial} />
                         <Route path='/extractCase' component={ExtractCase} />
                         <Route path='/ajbz' component={AjbzIndex} />
+                        <Route path='/achievementsCheck' component={AchievementsCheck} />
+                        <Route path='/integralRule' component={IntegralRule} />
+                        <Route path='/titleSeting' component={TitleSeting} />
                         {/* 没有匹配到的路由重定向到首页或者是自己写一个404提示页面 */}
                         <Redirect to="/" />
                     </Switch>

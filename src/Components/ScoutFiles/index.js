@@ -21,7 +21,7 @@ export default class ScoutFile extends React.Component {
 	componentWillReceiveProps = (nextProps) => {
 		let pp = nextProps;
 	}
-	componentDidMount = () => {
+	componentDidMount() {
 
 	}
 
@@ -32,7 +32,7 @@ export default class ScoutFile extends React.Component {
 		const { showContent } = this.state;
 		return (
 			<CommonLayout>
-				<InvestigationSearch   handleSearch={this.handleSearch} />
+				<InvestigationSearch handleSearch={this.handleSearch} />
 				<div className="search-result-list">
 					<InvestigationList searchParam={this.state.searchParam} />
 				</div>

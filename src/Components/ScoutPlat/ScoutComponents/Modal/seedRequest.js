@@ -3,10 +3,8 @@ import ReactDOM from 'react-dom';
 import { Form, Row, Col, Input, Select, Radio, List, Table, Upload, Badge, Button, Icon, Modal, DatePicker, message, TreeSelect, Switch, Spin, Alert } from 'antd';
 import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
-import { debug } from 'util';
 import QueueAnim from 'rc-queue-anim';
 import ZBDW from '../../../../Components/Common/organization/zbdw';
-import Animate from 'rc-animate';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const Option = Select.Option;
@@ -133,18 +131,22 @@ class CreateRequest extends React.Component {
                         }, 500)
                     })
                 } else {
-                    // 单个表单需求
+                    // 单个表单需求 构造一个param数组参数
                     this.ajaxLoad(formData);
+
+                    /*   let param = [{ fd: formData }];
+                      this.beforeSendAjax(param) */
+
+
                 }
             }
         })
     }
-    getFromValue = () => {
 
-    }
     // 请求接口获取数据
     ajaxLoad = (formData) => {
-        const reqUrl = addressUrl + '/demand/insert';
+       // const reqUrl = addressUrl + '/demand/insert';
+        const reqUrl = addressUrl + '/demand/insertOld';
         let config = {
             headers: {
                 "Content-Type": 'multipart/form-data'
@@ -170,11 +172,11 @@ class CreateRequest extends React.Component {
     multipleForm = () => {
         let params = this.state.tempRequestData;
         if (params && params.length) {
-            // 如果是添加多个需求了则排队发送 
+            // 第一版 将多个formdata 排队依次发送
             this.multipleForm.state = true; // 是否发生请求的开关
             let index = 0,
                 timerSend = setInterval(() => {
-                    if (this.multipleForm.state && 0) {
+                    if (this.multipleForm.state) {
                         this.multipleForm.state = false;
                         let fd = params[index].fd;
                         this.ajaxLoad(fd);
@@ -184,6 +186,9 @@ class CreateRequest extends React.Component {
                         }
                     }
                 }, 500)
+
+            // 第二版 将多个formdata合并成一个formdata（2018.6.26这个方式取消因为在谷歌49版本中的formData不提供遍历等api）
+            // this.beforeSendAjax(params)
         } else {
             /* 
             如果是没有多个需求分2种情况
@@ -192,6 +197,20 @@ class CreateRequest extends React.Component {
             this.handleSubmit(0, 1)
             // message.info("请先添加需求。")
         }
+    }
+    // 发送ajax之前将多个formdata转化成一个大的formdata;
+    beforeSendAjax = (params) => {
+        let bigFormData = new FormData();
+        params.forEach((item, index) => {
+            debugger;
+            item.fd.forEach((jtem, jndex) => {
+                if (jtem && jndex) {
+                    bigFormData.append("lsDemandVO[" + index + "]." + jndex, jtem);
+                }
+            })
+        })
+        this.ajaxLoad(bigFormData);
+        // bigFormData.forEach((item, index) => { console.log(item, index) })
     }
 
     // 上传文件之前，选择文件之后
@@ -558,7 +577,10 @@ class CreateRequest extends React.Component {
                         <Button type='primary' onClick={this.multipleForm} style={{ marginRight: '10px' }}><Icon type="check" />提交</Button>
                         <Button onClick={() => {
                             this.props.form.resetFields();
-                            this.setState({ requestTypeCn: '', requestContent: '' })
+                            this.setState({
+                                requestTypeCn: '',
+                                requestContent: ''
+                            })
                         }}><Icon type="rollback" />清空</Button>
                     </div>
                 </Form>

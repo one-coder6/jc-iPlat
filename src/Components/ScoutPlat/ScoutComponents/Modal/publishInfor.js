@@ -82,12 +82,14 @@ class PublishInfor extends React.Component {
                     let val = params[item];
                     if (val != undefined) {
                         if (item !== 'files') {
-                            formData.append(item, val);
+                            if (item !== 'jsdwbh') {
+                                formData.append(item, val);
+                            }
                         }
                     }
                 })
                 fileList && fileList.map((item, index) => {
-                    let fileType = this.state.fileTypes[item.uid];
+                    let fileType = this.state.fileTypes[item.uid] || '1';
                     formData.append("files[" + index + "].fileType", fileType);
                     formData.append("files[" + index + "].file", item);
                 })

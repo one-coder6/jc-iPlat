@@ -10,7 +10,8 @@ import { footerText } from '../../Util/config';
 import '../../styles/common.less';
 import '../../styles/layout.less';
 const { Header, Footer, Content } = Layout;
-
+const SubMenu = Menu.SubMenu;
+const MenuItemGroup = Menu.ItemGroup;
 export default class ContentComponent extends React.Component {
     constructor(props) {
         super(props);
@@ -67,6 +68,23 @@ export default class ContentComponent extends React.Component {
                             <Icon type="user" />我的档案
 						</NavLink>
                     </Menu.Item>
+                    <SubMenu title={<span><Icon type="form" />绩效考核</span>}>
+                        <Menu.Item key="achievementsCheck">
+                            <NavLink to='/achievementsCheck' activeClassName="activeRouter" >
+                                积分规则
+						</NavLink>
+                        </Menu.Item>
+                        <Menu.Item key="integralRule">
+                            <NavLink to='/integralRule' activeClassName="activeRouter" >
+                                积分设置
+						</NavLink>
+                        </Menu.Item>
+                        <Menu.Item key="titleSeting">
+                            <NavLink to='/titleSeting' activeClassName="activeRouter" >
+                                头衔设置
+						</NavLink>
+                        </Menu.Item>
+                    </SubMenu>
                 </Menu>
                 {/* <BreadNav /> */}
                 <Content>

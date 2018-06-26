@@ -78,8 +78,8 @@ class Header extends React.Component {
                     };
                     httpAjax("post", reqUrl, params).then(res => {
                         if (res.code == 200) {
-                            message.success('密码修改成功', 8,()=>{
-                                this.setState({viewModifePwd:false})
+                            message.success('密码修改成功', 8, () => {
+                                this.setState({ viewModifePwd: false })
                             });
                         } else {
                             message.error('密码修改失败【原' + res.message + '】', 8);
@@ -163,11 +163,11 @@ class Header extends React.Component {
                     </Col>
                     <Col xl={6} lg={8} md={8} sm={8} xs={6}>
                         <Row>
-                            {/* <Col xl={4} lg={3} md={3} sm={2} xs={2}>
-                            <Badge count={5}>
-                                <Icon type="mail" size='big' />
-                            </Badge>
-                        </Col> */}
+                            <Col xl={4} lg={3} md={3} sm={2} xs={2}>
+                                <Badge count={0}>
+                                    <Icon type="trophy" size='big' />
+                                </Badge>
+                            </Col>
                             <Col xl={4} lg={3} md={3} sm={2} xs={2}>
                                 <Dropdown overlay={noticeList}>
                                     <Badge count={this.state.newNoticeList.length || 0}>

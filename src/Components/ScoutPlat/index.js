@@ -9,7 +9,10 @@ import { httpAjax, addressUrl } from '../../Util/httpAjax';
 //引入自定义组件
 import Search from './ScoutComponents/SearchComponent';
 import CaseList from './ScoutComponents/CaseList';
+// 提取案件
 import ExtractList from './ExtractCase/index';
+// 批量提取案件
+import MultipleExtractImport from './ExtractCase/MultipleExtractImport';
 // 新增案件
 import InsertCase from './AddNewCase/index.js';
 
@@ -21,6 +24,7 @@ export default class ScoutPlat extends React.Component {
 			searchValue: null,
 			countGroup: '',
 			extractCase: false,
+			extractCaseMultiple:false,
 			reload: false,
 			viewInsertCase: false
 		}
@@ -44,14 +48,22 @@ export default class ScoutPlat extends React.Component {
 	reloadFn = () => {
 		this.setState({ reload: true })
 	}
+	// 提取案件
 	extractCase = () => {
 		this.setState({ extractCase: true })
+	}
+	// 批量提取案件
+	extractCaseMultiple = () => {
+		this.setState({ extractCaseMultiple: true })
 	}
 	handleCancel = () => {
 		//	this.setState({ reload: true })
 	}
 	handelExtra = () => {
 		this.setState({ extractCase: false })
+	}
+	handelExtraMultiple = () => {
+		this.setState({ extractCaseMultiple: false })
 	}
 	// 新增案件-提交
 	handelInsertCase = (e) => {
@@ -67,7 +79,7 @@ export default class ScoutPlat extends React.Component {
 		this.setState({ viewInsertCase: false })
 	}
 	render() {
-		const { countGroup, extractCase, viewInsertCase } = this.state;
+		const { countGroup, extractCase,extractCaseMultiple, viewInsertCase } = this.state;
 		return (
 			<CommonLayout>
 				{/*<Row style={{padding:'20px 0',background:'#fff'}}>
@@ -94,15 +106,19 @@ export default class ScoutPlat extends React.Component {
                         </Link> */}
 						<Button type='primary' size='small' style={{ marginRight: '5px' }} onClick={this.InsertCaseShow}>新增案件</Button>
 						<Button type='primary' size='small' style={{ marginRight: '5px' }} onClick={this.extractCase}>提取案件</Button>
+						<Button type='primary' size='small' style={{ marginRight: '5px' }} onClick={this.extractCaseMultiple}>批量提取案件</Button>
 						<Link to='/ajbz'><Button type="primary" size='small'>比中信息</Button></Link>
 					</Col>
 				</Row>
 				<CaseList searchValue={this.state.searchValue} reload={this.state.reload} />
 				<Modal style={{ top: 5, width: '100%' }} visible={viewInsertCase} title={<span><Icon type="file-add" /> 新增案件</span>} onCancel={this.InsertCaseHide} className='extractCaseM' footer={false}>
 					<InsertCase reloadFn={this.reloadFn} handelInsertCase={this.handelInsertCase} />
-				</Modal>  
+				</Modal>
 				<Modal visible={extractCase} title={<span><Icon type="share-alt" /> 提取案件</span>} onCancel={this.handelExtra} className='extractCaseM' footer={false}>
 					<ExtractList reloadFn={this.reloadFn} handelExtra={this.handelExtra} showType='extractCase' />
+				</Modal>
+				<Modal visible={extractCaseMultiple} title={<span><Icon type="share-alt" /> 批量提取案件</span>} onCancel={this.handelExtraMultiple}  footer={false}>
+					<MultipleExtractImport reloadFn={this.reloadFn} handelExtraMultiple={this.handelExtraMultiple} />
 				</Modal>
 			</CommonLayout>
 		)
