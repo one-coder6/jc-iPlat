@@ -85,7 +85,7 @@ class ExtractList extends React.Component {
             ...this.state.pagination
         };
         const { searchValue } = this.state;
-        const reqUrl = addressUrl + '/cases/listPickCases'  //'/cases/listPickCases' // '/cases/list' 
+        const reqUrl = addressUrl + '/cases/list'  //'/cases/listPickCases' // '/cases/list' 
         //this.setState({ loading: true })
         httpAjax("get", reqUrl, {
             params: {
@@ -134,6 +134,8 @@ class ExtractList extends React.Component {
                 message.error("提取失败");
                 this.props.handelExtra();
             }
+            // 清空已选项
+            this.setState({ selectedRowKeys: [] });
         })
     }
     gotoFn = () => {

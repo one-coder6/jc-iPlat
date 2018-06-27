@@ -32,16 +32,12 @@ export default class ScoutFile extends React.Component {
                 console.log(res.data.list)
             }
         })
-
-
-
     }
     componentWillReceiveProps = (nextProps) => {
         let pp = nextProps;
     }
 
     componentDidMount() {
-
     }
 
     render() {

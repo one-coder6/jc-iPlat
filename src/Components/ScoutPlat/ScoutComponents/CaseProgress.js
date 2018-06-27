@@ -164,7 +164,7 @@ class CaseProgress extends React.Component {
 					}
 				</Card>
 				<Modal
-					title="修改时间"
+					title={<span><Icon type="calendar" /> 修改时间</span>}
 					visible={this.state.visible}
 					onOk={this.handleOk}
 					onCancel={this.handleCancel}

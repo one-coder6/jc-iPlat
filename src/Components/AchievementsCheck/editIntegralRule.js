@@ -12,11 +12,19 @@ const CollectionCreateForm = Form.create()(
         constructor(props) {
             super(props)
             this.state = {
-                curRadioType: 0
+                curRadioType: "0",
+                switchType: false
             }
         }
+        componentWillMount() {
+            // 默认状态是根据当前记录的状态
+            let switchType = this.props.record.integralType == "0" ? true : false;
+            this.setState({ switchType: switchType })
+        }
         radioHandle = (e) => {
-            this.setState({ curRadioType: e.target.value })
+            // 根据当前选择的状态
+            let switchType = e.target.value == "0" ? true : false;
+            this.setState({ switchType: switchType })
         }
         render() {
             const { visible, onCancel, onCreate, form, record } = this.props;
@@ -29,7 +37,6 @@ const CollectionCreateForm = Form.create()(
                     }
                 },
                 wrapperCol: { span: 14 },
-
             };
             return (
                 <Modal
@@ -82,7 +89,7 @@ const CollectionCreateForm = Form.create()(
                                 </RadioGroup>
                             )}
                         </FormItem>
-                        {record.integralType == "0" && this.state.curRadioType == "0" ?
+                        {this.state.switchType ?
                             <FormItem {...formItemLayout} label="分数：">
                                 {getFieldDecorator('upperLimit',
                                     {

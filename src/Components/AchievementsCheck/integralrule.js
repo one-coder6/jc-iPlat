@@ -4,9 +4,7 @@ import CommonLayout from '../Content/Index'
 import '../../styles/achievementscheck.less';
 import { httpAjax, addressUrl } from '../../Util/httpAjax'; //引入自定义组件
 import CollectionCreateForm from './editIntegralRule' // 编辑
-import { debug } from 'util';
 const { Header, Footer, Sider, Content } = Layout;
-
 
 /* 绩效考核 - 积分设置 */
 export default class ScoutFile extends React.Component {
@@ -20,27 +18,22 @@ export default class ScoutFile extends React.Component {
     }
 
     componentWillMount() {
-        /*   /integralTitle/list */
-        // 获取勘查信息和案件基本信息
+        this.ajaxLoad();
+    }
+
+    ajaxLoad = () => {
         httpAjax("get", addressUrl + '/integralConfig/initData').then(res => {
             if (res.code == 200) {
                 this.setState({ touxianlist: res.data.initData })
-                console.log(res.data.initData)
             }
         })
-
     }
+
     componentWillReceiveProps = (nextProps) => {
         let pp = nextProps;
     }
-
-    componentDidMount() {
-
-    }
-
     // 修改一条记录
     updateRecord = (record) => {
-        console.log(record)
         this.setState({ record: record, visible: true, });
     }
 
@@ -50,16 +43,18 @@ export default class ScoutFile extends React.Component {
     handleCancel = () => {
         this.setState({ visible: false });
     }
+    // 提交修改的一条记录
     handleUpdate = () => {
         const form = this.formRef.props.form;
         form.validateFields((err, values) => {
             if (!err) {
+                debugger;
                 httpAjax("post", addressUrl + "/integralConfig/insert", { ...values }).then((res) => {
                     if (res.code == 200) {
                         message.success("修改成功。")
                         this.setState({ visible: false });
                         form.resetFields();
-
+                        this.ajaxLoad();
                     } else {
                         message.error("修改失败，请重试或者联系管理员。")
                     }
@@ -142,7 +137,6 @@ export default class ScoutFile extends React.Component {
                         onCreate={this.handleUpdate}
                     /> : ''
                 }
-
             </CommonLayout>
         )
     }

@@ -1,11 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
-import { Row, Col, Badge, message, Icon, Menu, Input, Dropdown, Tooltip, Button, Modal, Form } from 'antd';
+import { Row, Col, Badge, message, Icon, Menu, Input, Dropdown, Tooltip, Popover, Button, Modal, Form } from 'antd';
 import { httpAjax, addressUrl, GlobalWSUrl, UC_URL } from '../../Util/httpAjax';
 import { ScoketHandler } from './websocket/socket.js';
 import '../../styles/content/header.less';
+import tippy from 'tippy.js'
+
 const FormItem = Form.Item;
 let Goloal_WS = null;
 class Header extends React.Component {
@@ -20,6 +21,24 @@ class Header extends React.Component {
     componentWillMount() {
         this.reloadNotice();
     }
+
+    componentDidMount() {
+        tippy('.btn', {
+            delay: 100,
+            arrow: true,
+            arrowType: 'sharp',
+            size: 'large',
+            duration: 500,
+            theme: 'white', // 自定义css主题
+            interactiveBorder: 2,
+            animation: 'shift-toward', // 动画效果
+            trigger: 'mouseenter focus', // 触发方式
+            placement: 'bottom', // 显示位置
+            interactive: true, // 点击才关闭
+            html: document.querySelector('.myTemplate'),
+        })
+    }
+
     // 更新了值
     componentWillReceiveProps(nextprops) {
         this.reloadNotice();
@@ -28,6 +47,7 @@ class Header extends React.Component {
     componentWillUnmount() {
         Goloal_WS && Goloal_WS.onclose();
     }
+
     // 请求未读消息
     reloadNotice = () => {
         const user = JSON.parse(sessionStorage.getItem("user"));
@@ -110,19 +130,6 @@ class Header extends React.Component {
         const { getFieldDecorator } = this.props.form;
         let { user } = this.state;
         user = user || JSON.parse(sessionStorage.getItem("user"));
-        const menu = (
-            <Menu>
-                <Menu.Item key="0">
-                    <a href="">退出</a>
-                </Menu.Item>
-                <Menu.Item key="1">
-                    <a href="">修改</a>
-                </Menu.Item>
-                <Menu.Item key="3">
-                    <Link to='/systemSet'>个人中心</Link>
-                </Menu.Item>
-            </Menu>
-        );
         let _tempList = this.state.newNoticeList || [];
         // 消息list
         const noticeList = (<Menu>
@@ -141,7 +148,7 @@ class Header extends React.Component {
             }
         </Menu>
         );
-
+        // 退出
         const logoutMenu = (<Menu>
             <Menu.Item key="0" >
                 <a href="javaScript:void(0)" onClick={() => { this.setState({ viewModifePwd: true }) }} style={{ cursor: 'pointer' }} >修改密码</a>
@@ -151,6 +158,7 @@ class Header extends React.Component {
             </Menu.Item>
         </Menu>
         )
+
         return (
             <div>
                 <Row className='header'>
@@ -164,7 +172,7 @@ class Header extends React.Component {
                     <Col xl={6} lg={8} md={8} sm={8} xs={6}>
                         <Row>
                             <Col xl={4} lg={3} md={3} sm={2} xs={2}>
-                                <Badge count={0}>
+                                <Badge className="btn" count={0}>
                                     <Icon type="trophy" size='big' />
                                 </Badge>
                             </Col>
@@ -192,6 +200,7 @@ class Header extends React.Component {
                         </Row>
                     </Col>
                 </Row>
+                <div className='myTemplate'>我是积分内容</div>
                 <Modal
                     title={<span><Icon type="setting" /> 修改密码</span>}
                     wrapClassName="vertical-center-modal"
