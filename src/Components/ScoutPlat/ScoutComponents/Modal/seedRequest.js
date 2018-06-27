@@ -202,7 +202,6 @@ class CreateRequest extends React.Component {
     beforeSendAjax = (params) => {
         let bigFormData = new FormData();
         params.forEach((item, index) => {
-            debugger;
             item.fd.forEach((jtem, jndex) => {
                 if (jtem && jndex) {
                     bigFormData.append("lsDemandVO[" + index + "]." + jndex, jtem);

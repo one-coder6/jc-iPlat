@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Table, Input,Button, Breadcrumb, Icon, Tag } from 'antd'
+import { Layout, Table, Input, Button, Breadcrumb, Icon, Tag } from 'antd'
 import CommonLayout from '../Content/Index'
 import '../../styles/achievementscheck.less';
 import { httpAjax, addressUrl } from '../../Util/httpAjax'; //引入自定义组件
@@ -11,13 +11,11 @@ export default class ScoutFile extends React.Component {
         super(props);
         this.state = {
             touxianlist: null,
-            searchParam: null
         }
     }
 
     componentWillMount() {
-        /*   /integralTitle/list */
-        // 获取勘查信息和案件基本信息
+        //  请求头衔列表
         httpAjax("get", addressUrl + '/integralTitle/list').then(res => {
             if (res.code == 200) {
                 this.setState({ touxianlist: res.data.list })
@@ -38,7 +36,7 @@ export default class ScoutFile extends React.Component {
         const { touxianlist } = this.state;
         const columns_txdj = [{
             title: '头衔等级名称',
-            align:'center',
+            align: 'center',
             dataIndex: 'name',
             render: text => <a href="javascript:;">{text}</a>,
         }, {
@@ -46,18 +44,14 @@ export default class ScoutFile extends React.Component {
             align: "center",
             dataIndex: 'upperLimit',
             render: (text, record, index) => {
-                return <InputGroup compact>
-                    <Input style={{ width: 100, textAlign: 'center' }} defaultValue={record.upperLimit} />
-                    <Input style={{ width: 30, borderLeft: 0, pointerEvents: 'none', backgroundColor: '#fff' }} placeholder="-" disabled />
-                    <Input style={{ width: 100, textAlign: 'center', borderLeft: 0 }} defaultValue={record.lowerLimit} />
-                </InputGroup>
+                return text == "1" ? ((record.lowerLimit || '') + '-' + (record.upperLimit || '') + ' 名') : ((record.upperLimit || '-') + ' 名')
             }
         }, {
             align: 'center',
             title: '操作',
             dataIndex: 'opera',
-            render: () => {
-                return <span><Tag color="#108ee9">保存</Tag> <Tag color="#108ee9">删除</Tag></span>
+            render: (text, record) => {
+                return <span onClick={() => { this.updateRecord(record) }}><Tag color="cyan"><Icon type='edit' /> 修改</Tag><Tag color="cyan"><Icon type='delete' /> 删除</Tag></span>
             }
         }
         ];

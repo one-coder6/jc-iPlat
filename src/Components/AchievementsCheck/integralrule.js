@@ -43,21 +43,19 @@ export default class ScoutFile extends React.Component {
         console.log(record)
         this.setState({ record: record, visible: true, });
     }
+
     showModal = () => {
         this.setState({ visible: true });
     }
     handleCancel = () => {
         this.setState({ visible: false });
     }
-    handleCreate = () => {
+    handleUpdate = () => {
         const form = this.formRef.props.form;
         form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
-                debugger;
                 httpAjax("post", addressUrl + "/integralConfig/insert", { ...values }).then((res) => {
                     if (res.code == 200) {
-                        debugger;
                         message.success("修改成功。")
                         this.setState({ visible: false });
                         form.resetFields();
@@ -141,7 +139,7 @@ export default class ScoutFile extends React.Component {
                         wrappedComponentRef={this.saveFormRef}
                         visible={this.state.visible}
                         onCancel={this.handleCancel}
-                        onCreate={this.handleCreate}
+                        onCreate={this.handleUpdate}
                     /> : ''
                 }
 
