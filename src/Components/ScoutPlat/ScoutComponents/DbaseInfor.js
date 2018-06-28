@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
-import {Spin, Row, Col, Card, List, Button, Modal,Table } from 'antd';
+import {Spin, Row, Col,Icon, Card, List, Button, Modal,Table } from 'antd';
 import moment from 'moment';
 
 //引入自定义组件
@@ -520,8 +520,8 @@ export default class DbaseInfor extends React.Component {
 				 <div style={{padding:"5px 35px"}}>	{contentListNoTitle[this.state.noTitleKey]} </div>
 				</Card>
 				{/* 添加串并案 */}
-				<Modal visible={visible} title='添加串并案' onCancel={this.handleCancel} className='extractCaseM' footer={false}>
-					{/* <AddCBA handleCancel={this.handleCancel} showType='addCBA' /> */}
+				<Modal visible={visible} title={<span><Icon type="fork" />添加串并案</span>} onCancel={this.handleCancel} className='extractCaseM' footer={false}>
+					 <AddCBA handleCancel={this.handleCancel} showType='addCBA' />  
 				</Modal>
 			 </div>
 			</Spin>

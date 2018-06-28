@@ -145,7 +145,7 @@ class CreateRequest extends React.Component {
 
     // 请求接口获取数据
     ajaxLoad = (formData) => {
-       // const reqUrl = addressUrl + '/demand/insert';
+        // const reqUrl = addressUrl + '/demand/insert';
         const reqUrl = addressUrl + '/demand/insertOld';
         let config = {
             headers: {
@@ -361,6 +361,13 @@ class CreateRequest extends React.Component {
             }
         }];
 
+        const demandTypeOption = getFieldDecorator('prefix', {
+            //initialValue: '86',
+        })(
+            <Select style={{ width: 120 }}>
+                {this.renderOption(demandType)}
+            </Select>
+        );
         return (
             <div>
                 {/* 弹出层 */}
@@ -425,9 +432,11 @@ class CreateRequest extends React.Component {
                                 {getFieldDecorator('xqlx', {
                                     rules: [{ required: true, message: '请选择需求类型' },],
                                 })(
-                                    <Select placeholder='请选择需求类型' onChange={this.selectType}>
-                                        {this.renderOption(demandType)}
-                                    </Select>
+                                    /*  <Select placeholder='请选择需求类型' onChange={this.selectType}>
+                                         {this.renderOption(demandType)}
+                                     </Select> */
+
+                                    <Input addonBefore={demandTypeOption} style={{ width: '100%' }} />
                                 )}
                             </FormItem>
                         </Col>
