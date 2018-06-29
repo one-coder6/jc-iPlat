@@ -6,7 +6,7 @@ import { Row, Col, Card, Avatar, Tag } from 'antd';
 import { httpAjax, addressUrl } from '../../../Util/httpAjax';
 import MyRequest from './MyRequest';  //我的请求
 import WaitDone from './WaitDone';    //待办事项
-//import TeamFight from './TeamFight'   //合成作战
+import TeamFight from './TeamFight'   //合成作战
 import MonthFeedBacked from './MonthFeedBacked' //需求反馈情况
 import UnitRank from './UnitRank'; //本单位排名
 import '../../../styles/personalCenter.less';
@@ -16,7 +16,8 @@ export default class CenterContent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userInfor: ''
+            userInfor: '',
+            cases: '',
         }
     }
     componentWillMount() {
@@ -73,21 +74,23 @@ export default class CenterContent extends React.Component {
                         </Col>
                     </Row>
                 </Card>
+                <Card title="本月合成作战案件情况">
+                    <TeamFight/>
+                </Card>
+                <Card title="本单位积分排名情况" >
+                    <UnitRank personalRankVO = { personalRankVO }/>
+                </Card>
+                {/*
                 <Card title="我的请求"  >
                     <MyRequest lsPersonalMyDemand={lsPersonalMyDemand} />
                 </Card>
                 <Card title="待办任务"  >
                     <WaitDone lsPersonalHandleDemand={lsPersonalHandleDemand} />
                 </Card>
-                {/* <Card title="本月合成作战案件情况" >
-                    <TeamFight />
-                </Card> */}
                 <Card title="本月需求反馈情况" >
                     <MonthFeedBacked lsPersonalMonthFeedBacked={lsPersonalMonthFeedBacked} />
                 </Card>
-                {/* <Card title="本单位积分排名情况" >
-                    <UnitRank personalRankVO = { personalRankVO }/>
-                </Card> */}
+                */}
             </div>
         )
     }
