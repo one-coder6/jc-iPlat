@@ -10,22 +10,6 @@ export default class WaitDone extends React.Component {
         }
     }
 
-    mapDemandStatus = (status) => {
-        switch (status) {
-            case "INIT":
-                return '未指派';
-                break;
-            case "ALLOCATED":
-                return '已指派';
-                break;
-            case "SIGNED":
-                return '已签收';
-                break;
-            case "FEEDBACKED":
-                return '已反馈';
-                break;
-        }
-    }
     render() {
         const { lsPersonalHandleDemand } = this.props;
         const columns = [{

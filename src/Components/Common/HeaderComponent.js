@@ -15,28 +15,30 @@ class Header extends React.Component {
         this.state = {
             user: '',
             newNoticeList: [],
-            viewModifePwd: false
+            viewModifePwd: false,
+            totalCredits: 0
         }
     }
     componentWillMount() {
+        // 请求总积分
+        window.getTotalCredits = () => {
+            const reqUrl = addressUrl + '/integralHis/countScore';
+            httpAjax("post", reqUrl, {}).then((res) => {
+                if(res.code === "200"){
+                    let data = res.data;
+                    this.setState({
+                        totalCredits: data
+                    });
+                }
+            });
+        }
+
         this.reloadNotice();
+        window.getTotalCredits();
     }
 
     componentDidMount() {
-        tippy('.btn', {
-            delay: 100,
-            arrow: true,
-            arrowType: 'sharp',
-            size: 'large',
-            duration: 500,
-            theme: 'white', // 自定义css主题
-            interactiveBorder: 2,
-            animation: 'shift-toward', // 动画效果
-            trigger: 'mouseenter focus', // 触发方式
-            placement: 'bottom', // 显示位置
-            interactive: true, // 点击才关闭
-            html: document.querySelector('.myTemplate'),
-        })
+    
     }
 
     // 更新了值
@@ -171,19 +173,22 @@ class Header extends React.Component {
                     </Col>
                     <Col xl={6} lg={8} md={8} sm={8} xs={6}>
                         <Row>
-                            <Col xl={4} lg={3} md={3} sm={2} xs={2}>
+                            <Col xl={9} lg={9} md={9} sm={10} xs={2}>
                                 <Badge className="btn" count={0}>
-                                    <Icon type="trophy" size='big' />
+                                    <Link to={{ pathname:'/'}} style={{color: '#234b65',textDecoration: 'none'}}>
+                                        <Icon type="trophy" size='big'/>
+                                        <span style={{color: '#fff',marginLeft: '4px'}}>总积分：{this.state.totalCredits}</span>
+                                    </Link>
                                 </Badge>
                             </Col>
-                            <Col xl={4} lg={3} md={3} sm={2} xs={2}>
+                            <Col xl={4} lg={4} md={4} sm={3} xs={2}>
                                 <Dropdown overlay={noticeList}>
                                     <Badge count={this.state.newNoticeList.length || 0}>
                                         <Icon type="message" />
                                     </Badge>
                                 </Dropdown>
                             </Col>
-                            <Col xl={16} lg={18} md={16} sm={18} xs={18}>
+                            <Col xl={11} lg={11} md={11} sm={11} xs={18}>
                                 {/* <Dropdown overlay={menu} trigger={['click']}>
 								<div style={{cursor: 'pointer'}}>
 									<span>{user.name}  {user.account}</span> <Icon type="caret-down" />									
@@ -200,7 +205,7 @@ class Header extends React.Component {
                         </Row>
                     </Col>
                 </Row>
-                <div className='myTemplate'>我是积分内容</div>
+                {/*<div className='myTemplate'>我是积分内容</div>*/}
                 <Modal
                     title={<span><Icon type="setting" /> 修改密码</span>}
                     wrapClassName="vertical-center-modal"

@@ -162,6 +162,9 @@ class CreateRequest extends React.Component {
                 this.setState({ tempRequestData: [] })
                 this.props.handleCancel();
                 this.multipleForm.state = true;
+                // 更新积分
+                message.success(`恭喜您,获得了${res.data.score}积分！`);
+                window.getTotalCredits();
             } else {
                 message.error("创建需求失败")
                 this.props.handleCancel();
