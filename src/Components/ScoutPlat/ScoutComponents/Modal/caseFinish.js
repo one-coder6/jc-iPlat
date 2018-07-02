@@ -26,7 +26,8 @@ class CaseFinish extends React.Component {
             listType: [], // 加分原因
             inputMax: 0, // 最大积分
             inputMin: 0, // 最小积分
-            pointerInputCollect: [], // 积分dom对象 
+            pointerInputCollect: {}, // 积分dom对象 
+            pointerResult: {}  // 存储完成的分数
         }
     }
 
@@ -35,7 +36,6 @@ class CaseFinish extends React.Component {
         const { caseRecord } = this.props;
 
         httpAjax("get", addressUrl + '/clue/listEvaluate', { params: { ajbh: caseRecord.ajbh } }).then((res) => {
-            debugger;
             if (res.code == '200') {
                 let d = res.data;
                 this.setState({
@@ -55,7 +55,6 @@ class CaseFinish extends React.Component {
 
     // 上传附件
     normFile = (e) => {
-        console.log('Upload event:', e);
         if (Array.isArray(e)) {
             return e;
         }
@@ -67,7 +66,6 @@ class CaseFinish extends React.Component {
     }
 
     operationType = (e) => {
-        //console.log("key",e.target.value)
         if (e.target.value === 'finish') {
             this.setState({ operationType: "/cases/finish" })
         } else if (e.target.value === 'hangUp') {
@@ -85,61 +83,78 @@ class CaseFinish extends React.Component {
                 // 增加线索积分参数
                 let pointerInputCollect = this.state.pointerInputCollect;
                 let ClueAppraiseSave = [];
-                pointerInputCollect && pointerInputCollect.forEach((item) => {
-                    let temp = item,
-                        val = temp.dom.value,
+                // 取input or span中的值
+                let getVal = (t, key) => {
+                    let dom = document.querySelector(key);
+                    let result = "";
+                    result = t == '0' ? dom.innerHTML : dom.value;
+                    return parseInt(result);
+                }
+                
+                Object.keys(pointerInputCollect).forEach((item) => {
+                    let temp = pointerInputCollect[item],
+                        val = getVal(temp.showType, temp.findKey),
                         result = { clueId: temp.clueId, ruleType: temp.ruleType, score: val }
                     if (val)
                         ClueAppraiseSave.push(result)
                 })
-                /*  httpAjax("post", reqUrl, {
-                     ajbh: caseRecord.ajbh,
-                     bdajstatebz: value.bdajstatebz,
-                     ClueAppraiseSave: ClueAppraiseSave
-                 }).then(res => {
-                     if (res.code === '200') {
-                         message.success("破案/侦结成功");
-                         this.props.handleCancel();
-                         this.props.form.resetFields();
-                         this.props.getDataSource({
-                             pageSize: 10,
-                             pageNum: 1,
-                         });
-                     } else {
-                         message.error("破案/侦结失败")
-                         this.props.handleCancel();
-                     }
-                 }) */
+
+                httpAjax("post", reqUrl, {
+                    ajbh: caseRecord.ajbh,
+                    bdajstatebz: value.bdajstatebz,
+                    lsClueAppraiseSave: ClueAppraiseSave
+                }).then(res => {
+                    if (res.code === '200') {
+                        message.success("破案/侦结成功");
+                        this.props.handleCancel();
+                        this.props.form.resetFields();
+                        this.props.getDataSource({
+                            pageSize: 10,
+                            pageNum: 1,
+                        });
+                    } else {
+                        message.error("破案/侦结失败")
+                        this.props.handleCancel();
+                    }
+                })
             }
-            console.log("value", value)
         })
     }
     // 切换下拉菜单
     listTypeChange = (_e, record) => {
-        console.log(_e, record)
         /*
         1、找到文本框
         2、定值则不能输入
         3、非定值设置max和min分值
         4、提交之前获取所有文本框的值组合成数组
         */
-        let dom = document.querySelector('#p_p' + record.id),
+        let findKey = '#p_p' + record.id,
+            dom = document.querySelector(findKey),
             e = JSON.parse(_e);
         if (e && e.integralType == '0') {
             // 定值积分
-            dom.value = e.upperLimit;
             dom.setAttribute('disabled', true);
-            dom.setAttribute('title', '定值积分，无需输入')
-            dom.parentNode.previousElementSibling.style.display = 'none'
+            dom.setAttribute('title', '定值积分，' + e.upperLimit + '分')
+            dom.parentNode.previousElementSibling ? dom.parentNode.previousElementSibling.style.display = 'none' : '';
         } else {
-            dom.value = 0;
+            // 非定值积分
             dom.removeAttribute('disabled');
-            dom.setAttribute('title', '')
-            dom.parentNode.previousElementSibling.style.display = 'block'
-            this.setState({ inputMax: e.upperLimit, inputMin: e.lowerLimit })
+            dom.parentNode.setAttribute('title', '非定值积分，最低' + e.lowerLimit + '分，最高' + e.upperLimit + '分')
+            dom.parentNode.previousElementSibling ? dom.parentNode.previousElementSibling.style.display = 'block' : '';
+            let min = 'inputMin' + '_' + record.id,
+                max = 'inputMax' + '_' + record.id;
+            this.setState({ [max]: e.upperLimit, [min]: e.lowerLimit });
         }
-        // 保存起来
-        this.state.pointerInputCollect.push({ dom: dom, clueId: record.id, ruleType: e.ruleType })
+        //  定值还是非定值
+        let showType = e.integralType == '0' ? e.upperLimit : dom.value;
+        // 保存起来 临时存储作为展示
+        let pointerResult = this.state.pointerResult;
+        pointerResult[record.id] = { showType: e.integralType, showVal: showType };
+        this.setState({ pointerResult: pointerResult })
+        // 保存起来 作为最终请求参数 
+        let pointerInputCollect = this.state.pointerInputCollect;
+        pointerInputCollect[record.id] = { findKey: findKey, clueId: record.id, ruleType: e.ruleType, showType: e.integralType };
+        this.setState({ pointerInputCollect: pointerInputCollect });
     }
     render() {
         const { options, listEvaluate, tableLoading } = this.state;
@@ -154,7 +169,6 @@ class CaseFinish extends React.Component {
                 sm: { span: 21 },
             },
         };
-
         const columns = [{
             title: '序号',
             align: 'center',
@@ -168,7 +182,7 @@ class CaseFinish extends React.Component {
             width: 300,
             dataIndex: 'xsnr',
             key: 'xsnr',
-            render: text => <a href="javascript:;" title={text}>{text}</a>,
+            render: text => <a href="javascript:;" title={text}>{text.toString().truncate(0, 18)}</a>,
         }, {
             title: '提供者',
             align: 'left',
@@ -195,18 +209,32 @@ class CaseFinish extends React.Component {
             }
         }, {
             title: '分值',
-            align: 'left',
+            align: 'center',
             key: 'action3',
-            render: (text, record) => (
-                <span>
-                    <InputNumber id={'p_p' + record.id} min={this.state.inputMin} max={this.state.inputMax} />
+            render: (text, record, index) => {
+                let result = this.state.pointerResult,
+                    temp = result[record.id] || {},// 当前这一项
+                    showVal = '',
+                    min = showVal,
+                    max = showVal;
+                if (temp && temp.showType && temp.showType == '1') {
+                    // 非定值 
+                    min = this.state['inputMin' + '_' + record.id] || 0;
+                    max = this.state['inputMax' + '_' + record.id] || 0;
+                    showVal = temp.showVal || '';
+                } else {
+                    // 定值 or 首次加载
+                    showVal = temp.showVal || '';
+                    min = showVal;
+                    max = showVal;
+                }
+                return <span>
+                    {temp.showType == '1' ? <InputNumber style={{ width: 50 }} id={'p_p' + record.id} min={min} max={max} defaultValue={showVal} /> : <span id={'p_p' + record.id} >{showVal}</span>}
                 </span>
-            ),
+            },
         }];
-
         return (
             <div style={{ border: '0px solid red' }}>
-
                 <Form onSubmit={this.handleSubmit}>
                     <FormItem {...formItemLayout} label="案件状态">
                         {getFieldDecorator('xqnr', {
