@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Form, Row, Col, Input, Select, Radio, List, Table, Upload, Badge, Button, Icon, Modal, DatePicker, message, TreeSelect, Switch, Spin, Alert } from 'antd';
 import moment from 'moment';
 import { httpAjax, addressUrl, UC_URL } from '../../../../Util/httpAjax';
+import QueueAnim from 'rc-queue-anim';
 import ZBDW from '../../../../Components/Common/organization/zbdw';
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -10,6 +11,7 @@ const Option = Select.Option;
 const TreeNode = TreeSelect.TreeNode;
 const RadioGroup = Radio.Group;
 const confirm = Modal.confirm;
+const InputGroup = Input.Group;
 class CreateRequest extends React.Component {
     constructor(props) {
         super(props);
@@ -33,8 +35,7 @@ class CreateRequest extends React.Component {
                 showTotal: () => {
                     return `共 ${this.state.tempRequestData.length} 条`
                 }
-            },
-            xqnrPlaceholder: "请输入需求内容"
+            }
         }
     }
     componentWillMount() {
@@ -46,7 +47,6 @@ class CreateRequest extends React.Component {
             }
         })
     }
-
     //渲染下拉框
     renderOption = (selectArr) => {
         const options = selectArr && selectArr.map((item, index) => {
@@ -58,8 +58,7 @@ class CreateRequest extends React.Component {
 
     // 选择需求类型
     selectType = (value) => {
-        let text = value.split("&");
-        this.setState({ requestTypeCn: text[1], xqnrPlaceholder: '请输入' + text[1] })
+        this.setState({ requestTypeCn: value.split("&")[1] })
     }
 
     //获取更新的需求内容
@@ -251,6 +250,8 @@ class CreateRequest extends React.Component {
         this.setState({ fileTypes: temp });
     }
 
+    onPreview = (e) => {
+    }
     render() {
         const { demandType, fileList, pagination } = this.state;
         const { getFieldDecorator } = this.props.form;
@@ -259,6 +260,7 @@ class CreateRequest extends React.Component {
             onRemove: this.removeFileList,
             beforeUpload: this.beforeUpload,
             name: 'files',
+            onPreview: this.onPreview,
             showUploadList: false,
         };
         const formItemLayout = {
@@ -280,6 +282,12 @@ class CreateRequest extends React.Component {
             },
         };
 
+        let toggleDelBtn = (e, t) => {
+            // e.nativeEvent.stopImmediatePropagation()
+            let dom = document.getElementById(e);
+            //  let dom = e.target.nextElementSibling; // 下一个节点
+            dom.style.display = t == 'hide' ? 'none' : 'inline-block'
+        }
         // 修改一条临时需求
         let updateBytemp = (record) => {
             let temp = this.state.tempRequestData,
@@ -353,103 +361,103 @@ class CreateRequest extends React.Component {
                     <a href='javascript:' title='删除' onClick={() => { delAloneList(record.index) }} >{/* <Icon type="close" /> */}<Icon type="close-square-o" /></a></span>
             }
         }];
-        // 校验需求内容
-        let checkXqnrType = (e, v, f) => {
-            let types = this.state.requestTypeCn,
-                reg = "",
-                secondReg = ""
-            switch (types) {
-                case '手机号码':
-                    reg = /^1[3|4|5|7|8][0-9]{9}$/;
-                    break;
-                case '座机号码':
-                    reg = /^([0-9]{3,4}-)?[0-9]{7,8}$/;
-                    break;
-                case '手机串号':
-                    reg = /^\d{15}$/;
-                    break;
-                case 'MAC地址':
-                    reg = /[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}:[A-Fa-f0-9]{2}/;
-                    break;
-                case 'QQ群号码':
-                    reg = /^[0-9]*$/;
-                    break;
-                case '身份证件号码':
-                    reg = /^\d{15}|\d{}18$/;
-                    break;
-                case '银行卡号、账号':
-                    reg = /^[0-9]*$/;
-                    break;
-                case '车牌号':
-                    // 普通汽车
-                    reg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF]$)|([DF][A-HJ-NP-Z0-9][0-9]{4}$))/;
-                    // 新能源车
-                    secondReg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳]{1}$/;
-                    break;
-                case 'QQ号码':
-                    reg = /^[0-9]*$/;
-                    break;
-                case 'EMAIL地址':
-                    reg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
-                    break;
-                case 'IP地址':
-                    reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\:([0-9]|[1-9]\d{1,3}|[1-5]\d{4}|6[0-5]{2}[0-3][0-5])$/;
-                    break;
-                case '网站链接地址':
-                    reg = /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/;
-                    break;
-                case '电话号码':
-                    reg = /^[0-9]*$/;
-                    break;
-                case '短号反查':
-                    reg = /^[0-9]*$/;
-                    break;
-                case '身份证反查':
-                    reg = /^[0-9]*$/;
-                    break;
-                default:
-                    break;
-            }
 
-            if (reg && reg.test(v)) {
-                if (!secondReg) {
-                    // 只需要验证一次
-                    f()
-                } else {
-                    // 验证第二次
-                    if (secondReg.text(v)) {
-                        f()
-                    }
-                }
-            } else {
-                f("验证失败")
-            }
-        }
-
+        const demandTypeOption = getFieldDecorator('xqlx', {
+            //initialValue: '86',
+        })(
+            <Select style={{ width: 120 }}>
+                {this.renderOption(demandType)}
+            </Select>
+        );
         return (
             <div>
+                {/* 弹出层 */}
+                <div style={{
+                    width: 363,
+                    opacity:/*  this.state.tempListShow ? 1 : */ 0,
+                    height: 792,
+                    //  height: this.state.tempListShow ? 792 : 0,
+                    top: 0,
+                    background: '#fff',
+                    position: 'absolute',
+                    zIndex: 1,
+                    right: -364,
+                    padding: 10,
+                    border: '1px solid #ededed',
+                    borderRadius: 5,
+                    /*     display: this.state.tempListShow ? 'block' : 'none', */
+                    transition: 'height 0.7s,opacity 0.3s'
+                }} key="1">
+                    <div style={{ width: '100%', borderBottom: "1px solid  #e8e8e8" }}>
+                        <span style={{ padding: '8px 0px 14px', display: 'inline-block' }}>
+                            <span> <Icon type="pushpin" /> 已添加的需求</span>
+                        </span>
+                        <button aria-label="Close" className="ant-modal-close" onClick={() => { this.setState({ tempListShow: false }) }}><span className="ant-modal-close-x"></span></button>
+                    </div>
+                    <div><List
+                        style={{
+                            maxHeight: 659,
+                            overflow: "auto",
+                            padding: '0 10px'
+                        }}
+                        loading={this.state.tempListLoading}
+                        itemLayout="horizontal"
+                        dataSource={this.state.tempRequestData}
+                        renderItem={(item, index) => (
+                            <QueueAnim type='left'>
+                                <List.Item style={{ borderBottom: "1px dashed #e8e8e8" }} key={index}>
+                                    <List.Item.Meta onMouseMove={() => { toggleDelBtn('tempLi' + item.timekey, 'show') }} onMouseLeave={() => { toggleDelBtn('tempLi' + item.timekey, 'hide') }}
+                                        title={<span>
+                                            <span title={item.title} style={{ display: 'inline-block', width: 290, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{index + 1}.{item.title}</span>
+                                            <a id={'tempLi' + item.timekey} style={{ display: 'none', float: 'right' }} href="javascript:"><Icon type="delete" title="移除" onClick={() => { delAloneList(index) }} /></a>
+                                        </span>}
+                                        description={<span>{item.cont}</span>}
+                                    />
+                                </List.Item>
+                            </QueueAnim>
+                        )}
+                    />
+                        <p style={{ padding: 20, textAlign: "center" }}><Button style={{ width: "80%" }} type="primary">确认提交</Button></p>
+                    </div>
+                </div>
+                {/* 数量提示 */}
+                <div style={{ zIndex: 2, position: 'absolute', top: 55, right: 17, display:/*  !this.state.tempListShow && this.state.tempRequestData && this.state.tempRequestData.length ? 'block' :  */'none' }}>
+                    <div style={{ height: 30, width: 1, background: '#52c41a', margin: '0 auto', marginBottom: -5 }}></div>
+                    <div style={{ cursor: 'pointer' }} onClick={() => { this.setState({ tempListShow: true }) }}><Badge count={this.state.tempRequestData.length} style={{ backgroundColor: '#52c41a' }} /></div>
+                </div>
                 {/* 表单 */}
                 <Form onSubmit={this.handleSubmit} method="post">
                     <Row gutter={24}>
                         <Col span={12}>
-                            <FormItem {...formItemLayout} label="需求类型">
-                                {getFieldDecorator('xqlx', {
-                                    rules: [{ required: true, message: '请选择需求类型' },],
-                                })(
-                                    <Select placeholder='请选择需求类型' onChange={this.selectType}>
-                                        {this.renderOption(demandType)}
-                                    </Select>
-                                )}
+                            <FormItem {...formItemLayout} label="需求内容">
+                                <InputGroup compact>
+                                    {getFieldDecorator('xqlx', {
+                                        rules: [{ required: true, message: '请输入需求类型' },],
+                                    })(
+                                        <Select style={{ width: '40%' }} onChange={this.selectType}>
+                                            {this.renderOption(demandType)}
+                                        </Select>
+                                    )}
+                                    {getFieldDecorator('xqnr', {
+                                        rules: [{ required: true, message: '请输入需求内容' },],
+                                    })(
+                                        /*  <Select placeholder='请选择需求类型' onChange={this.selectType}>
+                                             {this.renderOption(demandType)}
+                                         </Select> */
+                                        <Input style={{ width: '60%' }} placeholder='请输入需求内容' onChange={this.changeXqnr} />
+                                    )}
+                                </InputGroup>
+
                             </FormItem>
                         </Col>
                         <Col span={12}>
-                            <FormItem {...formItemLayout} label="需求内容">
+                            {/*   <FormItem {...formItemLayout} label="需求内容">
                                 {getFieldDecorator('xqnr', {
-                                    rules: [{ required: true, message: this.state.xqnrPlaceholder, validator: checkXqnrType },],
+                                    rules: [{ required: true, message: '请输入需求内容.' },],
                                 })(
-                                    <Input placeholder={this.state.xqnrPlaceholder} onChange={this.changeXqnr} />
+                                    <Input placeholder='请输入需求内容' onChange={this.changeXqnr} />
                                 )}
-                            </FormItem>
+                            </FormItem> */}
                         </Col>
                         <Col span={12}>
                             <FormItem {...formItemLayout} label="需求名称">

@@ -86,7 +86,7 @@ class ExtractListMultiple extends React.Component {
             <div className="point-content">
                 <p> 一、下载模板.（下载后完成后您需要按照模板格式填充数据）</p>
                 <div>
-                    <Icon type="download" /> <a href={'/cases/batchTemplate'} title="点击下载" >批量提取案件.xls</a>
+                    <Icon type="download" /> <a href={addressUrl + '/cases/batchTemplate'} title="点击下载" >批量提取案件.xls</a>
                 </div>
                 <p> 二、上传附件.</p>
                 <div>

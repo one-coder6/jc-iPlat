@@ -221,9 +221,9 @@ class CaseList extends React.Component {
       width: '19%',
       render: (text, record, index) => {
         return <div>
-          <Button size='small' onClick={() => this.createRequest(record)} style={{ fontSize: '10px', marginRight: '6px',marginBottom:1 }}>创建需求</Button>
-          <Button size='small' onClick={() => this.publishInfor(record)} style={{ fontSize: '10px', marginRight: '6px',marginBottom:1 }}>发布信息</Button>
-          <Button size='small' onClick={() => this.caseFinish(record)} style={{ fontSize: '10px' ,marginBottom:1 }}>破案/侦结</Button>
+          <Button size='small' onClick={() => this.createRequest(record)} style={{ fontSize: '10px', marginRight: '6px', marginBottom: 1 }}>创建需求</Button>
+          <Button size='small' onClick={() => this.publishInfor(record)} style={{ fontSize: '10px', marginRight: '6px', marginBottom: 1 }}>发布信息</Button>
+          <Button size='small' onClick={() => this.caseFinish(record)} style={{ fontSize: '10px', marginBottom: 1 }}>破案/侦结</Button>
           {/* <Tooltip placement="top" title="创建需求">
 						<Icon type="plus" onClick={() => this.createRequest(record)} style={{ cursor: 'pointer' }} />
 					</Tooltip>
@@ -255,8 +255,8 @@ class CaseList extends React.Component {
           <PublishInfor caseRecord={caseRecord} handleCancel={this.handleCancel} />
         </Modal>
         {/* 破案/侦结 */}
-        <Modal visible={caseFinish} title='破案/侦结' onCancel={this.handleCancel} footer={null}>
-          <CaseFinish caseRecord={caseRecord} handleCancel={this.handleCancel} getDataSource={this.getDataSource} />
+        <Modal width='1096px' visible={caseFinish} title='破案/侦结' onCancel={this.handleCancel} footer={null}>
+          {caseFinish ? <CaseFinish caseRecord={caseRecord} handleCancel={this.handleCancel} getDataSource={this.getDataSource} /> : ''}
         </Modal>
       </div>
     )
